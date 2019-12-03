@@ -13,7 +13,7 @@ const initialState = {
   lastOdometer: '',
   truckImage: null,
   trailer1: {
-    trailerNumber: '',
+    trailerNumber: null,
     brakeConnections: {
       keyId: 'Brake Connections',
       status: true,
@@ -91,7 +91,7 @@ const initialState = {
     }
   },
   trailer2: {
-    trailerNumber: '',
+    trailerNumber: null,
     brakeConnections: {
       keyId: 'Brake Connections',
       status: true,
@@ -477,6 +477,22 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         lastOdometer: action.payload
+      };
+    case actionTypes.UPDATE_TRAILER1_NUMBER:
+      return {
+        ...state,
+        trailer1: {
+          ...state.trailer1,
+          trailerNumber: action.payload
+        }
+      };
+    case actionTypes.UPDATE_TRAILER2_NUMBER:
+      return {
+        ...state,
+        trailer2: {
+          ...state.trailer2,
+          trailerNumber: action.payload
+        }
       };
 
 

@@ -41,9 +41,24 @@ export const changeDate = (date) => {
     payload: date
   };
 };
+
 export const changeOdometer = (newOdometer) => {
   return {
     type: actionTypes.ON_ODOMETER_UPDATE,
     payload: newOdometer
+  };
+};
+
+export const updateTrailer1Number = (trailerNumber) => {
+  return {
+    type: actionTypes.UPDATE_TRAILER1_NUMBER,
+    payload: trailerNumber
+  };
+};
+
+export const updateTrailer2Number = (trailerNumber) => {
+  return {
+    type: actionTypes.UPDATE_TRAILER2_NUMBER,
+    payload: trailerNumber
   };
 };
