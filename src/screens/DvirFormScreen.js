@@ -26,7 +26,7 @@ const IndexScreen = ({ navigation, truckProperties, trailerModal }) => {
     alert('submit');
   };
   
-  const [modalShow, setModalShow] = useState(true);
+  const [modalShow, setModalShow] = useState(false);
   const [checkBoxValue, setCheckBoxValue] = useState(false);
   const [clicked, setClicked] = useState(false);
   

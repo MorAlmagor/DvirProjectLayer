@@ -28,6 +28,7 @@ const FormSection = ({
 }) => {
   const [expandSection, setExpandSection] = useState(false);
   const { title, checkList } = sectionInfo;
+
   if (title === 'Trailer NO.1') {
     return (
       <View style={styles.section}>

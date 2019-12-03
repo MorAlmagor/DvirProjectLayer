@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
   Text,
@@ -14,7 +15,7 @@ import MapView, { Marker } from 'react-native-maps';
 import { withNavigation } from 'react-navigation';
 import { changeUserLocation } from '../store/actions/formActions';
 import Colors from '../Colors/Colors';
-// הנדל errMsg
+// errMsg
 const MapScreen = ({ navigation, onSelectedLocation, locationCoords }) => {
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
@@ -41,7 +42,8 @@ const MapScreen = ({ navigation, onSelectedLocation, locationCoords }) => {
   };
 
   const selectLocationHandler = (event) => {
-    onSelectedLocation(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+    onSelectedLocation(event.nativeEvent.coordinate.latitude,
+      event.nativeEvent.coordinate.longitude);
     setLatitude(event.nativeEvent.coordinate.latitude);
     setLongitude(event.nativeEvent.coordinate.longitude);
     setSlectedLocation(event.nativeEvent.coordinate);
