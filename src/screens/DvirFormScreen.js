@@ -10,9 +10,10 @@ import { connect } from 'react-redux';
 import Form from '../components/Form/Form';
 import FormSubmission from '../components/FormSubmission/FormSubmission';
 import Modal from '../components/UI/Modals/DvirSummeryModal';
+import AddTrailerModal from '../components/UI/Modals/AddTrailerModal';
 import FormIntroSection from '../components/Form/FormIntroSection';
 
-const IndexScreen = ({ navigation, truckProperties }) => {
+const IndexScreen = ({ navigation, truckProperties, trailerModal }) => {
   const cleanUpHandler = () => {
     submitForm();
     setModalShow(false);
@@ -25,10 +26,7 @@ const IndexScreen = ({ navigation, truckProperties }) => {
     alert('submit');
   };
   
-  
-  // modalShoeHansler => FALSE
-  // לא לשכוחחחחחחחחחחחחחח
-  const [modalShow, setModalShow] = useState(false);
+  const [modalShow, setModalShow] = useState(true);
   const [checkBoxValue, setCheckBoxValue] = useState(false);
   const [clicked, setClicked] = useState(false);
   
@@ -51,6 +49,7 @@ const IndexScreen = ({ navigation, truckProperties }) => {
           setCheckBoxHandler={setCheckBoxValue}
         />
         {modalShow && <Modal modalshowHandler={setModalShow} clean={cleanUpHandler} />}
+        {trailerModal && <AddTrailerModal />}
       </View>
     </ScrollView>
   );
@@ -68,7 +67,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    imageBase64: state.form.truckImage
+    imageBase64: state.form.truckImage,
+    trailerModal: state.appUI.trailerModalShow,
+    num: state.form.trailer1.trailerNumber
   };
 };
 

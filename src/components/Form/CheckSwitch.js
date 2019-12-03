@@ -16,7 +16,6 @@ const CheckSwitch = ({
   onChangeTrailer2Status,
   trailer2
 }) => {
-  console.log(trailer2);
   const dispatchOwner = SectionTitle;
   if (dispatchOwner === 'Trailer NO.1') {
     return (

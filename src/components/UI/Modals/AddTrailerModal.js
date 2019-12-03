@@ -1,46 +1,91 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
   Text,
-  Platform
+  Platform,
+  TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
 import MainButton from '../Buttons/MainButton';
 import Colors from '../../../Colors/Colors';
+import { changeModalShow, ExpandSectionTrailer1, ExpandSectionTrailer2 } from '../../../store/actions/appUiActions';
+import { updateTrailer1Number, updateTrailer2Number } from '../../../store/actions/formActions';
 
-// eslint-disable-next-line consistent-return
-const AddTrailerModal = ({ title, ModalShow }) => {
-  if (title === 'Trailer NO.1') {
+
+const AddTrailerModal = ({
+  trailerTitle,
+  closeTrailerModal,
+  saveTrailer1,
+  saveTrailer2,
+  setExpandSectionTrailer1,
+  setExpandSectionTrailer2
+}) => {
+  const [trailer1, setTrailer1] = useState('');
+  const [trailer2, setTrailer2] = useState('');
+
+  const saveNum = () => {
+    if (trailerTitle === 'Trailer NO.1') {
+      saveTrailer1(trailer1);
+      closeTrailerModal();
+      setExpandSectionTrailer1();
+    } else {
+      saveTrailer2(trailer2);
+      closeTrailerModal();
+      setExpandSectionTrailer2();
+    }
+  };
+
+  if (trailerTitle === 'Trailer NO.1') {
     return (
       <View style={styles.backdrop}>
         <View style={styles.modal}>
-          <Text style={styles.noFaultsText}>Add Trailer NO.1</Text>
+          <Text style={styles.noFaultsText}>Add {trailerTitle}</Text>
           <Text>Please Write Trailer Number</Text>
+          <View style={{}}>
+            <TextInput
+              onChangeText={(text) => setTrailer1(text)}
+              placeholder="Trailer NO.1 Number"
+              // value={trailer1}
+              placeholderTextColor="grey"
+              style={styles.input}
+              autoCorrect={false}
+            />
+          </View>
           <View>
             <View style={styles.buttonsView}>
-              <MainButton onpress={() => ModalShow(false)}>I Confirm</MainButton>
+              <MainButton onpress={() => saveNum()}>Save Trailer Number</MainButton>
             </View>
             <View style={styles.buttonsView}>
-              <MainButton>Go back</MainButton>
+              <MainButton onpress={() => closeTrailerModal()}>Go back</MainButton>
             </View>
           </View>
         </View>
       </View>
     );
-  // eslint-disable-next-line no-else-return
+    // eslint-disable-next-line no-else-return
   } else {
     return (
       <View style={styles.backdrop}>
         <View style={styles.modal}>
-          <Text style={styles.noFaultsText}>Add Trailer NO.2</Text>
+          <Text style={styles.noFaultsText}>Add {trailerTitle}</Text>
           <Text>Please Write Trailer Number</Text>
+          <View style={{}}>
+            <TextInput
+              onChangeText={(text) => setTrailer2(text)}
+              placeholder="Trailer NO.2 Number"
+              value={trailer2}
+              placeholderTextColor="grey"
+              style={styles.input}
+              autoCorrect={false}
+            />
+          </View>
           <View>
             <View style={styles.buttonsView}>
-              <MainButton>I Confirm</MainButton>
+              <MainButton onpress={() => saveNum()}>save Trailer Number</MainButton>
             </View>
             <View style={styles.buttonsView}>
-              <MainButton onpress={() => ModalShow(false)}>Go back</MainButton>
+              <MainButton onpress={() => closeTrailerModal(false)}>Go back</MainButton>
             </View>
           </View>
         </View>
@@ -95,20 +140,40 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     opacity: 0.9
-  }
+  },
+  input: {
+    marginTop: 5,
+    height: 50,
+    width: 300,
+    padding: 12,
+    top: 14,
+    marginVertical: 4,
+    borderColor: '#aa0061',
+    borderWidth: 1,
+    borderRadius: 26,
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
 });
 
 const mapStateToProps = (state) => {
   return {
-    truckStatus: state.form.truckStatus
+    trailerTitle: state.appUI.trailerModalTitle,
+    trailer1num: state.form.trailer1.trailerNumber,
+    trailer2num: state.form.trailer2.trailerNumber,
   };
 };
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
+const mapDispatchToProps = (dispatch) => {
+  return {
+    closeTrailerModal: (demi) => dispatch(changeModalShow(demi)),
+    saveTrailer1: (trailer1) => dispatch(updateTrailer1Number(trailer1)),
+    saveTrailer2: (trailer2) => dispatch(updateTrailer2Number(trailer2)),
+    setExpandSectionTrailer1: () => dispatch(ExpandSectionTrailer1()),
+    setExpandSectionTrailer2: () => dispatch(ExpandSectionTrailer2())
+  };
+};
 
-//   };
-// };
 
-
-export default connect(mapStateToProps, null)(AddTrailerModal);
+export default connect(mapStateToProps, mapDispatchToProps)(AddTrailerModal);
