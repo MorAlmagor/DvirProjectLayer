@@ -84,19 +84,19 @@ const MapScreen = ({ navigation, onSelectedLocation, locationCoords }) => {
       </View>
       <View>
         {!selectedlocation ? <Text style={styles.mapGuildText}>Place select your location</Text>
-          : <Button onPress={() => SaveLocationHandler()} title="Save Your Location" />}
+          : <Button style={styles.btnStyle} onPress={() => SaveLocationHandler()} title="Save Your Location"  />}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    textAlign: 'center',
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
-  },
+  // paragraph: {
+  //   margin: 24,
+  //   fontSize: 18,
+  //   textAlign: 'center',
+  //   fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  // },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -114,11 +114,12 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
     bottom: 10
   },
-  // btnStyle: {
-  //   color: Colors.primary,
-  //   borderRadius: 20,
-  //   fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
-  // }
+  btnStyle: {
+    color: 'black',
+    borderRadius: 4,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    bottom: 10
+  }
 });
 
 const mapStateToProps = (state) => {

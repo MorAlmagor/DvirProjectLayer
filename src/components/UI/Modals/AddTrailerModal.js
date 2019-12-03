@@ -7,7 +7,7 @@ import {
   TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
-import MainButton from '../Buttons/MainButton';
+import ModalsButton from '../Buttons/ModalsButton';
 import Colors from '../../../Colors/Colors';
 import { changeModalShow, ExpandSectionTrailer1, ExpandSectionTrailer2 } from '../../../store/actions/appUiActions';
 import { updateTrailer1Number, updateTrailer2Number } from '../../../store/actions/formActions';
@@ -40,24 +40,23 @@ const AddTrailerModal = ({
     return (
       <View style={styles.backdrop}>
         <View style={styles.modal}>
-          <Text style={styles.noFaultsText}>Add {trailerTitle}</Text>
-          <Text>Please Write Trailer Number</Text>
+          <Text style={styles.noFaultsText}>{trailerTitle}</Text>
           <View style={{}}>
             <TextInput
               onChangeText={(text) => setTrailer1(text)}
-              placeholder="Trailer NO.1 Number"
+              placeholder="Enter Trailer Number"
               // value={trailer1}
               placeholderTextColor="grey"
               style={styles.input}
               autoCorrect={false}
             />
           </View>
-          <View>
+          <View style={styles.buttonsRow}>
             <View style={styles.buttonsView}>
-              <MainButton onpress={() => saveNum()}>Save Trailer Number</MainButton>
+              <ModalsButton onpress={() => saveNum()}>Save Number</ModalsButton>
             </View>
             <View style={styles.buttonsView}>
-              <MainButton onpress={() => closeTrailerModal()}>Go back</MainButton>
+              <ModalsButton onpress={() => closeTrailerModal()}>Go back</ModalsButton>
             </View>
           </View>
         </View>
@@ -68,24 +67,23 @@ const AddTrailerModal = ({
     return (
       <View style={styles.backdrop}>
         <View style={styles.modal}>
-          <Text style={styles.noFaultsText}>Add {trailerTitle}</Text>
-          <Text>Please Write Trailer Number</Text>
-          <View style={{}}>
+          <Text style={styles.noFaultsText}>{trailerTitle}</Text>
+          <View >
             <TextInput
               onChangeText={(text) => setTrailer2(text)}
-              placeholder="Trailer NO.2 Number"
+              placeholder="Enter Trailer Number"
               value={trailer2}
               placeholderTextColor="grey"
               style={styles.input}
               autoCorrect={false}
             />
           </View>
-          <View>
+          <View style={styles.buttonsRow}>
             <View style={styles.buttonsView}>
-              <MainButton onpress={() => saveNum()}>save Trailer Number</MainButton>
+              <ModalsButton onpress={() => saveNum()}>Save Number</ModalsButton>
             </View>
             <View style={styles.buttonsView}>
-              <MainButton onpress={() => closeTrailerModal(false)}>Go back</MainButton>
+              <ModalsButton onpress={() => closeTrailerModal(false)}>Go back</ModalsButton>
             </View>
           </View>
         </View>
@@ -109,15 +107,24 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
   },
+  buttonsRow: {
+    top: 15,
+    paddingbottom: 15,
+    justifyContent: 'space-around',
+    flexDirection:'row',
+    alignItems: 'center'
+  },
   buttonsView: {
-    bottom: 15,
-    top: 5
+    bottom: 10,
+    top: 10,
+    alignItems: 'center'
   },
   noFaultsText: {
     textAlign: 'center',
     fontSize: 22,
     fontWeight: '400',
     color: '#25282A',
+    bottom: 10,
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
   },
   image: {
@@ -142,18 +149,16 @@ const styles = StyleSheet.create({
     opacity: 0.9
   },
   input: {
-    marginTop: 5,
     height: 50,
     width: 300,
-    padding: 12,
-    top: 14,
-    marginVertical: 4,
     borderColor: '#aa0061',
     borderWidth: 1,
     borderRadius: 26,
     justifyContent: 'space-between',
-    flexDirection: 'column',
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+    alignItems: 'center',
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    paddingVertical: 12,
+    paddingHorizontal: 12
   },
 });
 
