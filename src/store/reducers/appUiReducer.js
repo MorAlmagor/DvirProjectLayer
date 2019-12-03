@@ -30,7 +30,6 @@ const reducerUI = (state = initialState, action) => {
         ...state,
         trailer2ExpendSction: !state.trailer2ExpendSction
       };
-
     default: return state;
   }
 };

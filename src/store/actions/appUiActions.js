@@ -8,10 +8,9 @@ export const openTrailerModal = (title) => {
   };
 };
 
-export const changeModalShow = (demi) => {
+export const changeModalShow = () => {
   return {
     type: actionTypes.CHANGE_MODAL_SHOW,
-    payload: demi
   };
 };
 
