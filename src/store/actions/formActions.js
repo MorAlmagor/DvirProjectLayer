@@ -62,3 +62,10 @@ export const updateTrailer2Number = (trailerNumber) => {
     payload: trailerNumber
   };
 };
+
+export const changeCarrier = (text) => {
+  return {
+    type: actionTypes.CHANGE_CARRIER,
+    payload: text
+  };
+};

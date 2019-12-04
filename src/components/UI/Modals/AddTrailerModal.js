@@ -3,7 +3,7 @@ import {
   View,
   StyleSheet,
   Text,
-  Platform,
+  // Platform, לא לשנות ביינתים
   TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -68,7 +68,7 @@ const AddTrailerModal = ({
       <View style={styles.backdrop}>
         <View style={styles.modal}>
           <Text style={styles.noFaultsText}>{trailerTitle}</Text>
-          <View >
+          <View>
             <TextInput
               onChangeText={(text) => setTrailer2(text)}
               placeholder="Enter Trailer Number"
@@ -105,15 +105,15 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 20,
     borderColor: Colors.primary,
     borderWidth: 2,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+    // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto' אל תשני ביינתים
   },
-  buttonsRow: {
-    top: 15,
-    paddingbottom: 15,
-    justifyContent: 'space-around',
-    flexDirection:'row',
-    alignItems: 'center'
-  },
+  // buttonsRow: { מקריס אצלי את האפליקציה ????
+  //   top: 15,
+  //   paddingbottom: 15,
+  //   justifyContent: 'space-around',
+  //   flexDirection:'row',
+  //   alignItems: 'center'
+  // },
   buttonsView: {
     bottom: 10,
     top: 10,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#25282A',
     bottom: 10,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto', אל תשני ביינתים
   },
   image: {
     width: 200,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     justifyContent: 'space-between',
     alignItems: 'center',
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto', אל תשני ביינתים
     paddingVertical: 12,
     paddingHorizontal: 12
   },

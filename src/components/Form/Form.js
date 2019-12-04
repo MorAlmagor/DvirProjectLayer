@@ -246,63 +246,63 @@ const trailerNO1 = [
     checkList: [
       {
         text: 'Brake Connections',
-        keyId: 'brakeConnections'
+        keyId: 'brakeConnectionsTrailer1'
       },
       {
         text: 'Brakes',
-        keyId: 'brakes'
+        keyId: 'brakesTrailer1'
       },
       {
         text: 'Coupling Devices',
-        keyId: 'couplingDevices'
+        keyId: 'couplingDevicesTrailer1'
       },
       {
         text: 'Coupling King Pin',
-        keyId: 'couplingKingPin'
+        keyId: 'couplingKingPinTrailer1'
       },
       {
         text: 'Doors',
-        keyId: 'doors'
+        keyId: 'doorsTrailer1'
       },
       {
         text: 'Hitch',
-        keyId: 'hitch'
+        keyId: 'hitchTrailer1'
       },
       {
         text: 'Landing Gear',
-        keyId: 'landingGear'
+        keyId: 'landingGearTrailer1'
       },
       {
         text: 'Lights',
-        keyId: 'lights'
+        keyId: 'lightsTrailer1'
       },
       {
         text: 'Reflectors',
-        keyId: 'reflectors'
+        keyId: 'reflectorsTrailer1'
       },
       {
         text: 'Roof',
-        keyId: 'roof'
+        keyId: 'roofTrailer1'
       },
       {
         text: 'Suspension System',
-        keyId: 'suspensionSystem'
+        keyId: 'suspensionSystemTrailer1'
       },
       {
         text: 'Straps',
-        keyId: 'straps'
+        keyId: 'strapsTrailer1'
       },
       {
         text: 'Tarpulin',
-        keyId: 'tarpulin'
+        keyId: 'tarpulinTrailer1'
       },
       {
         text: 'Tires',
-        keyId: 'tires'
+        keyId: 'tiresTrailer1'
       },
       {
         text: 'Wheels And Rim',
-        keyId: 'wheelsAndRim'
+        keyId: 'wheelsAndRimTrailer1'
       }
     ]
   },
@@ -314,63 +314,63 @@ const trailerNO2 = [
     checkList: [
       {
         text: 'Brake Connections',
-        keyId: 'brakeConnections'
+        keyId: 'brakeConnectionsTrailer2'
       },
       {
         text: 'Brakes',
-        keyId: 'brakes'
+        keyId: 'brakesTrailer2'
       },
       {
         text: 'Coupling Devices',
-        keyId: 'couplingDevices'
+        keyId: 'couplingDevicesTrailer2'
       },
       {
         text: 'Coupling King Pin',
-        keyId: 'couplingKingPin'
+        keyId: 'couplingKingPinTrailer2'
       },
       {
         text: 'Doors',
-        keyId: 'doors'
+        keyId: 'doorsTrailer2'
       },
       {
         text: 'Hitch',
-        keyId: 'hitch'
+        keyId: 'hitchTrailer2'
       },
       {
         text: 'Landing Gear',
-        keyId: 'landingGear'
+        keyId: 'landingGearTrailer2'
       },
       {
         text: 'Lights',
-        keyId: 'lights'
+        keyId: 'lightsTrailer2'
       },
       {
         text: 'Reflectors',
-        keyId: 'reflectors'
+        keyId: 'reflectorsTrailer2'
       },
       {
         text: 'Roof',
-        keyId: 'roof'
+        keyId: 'roofTrailer2'
       },
       {
         text: 'Suspension System',
-        keyId: 'suspensionSystem'
+        keyId: 'suspensionSystemTrailer2'
       },
       {
         text: 'Straps',
-        keyId: 'straps'
+        keyId: 'strapsTrailer2'
       },
       {
         text: 'Tarpulin',
-        keyId: 'tarpulin'
+        keyId: 'tarpulinTrailer2'
       },
       {
         text: 'Tires',
-        keyId: 'tires'
+        keyId: 'tiresTrailer2'
       },
       {
         text: 'Wheels And Rim',
-        keyId: 'wheelsAndRim'
+        keyId: 'wheelsAndRimTrailer2'
       }
     ]
   },

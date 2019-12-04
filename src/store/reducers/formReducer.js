@@ -3,7 +3,6 @@ import * as actionTypes from '../actions/actionTypes';
 const initialState = {
   currentDate: '',
   locationDetails: {
-    locationName: null,
     coords: {
       longitude: null,
       latitude: null
@@ -14,77 +13,77 @@ const initialState = {
   truckImage: null,
   trailer1: {
     trailerNumber: null,
-    brakeConnections: {
+    brakeConnectionsTrailer1: {
       keyId: 'Brake Connections',
       status: true,
       dateModified: ''
     },
-    brakes: {
+    brakesTrailer1: {
       keyId: 'Brakes',
       status: true,
       dateModified: ''
     },
-    couplingDevices: {
+    couplingDevicesTrailer1: {
       keyId: 'Coupling Devices',
       status: true,
       dateModified: ''
     },
-    couplingKingPin: {
+    couplingKingPinTrailer1: {
       keyId: 'Coupling King Pin',
       status: true,
       dateModified: ''
     },
-    doors: {
+    doorsTrailer1: {
       keyId: 'Doors',
       status: true,
       dateModified: ''
     },
-    hitch: {
+    hitchTrailer1: {
       keyId: 'Hitch',
       status: true,
       dateModified: ''
     },
-    landingGear: {
+    landingGearTrailer1: {
       keyId: 'Landing Gear',
       status: true,
       dateModified: ''
     },
-    lights: {
+    lightsTrailer1: {
       keyId: 'Lights',
       status: true,
       dateModified: ''
     },
-    reflectors: {
+    reflectorsTrailer1: {
       keyId: 'Reflectors',
       status: true,
       dateModified: ''
     },
-    roof: {
+    roofTrailer1: {
       keyId: 'Roof',
       status: true,
       dateModified: ''
     },
-    suspensionSystem: {
+    suspensionSystemTrailer1: {
       keyId: 'Suspension System',
       status: true,
       dateModified: ''
     },
-    straps: {
+    strapsTrailer1: {
       keyId: 'Straps',
       status: true,
       dateModified: ''
     },
-    tarpulin: {
+    tarpulinTrailer1: {
       keyId: 'Tarpulin',
       status: true,
       dateModified: ''
     },
-    tires: {
+    tiresTrailer1: {
       keyId: 'Tires',
       status: true,
       dateModified: ''
     },
-    wheelsAndRim: {
+    wheelsAndRimTrailer1: {
       keyId: 'Wheels And Rim',
       status: true,
       dateModified: ''
@@ -92,77 +91,77 @@ const initialState = {
   },
   trailer2: {
     trailerNumber: null,
-    brakeConnections: {
+    brakeConnectionsTrailer2: {
       keyId: 'Brake Connections',
       status: true,
       dateModified: ''
     },
-    brakes: {
+    brakesTrailer2: {
       keyId: 'Brakes',
       status: true,
       dateModified: ''
     },
-    couplingDevices: {
+    couplingDevicesTrailer2: {
       keyId: 'Coupling Devices',
       status: true,
       dateModified: ''
     },
-    couplingKingPin: {
+    couplingKingPinTrailer2: {
       keyId: 'Coupling King Pin',
       status: true,
       dateModified: ''
     },
-    doors: {
+    doorsTrailer2: {
       keyId: 'Doors',
       status: true,
       dateModified: ''
     },
-    hitch: {
+    hitchTrailer2: {
       keyId: 'Hitch',
       status: true,
       dateModified: ''
     },
-    landingGear: {
+    landingGearTrailer2: {
       keyId: 'Landing Gear',
       status: true,
       dateModified: ''
     },
-    lights: {
+    lightsTrailer2: {
       keyId: 'Lights',
       status: true,
       dateModified: ''
     },
-    reflectors: {
+    reflectorsTrailer2: {
       keyId: 'Reflectors',
       status: true,
       dateModified: ''
     },
-    roof: {
+    roofTrailer2: {
       keyId: 'Roof',
       status: true,
       dateModified: ''
     },
-    suspensionSystem: {
+    suspensionSystemTrailer2: {
       keyId: 'Suspension System',
       status: true,
       dateModified: ''
     },
-    straps: {
+    strapsTrailer2: {
       keyId: 'Straps',
       status: true,
       dateModified: ''
     },
-    tarpulin: {
+    tarpulinTrailer2: {
       keyId: 'Tarpulin',
       status: true,
       dateModified: ''
     },
-    tires: {
+    tiresTrailer2: {
       keyId: 'Tires',
       status: true,
       dateModified: ''
     },
-    wheelsAndRim: {
+    wheelsAndRimTrailer2: {
       keyId: 'Wheels And Rim',
       status: true,
       dateModified: ''
@@ -418,7 +417,6 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  // (changeCheckTrailer1Status
   switch (action.type) {
     case actionTypes.CHANGE_CHECK_TRUCK_STATUS:
       return {
@@ -485,6 +483,11 @@ const reducer = (state = initialState, action) => {
           ...state.trailer1,
           trailerNumber: action.payload
         }
+      };
+    case actionTypes.CHANGE_CARRIER:
+      return {
+        ...state,
+        carrier: action.payload
       };
     case actionTypes.UPDATE_TRAILER2_NUMBER:
       return {
