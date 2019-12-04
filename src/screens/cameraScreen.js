@@ -5,13 +5,12 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'
+import { FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import { setUserImage } from '../store/actions/formActions';
 import MainButton from '../components/UI/Buttons/MainButton';
-import Colors from '../Colors/Colors';
 
 const CameraScreen = ({
   navigation,
@@ -65,25 +64,25 @@ const CameraScreen = ({
   };
 
   return (
-   
+
     <View style={styles.container}>
       <View>
         <Text style={styles.userText}>Please Take Picture Of The Front Of Your Vehicle</Text>
       </View>
       <View style={styles.buttonsContainer}>
-        <MainButton onpress={openCam}>{<FontAwesome name="camera" size={30} />}</MainButton>
+        <MainButton onpress={openCam}><FontAwesome name="camera" size={30} /></MainButton>
       </View>
 
-      <View >
+      <View>
         <Text style={styles.divaider}>─────  or  ─────</Text>
       </View>
 
       <View style={styles.container1}>
         <View>
           <Text style={styles.userText}>Select A Photo from your Gallery</Text>
-        </View >
+        </View>
         <View style={styles.buttonsContainer1}>
-          <MainButton onpress={openCamRoll}>{<FontAwesome name="image" size={30} />}</MainButton>
+          <MainButton onpress={openCamRoll}><FontAwesome name="image" size={30} /></MainButton>
         </View>
 
       </View>
@@ -122,12 +121,12 @@ const styles = StyleSheet.create({
     color: 'grey',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
     marginBottom: '10%'
-    },
-    image: {
-      alignItems: 'center',
-      marginTop: '10%',
-      borderRadius: 10
-    }
+  },
+  image: {
+    alignItems: 'center',
+    marginTop: '10%',
+    borderRadius: 10
+  }
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -19,11 +19,14 @@ const FormSubmission = ({
   setCheckBoxHandler,
   clicked,
   navigation,
-  locationCoords
+  locationCoords,
+  userCarrier,
+  odometer
 }) => {
+  const odometerBool = odometer !== '';
+  const carrierBool = userCarrier !== '';
   const submitHandler = () => {
-    // תיקון לא טוב צרך להוסיף רדוסר חדש
-    if (checkboxVal && locationCoords.longitude) {
+    if (checkboxVal && locationCoords.longitude && odometerBool && carrierBool) {
       modalshowHandler(true);
     } else {
       clickedHandler(true);
@@ -55,6 +58,10 @@ const FormSubmission = ({
         && <Text style={styles.termsOfUsealert}>Please accept the terms of use to continue</Text>}
       {clicked && !locationCoords.longitude
         && <Text style={styles.termsOfUsealert}>Please Select Your Location</Text>}
+      {clicked && !carrierBool
+        && <Text style={styles.termsOfUsealert}>Please Type Your Carrier</Text>}
+      {clicked && !odometerBool
+        && <Text style={styles.termsOfUsealert}>Please type Truck Odometer</Text>}
       <MainButton onpress={submitHandler}>SUBMIT</MainButton>
     </View>
   );
@@ -100,7 +107,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    locationCoords: state.form.locationDetails.coords
+    locationCoords: state.form.locationDetails.coords,
+    userCarrier: state.form.carrier,
+    odometer: state.form.lastOdometer
   };
 };
 

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { getStringDate } from '../../utils/dateCreator';
-import { changeDate, changeOdometer } from '../../store/actions/formActions';
+import { changeDate, changeOdometer, changeCarrier } from '../../store/actions/formActions';
 
 const FormIntroSection = ({
   dvirStatus,
@@ -20,7 +20,8 @@ const FormIntroSection = ({
   lastOdometer,
   onOdometerUpdate,
   onDateUpdate,
-  choosenLocation
+  choosenLocation,
+  onCarrierUpdate
 }) => {
   const dateString = getStringDate();
 
@@ -42,7 +43,7 @@ const FormIntroSection = ({
             placeholderTextColor="grey"
             style={styles.inputC}
             autoCorrect={false}
-            editable={false}
+            onChangeText={(text) => onCarrierUpdate(text)}
           />
         </View>
         <View>
@@ -199,7 +200,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onDateUpdate: (date) => dispatch(changeDate(date)),
-    onOdometerUpdate: (date) => dispatch(changeOdometer(date)),
+    onOdometerUpdate: (odometer) => dispatch(changeOdometer(odometer)),
+    onCarrierUpdate: (text) => dispatch(changeCarrier(text))
+
   };
 };
 
