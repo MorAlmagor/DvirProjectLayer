@@ -7,8 +7,3 @@ export const getStringDate = () => {
 
   return dateString;
 };
-
-
-export const getStringTime = () => {
-  
-};

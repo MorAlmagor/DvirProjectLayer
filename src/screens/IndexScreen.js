@@ -18,7 +18,7 @@ const IndexScreen = ({ userName, navigation }) => {
         <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>
         <MainButton onpress={() => alert('comming Soon')}>Old-Reports</MainButton>
       </View>
-      </View>
+    </View>
   );
 };
 const styles = StyleSheet.create({

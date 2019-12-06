@@ -12,7 +12,7 @@ import Colors from '../Colors/Colors';
 const StartScreen = ({ navigation }) => {
 
   useEffect(() => {
-    setTimeout(() => { navigation.navigate('Dvir'); }, 3000);
+    setTimeout(() => { navigation.navigate('Index'); }, 4000);
   }, []);
 
   return (

@@ -10,7 +10,7 @@ import CameraPiker from './src/screens/cameraScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import StartScreen from './src/screens/StartScreen';
 import MapScreen from './src/screens/MapScreen';
-// import TestScreen from './src/screens/TestScreen';
+import TestScreen from './src/screens/TestScreen';
 
 
 const navigator = createStackNavigator({
@@ -21,10 +21,10 @@ const navigator = createStackNavigator({
   Map: MapScreen,
   Login: LoginScreen,
   OpenApp: StartScreen,
-  // Test: TestScreen לא למחוק מסך לניסיונות
+  Test: TestScreen
 },
 {
-  initialRouteName: 'Dvir',
+  initialRouteName: 'Index',
   defaultNavigationOptions: {
     title: 'Just Drive'
   }

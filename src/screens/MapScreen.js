@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
@@ -19,18 +20,17 @@ import Colors from '../Colors/Colors';
 const MapScreen = ({ navigation, onSelectedLocation, locationCoords }) => {
   const [longitude, setLongitude] = useState();
   const [latitude, setLatitude] = useState();
-  const [errMsg, setErrMsg] = useState();
   const [selectedlocation, setSlectedLocation] = useState(false);
   useEffect(() => {
     getLocationAsync();
   }, []);
   const getLocationAsync = async () => {
     const status = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      setErrMsg(
-        'Permission to access location was denied',
-      );
+    if (status.status !== 'granted') {
+      alert('Permission to access location was denied \n Please Allow Location Permission In Settings To Continue');
+      navigation.navigate('Index');
     }
+
 
     const currentlocation = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest
@@ -86,19 +86,13 @@ const MapScreen = ({ navigation, onSelectedLocation, locationCoords }) => {
       </View>
       <View>
         {!selectedlocation ? <Text style={styles.mapGuildText}>Place select your location</Text>
-          : <Button style={styles.btnStyle} onPress={() => SaveLocationHandler()} title="Save Your Location"  />}
+          : <Button color={Colors.primary} style={styles.btnStyle} onPress={() => SaveLocationHandler()} title="Save Your Location" />}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  // paragraph: {
-  //   margin: 24,
-  //   fontSize: 18,
-  //   textAlign: 'center',
-  //   fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
-  // },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -111,7 +105,7 @@ const styles = StyleSheet.create({
   },
   mapGuildText: {
     fontSize: 20,
-    color: Colors.accent,
+    color: Colors.primary,
     fontWeight: 'bold',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
     bottom: 10
