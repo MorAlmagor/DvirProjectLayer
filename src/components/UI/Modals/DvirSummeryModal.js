@@ -121,7 +121,7 @@ const DvirSummeryModal = ({
         <View style={styles.modal}>
           <Text style={styles.noFaultsText}>Reported fault summary</Text>
           <View>
-            {ans.map((fault) => <Text key={fault}>{fault}</Text>)}
+            {ans.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
           </View>
           {trailersStatusSummery}
           <View style={styles.buttonsView}>

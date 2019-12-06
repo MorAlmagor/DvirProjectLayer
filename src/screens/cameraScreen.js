@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -14,7 +15,7 @@ import MainButton from '../components/UI/Buttons/MainButton';
 
 const CameraScreen = ({
   navigation,
-  onSetImage
+  onSetImage,
 }) => {
   const [permissions, setPermissions] = useState({ camera: null, cameraRoll: null });
 
@@ -22,8 +23,13 @@ const CameraScreen = ({
   const getPermissions = async () => {
     try {
       const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-      const checkedStatus = status === 'granted';
-      setPermissions({ camera: checkedStatus, cameraRoll: checkedStatus });
+      if (status === 'undetermined') {
+        alert('Permission To Access Camera Was Denied \n Please Allow Camera Permission To Continue');
+        navigation.navigate('Index');
+      } else {
+        const checkedStatus = status === 'granted';
+        setPermissions({ camera: checkedStatus, cameraRoll: checkedStatus });
+      }
     } catch (error) {
       // console.error('Error');
     }
