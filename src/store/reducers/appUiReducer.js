@@ -4,7 +4,9 @@ const initialState = {
   trailerModalTitle: '',
   trailerModalShow: false,
   trailer1ExpendSction: false,
-  trailer2ExpendSction: false
+  trailer2ExpendSction: false,
+  userConnect: true,
+  DATA: null
 };
 
 const reducerUI = (state = initialState, action) => {
@@ -29,6 +31,16 @@ const reducerUI = (state = initialState, action) => {
       return {
         ...state,
         trailer2ExpendSction: !state.trailer2ExpendSction
+      };
+    case actionTypes.USER_IS_CONNECT:
+      return {
+        ...state,
+        userConnect: action.payload
+      };
+    case actionTypes.SET_DATA:
+      return {
+        ...state,
+        DATA: action.payload
       };
     default: return state;
   }

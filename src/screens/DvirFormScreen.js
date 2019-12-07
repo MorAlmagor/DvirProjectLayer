@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable padded-blocks */
 /* eslint-disable dot-notation */
 /* eslint-disable max-len */
@@ -10,7 +11,8 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
-  Alert
+  Alert,
+  NetInfo
 } from 'react-native';
 import { connect } from 'react-redux';
 import Form from '../components/Form/Form';
@@ -19,24 +21,27 @@ import Modal from '../components/UI/Modals/DvirSummeryModal';
 import AddTrailerModal from '../components/UI/Modals/AddTrailerModal';
 import FormIntroSection from '../components/Form/FormIntroSection';
 import SpinerModal from '../components/UI/Spiner/SpinerModal';
+import { setData } from '../store/actions/appUiActions';
 
-const IndexScreen = ({
+const DvirFormScreen = ({
   navigation,
   truckProperties,
   trailerModal,
-  fromState
+  fromState,
+  onSaveData
 }) => {
 
-  const cleanUpHandler = async () => {
-    await setModalShow(false);
-    await setCheckBoxValue(false);
-    await setClicked(false);
-    await submitForm();
+
+  const cleanUpHandler = () => {
+    setModalShow(false);
+    setCheckBoxValue(false);
+    setClicked(false);
+    submitForm();
   };
 
   const [loading, setLoading] = useState(false);
-  const submitForm = async () => {
-  //
+  const submitForm = () => {
+    //
     setLoading(true);
     const date = new Date();
     const hours = date.getHours();
@@ -62,7 +67,7 @@ const IndexScreen = ({
       odometer: fromState.lastOdometer,
       truckImage: fromState.truckImage,
     };
-    
+
     Object.keys(fromState.truckStatus).map((key) => truckStatusArr.push([key, fromState.truckStatus[key].status]));
     for (let i = 0; i < truckStatusArr.length; i += 1) {
       DATA[truckStatusArr[i][0]] = truckStatusArr[i][1];
@@ -95,33 +100,85 @@ const IndexScreen = ({
       DATA['trailer1Number'] = fromState.trailer1.trailerNumber;
       DATA['trailer2Number'] = fromState.trailer2.trailerNumber;
     }
-    const response = await fetch('https://vir-project-server.firebaseio.com/data.json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(DATA)
-    });
-    
-    if (response.ok) {
-      setLoading(false);
-      navigation.navigate('Index');
-      Alert.alert('the form has been sent successfully', '                           Drive carefuly!');
+
+    // For Android devices
+    if (Platform.OS === 'android') {
+      NetInfo.isConnected.fetch().then((isConnected) => {
+        if (isConnected) {
+          fatchDataToServer();
+        } else {
+          Alert.alert(
+            'Oops Something went wrong',
+            'Please Check Your Conection',
+            [
+              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly },
+              { text: 'Try Again', style: 'destructive', onPress: submitForm },
+            ]
+          );
+        }
+      });
+    } else {
+      // For iOS devices
+      NetInfo.isConnected.addEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange()
+      );
     }
-    if (response.status === 404) {
-      setTimeout(async () => {
-        await Alert.alert(
+    //  iOS devices Check Connection
+    const handleFirstConnectivityChange = (isConnected) => {
+      NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange
+      );
+
+      if (!isConnected === false) {
+        Alert.alert(
           'Oops Something went wrong',
           'Please Check Your Conection',
           [
-            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: console.log('save!') },
+            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly },
             { text: 'Try Again', style: 'destructive', onPress: submitForm },
           ]
         );
-        // setLoading(false);
-        // navigation.navigate('Index');
-      }, 7000);
-    }
+      } else {
+        fatchDataToServer();
+      }
+    };
+
+    const fatchDataToServer = async () => {
+      const response = await fetch('https://dvir-project-server.firebaseio.com/data.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(DATA)
+      });
+
+      if (response.ok) {
+        setLoading(false);
+        navigation.navigate('Index');
+        Alert.alert('   the form has been sent successfully', '                           Drive carefuly!');
+      }
+      if (response.status === 404) {
+
+        Alert.alert(
+          'Oops Something went wrong',
+          [
+            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly },
+            { text: 'Try Again', style: 'destructive', onPress: submitForm },
+          ]
+        );
+
+      }
+    };
+
+    const SaveDataLocaly = () => {
+      onSaveData(DATA);
+      setLoading(true);
+      navigation.navigate('Index');
+      alert('Your Form Saved In Old Report Scetion');
+    };
+
   };
 
   // const SaveLocaly
@@ -130,8 +187,8 @@ const IndexScreen = ({
   const [modalShow, setModalShow] = useState(true);
   const [checkBoxValue, setCheckBoxValue] = useState(false);
   const [clicked, setClicked] = useState(false);
-  
-  
+
+
   return (
     <ScrollView>
       <View>
@@ -175,4 +232,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(IndexScreen);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSaveData: (DATA) => dispatch(setData(DATA))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DvirFormScreen);

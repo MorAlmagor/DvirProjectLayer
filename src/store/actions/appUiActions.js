@@ -25,3 +25,17 @@ export const ExpandSectionTrailer2 = () => {
     type: actionTypes.EXPAND_SECTION_TRAILER2,
   };
 };
+
+export const userIsConnect = (status) => {
+  return {
+    type: actionTypes.USER_IS_CONNECT,
+    payload: status
+  };
+};
+
+export const setData = (DATA) => {
+  return {
+    type: actionTypes.SET_DATA,
+    payload: DATA
+  };
+};
