@@ -1,6 +1,6 @@
 /* eslint-disable no-alert */
 /* eslint-disable consistent-return */
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import {
   Text,
@@ -9,7 +9,8 @@ import {
   StyleSheet,
   NetInfo,
   Alert,
-  Image
+  Image,
+  AsyncStorage
 } from 'react-native';
 import { userIsConnect } from '../store/actions/appUiActions';
 import MainButton from '../components/UI/Buttons/MainButton';
@@ -20,6 +21,7 @@ const IndexScreen = ({
   onUserConnection,
   userIsConnected,
 }) => {
+  const [LocalData, setLocalData] = useState();
   // לא לשכוח דביר סטאטוס //
   const dvirStatus = true;
 
@@ -27,6 +29,7 @@ const IndexScreen = ({
   setTimeout(() => {
     CheckConnectivity();
   }, 1000);
+
 
   const CheckConnectivity = () => {
     // For Android devices
@@ -62,6 +65,10 @@ const IndexScreen = ({
   };
 
   if (userIsConnected) {
+    AsyncStorage.getItem('aocalDATA')
+      .then((req) => JSON.parse(req))
+      .then((json) => setLocalData(json))
+      .catch(() => alert('error!'));
     return (
       <View style={styles.container}>
         <View>
@@ -70,6 +77,8 @@ const IndexScreen = ({
             source={require('../../assets/ic_just2.png')}
           />
         </View>
+        {LocalData.length > 0
+          && <Text style={styles.offlineText}>Dont Forget Your Saved Form In Old Reports</Text>}
         <Text style={styles.userNameText}>
           Hello {userName}
         </Text>

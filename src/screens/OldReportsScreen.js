@@ -1,19 +1,24 @@
+/* eslint-disable no-alert */
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   View,
   StyleSheet,
+  AsyncStorage,
+  ScrollView,
+  Platform,
+  NetInfo
 } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Colors from '../Colors/Colors';
+import OldReports from '../components/UI/MapReturnSection/OldReports';
 
 
 export const OldReportsTab = ({ navigation }) => {
-//
-
+  //
   return (
     <View>
       <View style={styles.headerView}>
@@ -26,13 +31,91 @@ export const OldReportsTab = ({ navigation }) => {
 
 export const LocalyForms = ({ navigation }) => {
   //
-  
+  const [localData, setLocalData] = useState(false);
+
+  const deleteLocalForm = async (index) => {
+    const newData = localData;
+    newData.splice(index, 1);
+    try {
+      await AsyncStorage.setItem('aocalDATA', JSON.stringify(newData));
+    } catch (error) {
+      alert('error');
+    }
+  };
+
+  const uploadLocalForm = (index) => {
+    const pervData = localData;
+    const formToUpload = pervData.splice(index, 1);
+    CheckConnectivity(formToUpload, index);
+  };
+
+  const CheckConnectivity = (dataToFatch, index) => {
+    // For Android devices
+    if (Platform.OS === 'android') {
+      NetInfo.isConnected.fetch().then((isConnected) => {
+        if (isConnected) {
+          fatchDataToServer(dataToFatch, index);
+        } else {
+          alert('No Internet Connection');
+        }
+      });
+    } else {
+      // For iOS devices
+      NetInfo.isConnected.addEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange(dataToFatch, index)
+      );
+    }
+  };
+
+  const handleFirstConnectivityChange = (isConnected, dataToFatch, index) => {
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      handleFirstConnectivityChange
+    );
+
+    if (isConnected === false) {
+      alert('You Are Offline! \n Please Check Your Connection');
+    } else {
+      fatchDataToServer(dataToFatch, index);
+    }
+  };
+
+  const fatchDataToServer = async (dataToFatch, index) => {
+    const response = await fetch('https://dvir-project-server.firebaseio.com/data.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(dataToFatch)
+    });
+
+    if (response.ok) {
+      // setLoading(false);
+      alert('the form has been sent successfully');
+      deleteLocalForm(index);
+    }
+    if (response.status === 404) {
+      alert('Oops Something went wrong');
+    }
+  };
+
+  AsyncStorage.getItem('aocalDATA')
+    .then((req) => JSON.parse(req))
+    .then((json) => setLocalData(json))
+    .catch(() => alert('error!'));
+
   return (
     <View>
       <View style={styles.headerView}>
         <Text style={styles.headerText}>Saved Reports</Text>
       </View>
-      <Text style={styles.emptinessText}>Good! No Saved Reports</Text>
+      <ScrollView>
+        {localData.length > 0
+          // eslint-disable-next-line max-len
+          ? localData.map((data, index) => <OldReports key={data.time} deleteForm={deleteLocalForm} uploadForm={uploadLocalForm} data={data} index={index} />)
+          : <Text style={styles.emptinessText}>Good! No Localy Reports</Text>}
+      </ScrollView>
     </View>
   );
 };
@@ -46,7 +129,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   headerView: {
-    height: '15%',
+    height: 40,
     backgroundColor: Colors.primary,
     width: '100%',
   },
@@ -55,7 +138,7 @@ const styles = StyleSheet.create({
     marginTop: '60%',
     fontWeight: 'bold',
     fontSize: 25
-    
+
   }
 });
 
