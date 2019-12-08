@@ -12,7 +12,8 @@ import {
   ScrollView,
   Platform,
   Alert,
-  NetInfo
+  NetInfo,
+  AsyncStorage,
 } from 'react-native';
 import { connect } from 'react-redux';
 import Form from '../components/Form/Form';
@@ -38,10 +39,17 @@ const DvirFormScreen = ({
     setClicked(false);
     submitForm();
   };
-
+  
+  const [modalShow, setModalShow] = useState(true);
+  const [checkBoxValue, setCheckBoxValue] = useState(false);
+  const [clicked, setClicked] = useState(false);
   const [loading, setLoading] = useState(false);
+
+
   const submitForm = () => {
     //
+    
+
     setLoading(true);
     const date = new Date();
     const hours = date.getHours();
@@ -67,16 +75,16 @@ const DvirFormScreen = ({
       odometer: fromState.lastOdometer,
       truckImage: fromState.truckImage,
     };
-
+    
     Object.keys(fromState.truckStatus).map((key) => truckStatusArr.push([key, fromState.truckStatus[key].status]));
     for (let i = 0; i < truckStatusArr.length; i += 1) {
       DATA[truckStatusArr[i][0]] = truckStatusArr[i][1];
     }
-
+    
     if (fromState.trailer1.trailerNumber === null) {
       DATA['trailer1'] = null;
       DATA['trailer2'] = null;
-
+      
     } else if (fromState.trailer1.trailerNumber !== null && fromState.trailer2.trailerNumber === null) {
       Object.keys(fromState.trailer1).map((key) => trailer1Arr.push([key, fromState.trailer1[key].status]));
       for (let i = 1; i < trailer1Arr.length; i += 1) {
@@ -85,7 +93,7 @@ const DvirFormScreen = ({
       DATA['trailer1'] = true;
       DATA['trailer1Number'] = fromState.trailer1.trailerNumber;
       DATA['trailer2'] = null;
-
+      
     } else if (fromState.trailer1.trailerNumber !== null && fromState.trailer2.trailerNumber !== null) {
       Object.keys(fromState.trailer1).map((key) => trailer1Arr.push([key, fromState.trailer1[key].status]));
       for (let i = 1; i < trailer1Arr.length; i += 1) {
@@ -100,11 +108,11 @@ const DvirFormScreen = ({
       DATA['trailer1Number'] = fromState.trailer1.trailerNumber;
       DATA['trailer2Number'] = fromState.trailer2.trailerNumber;
     }
-
+    
     // For Android devices
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
-        if (isConnected) {
+        if (!isConnected) {                               /////////////// DONT-FORGOT//////////////////////
           fatchDataToServer();
         } else {
           Alert.alert(
@@ -156,8 +164,14 @@ const DvirFormScreen = ({
 
       if (response.ok) {
         setLoading(false);
-        navigation.navigate('Index');
+        const resetLocalData = [];
+        try {
+          await AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+        } catch (error) {
+          alert('error');
+        }
         Alert.alert('   the form has been sent successfully', '                           Drive carefuly!');
+        navigation.navigate('Index');
       }
       if (response.status === 404) {
 
@@ -172,22 +186,36 @@ const DvirFormScreen = ({
       }
     };
 
-    const SaveDataLocaly = () => {
+    const storeData = async (json) => {
+      let tempLocalDATA = json;
+      if (tempLocalDATA === null) {
+        tempLocalDATA = [];
+      }
+      tempLocalDATA.push(DATA);
+      try {
+        await AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
+        alert('saved');
+      } catch (error) {
+        alert('error');
+      }
+    };
+
+    const retrieveData = async () => {
+      AsyncStorage.getItem('aocalDATA')
+        .then((req) => JSON.parse(req))
+        .then((json) => storeData(json))
+        .catch((error) => alert(error));
+    };
+
+
+    const SaveDataLocaly = async () => {
+      await retrieveData();
       onSaveData(DATA);
-      setLoading(true);
+      setLoading(false);
       navigation.navigate('Index');
-      alert('Your Form Saved In Old Report Scetion');
     };
 
   };
-
-  // const SaveLocaly
-
-
-  const [modalShow, setModalShow] = useState(true);
-  const [checkBoxValue, setCheckBoxValue] = useState(false);
-  const [clicked, setClicked] = useState(false);
-
 
   return (
     <ScrollView>
