@@ -77,8 +77,6 @@ const IndexScreen = ({
             source={require('../../assets/ic_just2.png')}
           />
         </View>
-        {LocalData.length > 0
-          && <Text style={styles.offlineText}>Dont Forget Your Saved Form In Old Reports</Text>}
         <Text style={styles.userNameText}>
           Hello {userName}
         </Text>

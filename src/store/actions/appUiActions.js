@@ -39,3 +39,10 @@ export const setData = (DATA) => {
     payload: DATA
   };
 };
+
+export const setOddsSummery = (summery) => {
+  return {
+    type: actionTypes.SET_ODDS_SUMMERY,
+    payload: summery
+  };
+};

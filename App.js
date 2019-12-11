@@ -13,6 +13,8 @@ import LoginScreen from './src/screens/LoginScreen';
 import StartScreen from './src/screens/StartScreen';
 import MapScreen from './src/screens/MapScreen';
 import TestScreen from './src/screens/TestScreen';
+import AllFaultsScreen from './src/screens/AllFaultsScreen';
+import SemiFaultsScreen from './src/screens/SemiFaultsScreen';
 import Colors from './src/Colors/Colors';
 
 
@@ -25,10 +27,12 @@ const navigator = createStackNavigator({
   Login: LoginScreen,
   OpenApp: StartScreen,
   Reports: OldReportsScreen,
-  Test: TestScreen
+  Test: TestScreen,
+  Faults: AllFaultsScreen,
+  SemiFaults: SemiFaultsScreen
 },
 {
-  initialRouteName: 'Reports',
+  initialRouteName: 'Dvir',
   defaultNavigationOptions: {
     headerBackImage: <Icon name="md-arrow-round-back" color="white" size={30} />,
     headerStyle: {

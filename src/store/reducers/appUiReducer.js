@@ -6,7 +6,10 @@ const initialState = {
   trailer1ExpendSction: false,
   trailer2ExpendSction: false,
   userConnect: true,
-  DATA: null
+  DATA: null,
+  truckRaf: 40,
+  trailerRaf: 30,
+  oddsSummery: null
 };
 
 const reducerUI = (state = initialState, action) => {
@@ -41,6 +44,11 @@ const reducerUI = (state = initialState, action) => {
       return {
         ...state,
         DATA: action.payload
+      };
+    case actionTypes.SET_ODDS_SUMMERY:
+      return {
+        ...state,
+        oddsSummery: action.payload
       };
     default: return state;
   }
