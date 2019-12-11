@@ -234,7 +234,7 @@ const DvirFormScreen = ({
           checkboxVal={checkBoxValue}
           setCheckBoxHandler={setCheckBoxValue}
         />
-        {modalShow && <Modal modalshowHandler={setModalShow} clean={cleanUpHandler} />}
+        {modalShow && <Modal navigation={navigation} modalshowHandler={setModalShow} clean={cleanUpHandler} />}
         {trailerModal && <AddTrailerModal />}
         {loading && <SpinerModal />}
       </View>

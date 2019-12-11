@@ -1,228 +1,250 @@
-/* eslint-disable max-len */
-/* eslint-disable react/jsx-closing-tag-location */
-/* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable consistent-return */
+/* eslint-disable max-len */
+/* eslint-disable prefer-template */
+/* eslint-disable no-else-return */
 import React from 'react';
+import { connect } from 'react-redux';
+import { StackedBarChart } from 'react-native-svg-charts';
 import {
   View,
-  StyleSheet,
   Text,
-  Image,
-  Platform
+  Dimensions,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity
 } from 'react-native';
-import { connect } from 'react-redux';
 import MainButton from '../Buttons/MainButton';
 import Colors from '../../../Colors/Colors';
+import DvirSummeryButton from '../Buttons/DvirSummeryButton';
+import FormSummeryAlertCard from '../Cards/FormSummeryAlertCard';
 
 const DvirSummeryModal = ({
+  navigation,
   clean,
-  modalshowHandler,
   truckStatus,
   trailer1Status,
   trailer2Status,
   trailer1Valid,
-  trailer2Valid
+  trailer2Valid,
+  truckRaf,
+  trailerRaf,
 }) => {
   //
-  let trailersStatusSummery = null;
-  if (trailer1Valid === null) {
-    trailersStatusSummery = (
-      <View>
-        <Text style={styles.trailerNoFaultsText}>No Trailer Add to Truck</Text>
-      </View>
-    );
-  } else if (trailer1Valid !== null && trailer2Valid === null) {
-    const trailer1ArreyKeys = Object.keys(trailer1Status);
-    const trailer1Faults = [];
-    for (let i = 1; i < trailer1ArreyKeys.length; i += 1) {
-      if (trailer1Status[trailer1ArreyKeys[i]].status === false) {
-        trailer1Faults.push(trailer1Status[trailer1ArreyKeys[i]].keyId);
+  
+  const getSummery = (tempData, type) => {
+    const tempDataArreyKeys = Object.keys(tempData);
+    const tempFaults = [];
+    let tempScore = 0;
+    for (let i = 1; i < tempDataArreyKeys.length; i += 1) {
+      if (tempData[tempDataArreyKeys[i]].status === false) {
+        tempFaults.push(tempData[tempDataArreyKeys[i]].keyId);
+        tempScore += tempData[tempDataArreyKeys[i]].Score;
       }
     }
-    trailersStatusSummery = (
-      <View>
-        <Text style={styles.trailerNoFaultsText}>Trailer NO {trailer1Valid}</Text>
-        {trailer1Faults.length === 0
-          ? <Text style={styles.trailerNoFaultsText}>No Faults Reported</Text>
-          : <View>
-            <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text>
-            {trailer1Faults.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
-          </View>}
-      </View>
-    );
-  } else if (trailer1Valid !== null && trailer2Valid !== null) {
-    const trailer1ArreyKeys = Object.keys(trailer1Status);
-    const trailer1Faults = [];
-    for (let i = 1; i < trailer1ArreyKeys.length; i += 1) {
-      if (trailer1Status[trailer1ArreyKeys[i]].status === false) {
-        trailer1Faults.push(trailer1Status[trailer1ArreyKeys[i]].keyId);
-      }
+    if (type) {
+      const raf = truckRaf;
+      const rafOdds = ((tempScore - raf) / raf) * -100;
+      const faultsOdds = ((tempFaults.length - 43) / 43) * -100;
+      const ans = {
+        faultsArr: tempFaults,
+        score: tempScore,
+        faultsOdds,
+        rafOdds
+      };
+      return ans;
+    } else {
+      const raf = trailerRaf;
+      const rafOdds = ((tempScore - raf) / raf) * -100;
+      const faultsOdds = ((tempFaults.length - 43) / 43) * -100;
+      const ans = {
+        faultsArr: tempFaults,
+        score: tempScore,
+        faultsOdds,
+        rafOdds
+      };
+      return ans;
     }
-    const trailer2ArreyKeys = Object.keys(trailer2Status);
-    const trailer2Faults = [];
-    for (let i = 1; i < trailer2ArreyKeys.length; i += 1) {
-      if (trailer2Status[trailer2ArreyKeys[i]].status === false) {
-        trailer2Faults.push(trailer2Status[trailer2ArreyKeys[i]].keyId);
-      }
-    }
-    trailersStatusSummery = (
-      <View>
-        <View>
-          <Text style={styles.trailerNoFaultsText}>Trailer NO {trailer1Valid}</Text>
-          {trailer1Faults.length === 0
-            ? <Text style={styles.trailerNoFaultsText}>No Faults Reported</Text>
-            : <View>
-              <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text>
-              {trailer1Faults.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
-            </View>}
-        </View>
-        <View>
-          <Text style={styles.trailerNoFaultsText}>Trailer NO {trailer2Valid}</Text>
-          {trailer2Faults.length === 0
-            ? <Text style={styles.trailerNoFaultsText}>No Faults Reported</Text>
-            : <View>
-              <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text>
-              {trailer2Faults.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
-            </View>}
-        </View>
+  };
 
-      </View>
-    );
-  }
+  const totalSummery = (
+    trailer1Validation,
+    trailer2Validation,
+    truckSummery,
+    tariler1Summery,
+    tariler2Summery
+  ) => {
+    if (trailer1Validation === null) {
+      const TotalRafOdds = truckSummery.rafOdds;
+      const TotalFaultsOdds = truckSummery.faultsOdds;
+      return {
+        rafOdds: TotalRafOdds,
+        faultsOdds: TotalFaultsOdds
+      };
+    } else if (trailer1Validation !== null && trailer2Validation === null) {
+      const TotalRaf = truckRaf + trailerRaf;
+      const TotalScore = truckSummery.score + tariler1Summery.score;
+      const TotalFaults = truckSummery.length + tariler1Summery.length;
+      const TotalRafOdds = ((TotalScore - TotalRaf) / TotalRaf) * -100;
+      const TotalFaultsOdds = ((TotalFaults.length - 63) / 63) * -100;
+      return {
+        rafOdds: TotalRafOdds,
+        faultsOdds: TotalFaultsOdds
+      };
+    } else if (trailer1Validation !== null && trailer2Validation !== null) {
+      const TotalRaf = truckRaf + trailerRaf + trailerRaf;
+      const TotalScore = truckSummery.score + tariler1Summery.score + tariler2Summery.score;
+      const TotalFaults = truckSummery.length + tariler1Summery.length + tariler2Summery.length;
+      const TotalRafOdds = ((TotalScore - TotalRaf) / TotalRaf) * -100;
+      const TotalFaultsOdds = ((TotalFaults.length - 83) / 83) * -100;
+      return {
+        rafOdds: TotalRafOdds,
+        faultsOdds: TotalFaultsOdds
+      };
+    }
+  };
+  
+  const truckSummery = getSummery(truckStatus, true);
+  const tariler1Summery = getSummery(trailer1Status, true);
+  const tariler2Summery = getSummery(trailer2Status, true);
+  const totalOddsSummery = totalSummery(trailer1Valid, trailer2Valid, truckSummery, tariler1Summery, tariler2Summery);
 
-  const trailer1ArreyKeys = Object.keys(trailer1Status);
-  const trailer1Faults = [];
-  for (let i = 1; i < trailer1ArreyKeys.length; i += 1) {
-    if (trailer1Status[trailer1ArreyKeys[i]].status === false) {
-      trailer1Faults.push(trailer1Status[trailer1ArreyKeys[i]].keyId);
-    }
-  }
-  const trailer2ArreyKeys = Object.keys(trailer2Status);
-  const trailer2Faults = [];
-  for (let i = 1; i < trailer2ArreyKeys.length; i += 1) {
-    if (trailer2Status[trailer2ArreyKeys[i]].status === false) {
-      trailer2Faults.push(trailer2Status[trailer2ArreyKeys[i]].keyId);
-    }
-  }
-  const ans = [];
-  const ansToCheck = [];
+  
+  const dataScoreSummery = [
+    {
+      rank: 100,
+      test: 25,
+      test2: 13
+    },
+    {
+      rank: totalOddsSummery.rafOdds,
+      test: 25,
+      test2: 13
+    },
+    {
+      rank: truckSummery.rafOdds,
+      test: 25,
+      test2: 13
+    },
+    {
+      rank: trailer1Valid ? tariler1Summery.rafOdds : 0,
+      test: trailer1Valid ? 25 : 1,
+      test2: trailer1Valid ? 25 : 1
 
-  Object.keys(truckStatus).map((key) => {
-    return ansToCheck.push({ name: truckStatus[key].keyId, status: truckStatus[key].status });
-  });
-  for (let i = 0; i < ansToCheck.length; i += 1) {
-    if (!ansToCheck[i].status) {
-      ans.push(ansToCheck[i].name);
-    }
-  }
-  if (ans.length > 0 || trailer1Faults.length > 0 || trailer2Faults.length > 0) {
-    return (
-      <View style={styles.backdrop}>
-        <View style={styles.modal}>
-          <Text style={styles.noFaultsText}>Reported fault summary</Text>
-          <View>
-            {ans.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
+    },
+    {
+      rank: trailer2Valid ? tariler2Summery.rafOdds : 0,
+      test: trailer2Valid ? 25 : 1,
+      test2: trailer2Valid ? 25 : 1
+    },
+  ];
+
+  const colors = [Colors.primary, '#BE066E', '#C30771'];
+  const keys = ['rank', 'test', 'test2'];
+  // truck renk
+
+  return (
+    <View style={styles.backdrop}>
+      <View style={styles.modal}>
+        <ScrollView>
+          <View style={{ width: '100%', alignItems: 'center', marginVertical: 10 }}>
+            <View style={{ width: '90%', height: 200 }}>
+              <StackedBarChart
+                style={{ height: 200 }}
+                keys={keys}
+                colors={colors}
+                data={dataScoreSummery}
+                contentInset={{ top: 30, bottom: 30 }}
+              // horizontal={true}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', width: '90%', height: 50 }}>
+              <Text style={{ textAlign: 'center', width: '20%' }}>Full Rank</Text>
+              <Text style={{ textAlign: 'center', width: '20%' }}>Total Rank</Text>
+              <Text style={{ textAlign: 'center', width: '20%' }}>Truck Score</Text>
+              <Text style={{ textAlign: 'center', width: '20%' }}>Trailer 1</Text>
+              <Text style={{ textAlign: 'center', width: '20%' }}>trailer 2</Text>
+            </View>
+            <Text>__________________Tap For Detail___________________</Text>
+            <DvirSummeryButton
+              title="Total Rank"
+              odds={totalOddsSummery.rafOdds.toFixed(0) + '%'}
+              onpress={() => navigation.navigate('Faults', {
+                truck: truckSummery,
+                tariler1: tariler1Summery,
+                tariler2: tariler2Summery,
+                total: totalOddsSummery
+              })}
+            />
+            <DvirSummeryButton
+              title="Truck"
+              odds={truckSummery.rafOdds.toFixed(0) + '%'}
+              onpress={() => navigation.navigate('SemiFaults', { Sum: truckSummery, type: 'Truck' })}
+            />
+            {trailer1Valid && <DvirSummeryButton title="Trailer 1" odds={tariler1Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler1Summery, type: 'Trailer1' })} />}
+            {trailer2Valid && <DvirSummeryButton title="Trailer 2" odds={tariler2Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler2Summery, type: 'Trailer2' })} />}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Faults', {
+                truck: truckSummery,
+                tariler1: tariler1Summery,
+                tariler2: tariler2Summery,
+                total: totalOddsSummery
+              })}
+            >
+              <FormSummeryAlertCard
+                tariler1Summery={tariler1Summery}
+                tariler2Summery={tariler2Summery}
+                truckSummery={truckSummery}
+                truckRaf={truckRaf}
+                trailerRaf={trailerRaf}
+                trailer1Active={trailer1Valid}
+                trailer2Active={trailer2Valid}
+              />
+            </TouchableOpacity>
+            <View>
+              <MainButton onpress={() => clean()}>
+                Submit
+              </MainButton>
+            </View>
           </View>
-          {trailersStatusSummery}
-          <View style={styles.buttonsView}>
-            <MainButton onpress={() => clean()}>I Confirm</MainButton>
-          </View>
-          <View style={styles.buttonsView}>
-            <MainButton onpress={() => modalshowHandler(false)}>Go back</MainButton>
-          </View>
-        </View>
+        </ScrollView>
       </View>
-    );
-  }
-  if (ans.length === 0 && trailer1Faults.length === 0 && trailer2Faults.length === 0) {
-    return (
-      <View style={styles.backdrop}>
-        <View style={styles.modal}>
-          <Text style={styles.noFaultsText}>There is no faults found, Drive Carefully</Text>
-          {trailersStatusSummery}
-          <View style={styles.imageContainer}>
-            <Image style={styles.Image} source={require('../../../../assets/SteeringWheel.png')} />
-          </View>
-          <View style={styles.buttonsView}>
-            <MainButton onpress={() => clean()}>Ok</MainButton>
-          </View>
-          <View style={styles.buttonsView}>
-            <MainButton onpress={() => modalshowHandler(false)}>Go back</MainButton>
-          </View>
-        </View>
-      </View>
-    );
-  }
+    </View>
+  );
 };
+
 
 const styles = StyleSheet.create({
   modal: {
-    alignContent: 'flex-end',
-    backgroundColor: 'white',
-    width: '87%',
-    padding: '10%',
     zIndex: 500,
     top: '7%',
-    borderTopEndRadius: 20,
-    borderBottomStartRadius: 20,
-    borderColor: Colors.primary,
-    borderWidth: 2,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
-  },
-  buttonsView: {
-    bottom: 15,
-    top: 5
-  },
-  noFaultsText: {
-    textAlign: 'center',
-    fontSize: 26,
-    fontWeight: '400',
-    color: Colors.primary,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
-  },
-  trailerNoFaultsText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.primary,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
-  },
-  trailerFaultsText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.accent,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
-  },
-  trailerFaults: {
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '400',
-    color: Colors.accent,
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
-  },
-  image: {
-    width: 150,
-    height: 150,
-    resizeMode: 'contain'
-  },
-  imageContainer: {
-    alignItems: 'center',
-    margin: '5%'
-
+    // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
   },
   backdrop: {
     alignItems: 'center',
     alignContent: 'flex-end',
     position: 'absolute',
-    backgroundColor: 'black',
+    backgroundColor: 'white',
     width: '100%',
     height: '100%',
     zIndex: 400,
     left: 0,
     top: 0,
-    opacity: 0.9
+  },
+  alertGuildContainer: {
+    alignItems: 'center',
+    borderColor: Colors.primary,
+    borderWidth: 2,
+    borderRadius: 10,
+    width: Dimensions.get('window').width * 0.9
+  },
+  alertGuildText: {
+    color: Colors.primary,
+    fontWeight: 'bold',
+    marginTop: 5,
+    marginLeft: 15,
+    fontSize: 17
   }
+
 });
 
 const mapStateToProps = (state) => {
@@ -232,14 +254,15 @@ const mapStateToProps = (state) => {
     trailer2Valid: state.form.trailer2.trailerNumber,
     trailer1Status: state.form.trailer1,
     trailer2Status: state.form.trailer2,
+    truckRaf: state.appUI.truckRaf,
+    trailerRaf: state.appUI.trailerRaf,
   };
 };
 
 // const mapDispatchToProps = (dispatch) => {
 //   return {
-
+    
 //   };
 // };
-
 
 export default connect(mapStateToProps, null)(DvirSummeryModal);
