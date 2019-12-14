@@ -35,48 +35,48 @@ const FormSummeryAlertCard = ({
     );
     SummeryAlert = (
       <Text style={styles.alertGuildText}>
-        {TruckDetail ? 'You Allow To Ride, Drive Carefuly' : ' You Are Not Allowed To Travel' }
+        {TruckDetail ? 'You\'r Allow To Ride, Drive Carefuly' : 'You\'r Are Not Allowed To Drive' }
       </Text>
     );
   } else if (trailer1Active !== null && trailer2Active === null) {
     TrailersDetails = (
       <Text style={styles.alertGuildText}>
-        {Trailer1Detail ? 'Trailer NO1 Add To Truck & Safe For Travel' : 'Trailer NO1 Not Safe For Travel' }
+        {Trailer1Detail ? 'Trailer NO.1 Add To Truck & Safe For Drive' : 'Trailer NO.1 Not Safe For Drive' }
       </Text>
     );
     SummeryAlert = (
       <Text style={styles.alertGuildText}>
-        {TruckDetail && Trailer1Detail ? 'You Allow To Ride, Drive Carefuly' : ' You Are Not Allowed To Travel' }
+        {TruckDetail && Trailer1Detail ? 'You\'r Allow To Ride, Drive Carefuly' : 'You\'r Not Allowed To Drive' }
       </Text>
     );
   } else if (trailer1Active !== null && trailer1Active !== null) {
     TrailersDetails = (
       <View>
         <Text style={styles.alertGuildText}>
-          {Trailer1Detail ? 'Trailer NO1 Safe For Travel' : 'Trailer NO1 Not Safe For Travel'}
+          {Trailer1Detail ? 'Trailer NO.1 Safe For Drive' : 'Trailer NO.1 Not Safe For Drive'}
         </Text>
         <Text style={styles.alertGuildText}>
-          {Trailer2Detail ? 'Trailer NO2 Safe For Travel' : 'Trailer1 NO2 Safe For Travel'}
+          {Trailer2Detail ? 'Trailer NO.2 Safe For Drive' : 'Trailer NO.2 Safe For Drive'}
         </Text>
       </View>
     );
     SummeryAlert = (
       <Text style={styles.alertGuildText}>
         {TruckDetail && Trailer1Detail && Trailer2Detail
-          ? 'You Allow To Ride, Drive Carefuly'
-          : ' You Are Not Allowed To Travel' }
+          ? 'You\'r Allow To Ride, Drive Carefuly'
+          : 'You\'r Not Allowed To Drive' }
       </Text>
     );
   }
 
   return (
     <View style={styles.alertGuildContainer}>
-      <Text>_________Tap For Detail_________</Text>
+      {/* <Text>Tap For Detail</Text> */}
       {SummeryAlert}
       <Text style={styles.alertGuildText}>
         {TruckDetail
-          ? 'Truck Is Safety For Travel'
-          : 'Truck Is Not Safety For Travel'}
+          ? 'Truck Is Safe For Drive'
+          : 'Truck Is Not Safe For Drive'}
       </Text>
       {TrailersDetails}
       <Text style={styles.alertGuildText}>A Message Was Sent To Your Company</Text>
@@ -86,18 +86,21 @@ const FormSummeryAlertCard = ({
 
 const styles = StyleSheet.create({
   alertGuildContainer: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     borderColor: Colors.primary,
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 10,
-    width: Dimensions.get('window').width * 0.9
+    width: Dimensions.get('window').width * 0.9,
+    paddingVertical:10,
+    marginBottom: 4,
+    marginTop: 10
   },
   alertGuildText: {
     color: Colors.primary,
-    fontWeight: 'bold',
+    fontWeight: '400',
     marginTop: 5,
-    marginLeft: 15,
-    fontSize: 17
+    marginLeft: 12,
+    fontSize: 15
   }
 });
 

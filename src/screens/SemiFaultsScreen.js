@@ -28,9 +28,9 @@ const SemiFaultsScreen = ({
   const type = navigation.state.params.type;
   if (type === 'Truck') {
     tempToMap = truckStatus;
-  } else if (type === 'Trailer1') {
+  } else if (type === 'Trailer 1') {
     tempToMap = trailer1Status;
-  } else if (type === 'Trailer2') {
+  } else if (type === 'Trailer 2') {
     tempToMap = trailer2Status;
   }
 
@@ -54,7 +54,7 @@ const SemiFaultsScreen = ({
     },
     propsForDots: {
       r: '6',
-      strokeWidth: '2',
+      strokeWidth: '7',
       stroke: '#ffa726'
     }
   };
@@ -81,8 +81,8 @@ const SemiFaultsScreen = ({
         />
       </View>
       <Text style={styles.noFaultsText}>__________________________</Text>
-      <Text style={styles.noFaultsText}>{type}</Text>
-      <Text style={styles.noFaultsText}>Reported fault summary</Text>
+      <Text style={styles.noFaultsText}>{type} Reported Faults</Text>
+      {/* <Text style={styles.noFaultsText}>Reported fault</Text> */}
       <ScrollView>
         <View>
           {ans.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
@@ -108,9 +108,10 @@ const styles = StyleSheet.create({
   noFaultsText: {
     textAlign: 'center',
     fontSize: 26,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    paddingVertical: 6
   },
   trailerNoFaultsText: {
     textAlign: 'center',
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    paddingVertical: 2
   },
   image: {
     width: 150,

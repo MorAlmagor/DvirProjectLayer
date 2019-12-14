@@ -73,16 +73,17 @@ const DvirSummeryModal = ({
           {trailer1Faults.length === 0
             ? <Text style={styles.trailerNoFaultsText}>No Faults Reported</Text>
             : <View>
-              <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text>
+              {/* <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text> */}
               {trailer1Faults.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
             </View>}
         </View>
         <View>
+          <Text style={styles.noFaultsLine}>_________</Text>
           <Text style={styles.trailerNoFaultsText}>Trailer NO {trailer2Valid}</Text>
           {trailer2Faults.length === 0
             ? <Text style={styles.trailerNoFaultsText}>No Faults Reported</Text>
             : <View>
-              <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text>
+              {/* <Text style={styles.trailerFaultsText}>Trailer Faults Reported</Text> */}
               {trailer2Faults.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
             </View>}
         </View>
@@ -145,7 +146,7 @@ const DvirSummeryModal = ({
       };
     } else if (trailer1Valid !== null && trailer2Valid === null) {
       dataTrucks = {
-        labels: ['Trailer#1', 'Truck', 'Total'],
+        labels: ['Trailer 1', 'Truck', 'Total'],
         data: [
           Odds.tariler1.rafOdds / 100,
           Odds.truck.rafOdds / 100,
@@ -154,10 +155,10 @@ const DvirSummeryModal = ({
       };
     } else if (trailer1Valid !== null && trailer2Valid !== null) {
       dataTrucks = {
-        labels: ['Trailer#2', 'Trailer#1', 'Truck', 'Total'],
+        labels: ['Trailer 1', 'Trailer 2', 'Truck', 'Total'],
         data: [
-          Odds.tariler2.rafOdds / 100,
           Odds.tariler1.rafOdds / 100,
+          Odds.tariler2.rafOdds / 100,
           Odds.truck.rafOdds / 100,
           Odds.total.rafOdds / 100
         ]
@@ -175,12 +176,14 @@ const DvirSummeryModal = ({
             hideLegend={false}
           />
         </View>
-        <Text style={styles.noFaultsText}>Reported fault summary</Text>
+        <Text style={styles.noFaultsText}>_____________________________</Text>
+        <Text style={styles.noFaultsText}>Truck Reported Faults</Text>
         <ScrollView style={{ width: '100%' }}>
-          <Text style={styles.noFaultsText}>Truck Faults</Text>
+          {/* <Text style={styles.noFaultsText}>Truck Faults</Text> */}
           <View>
             {ans.map((fault) => <Text style={styles.trailerFaults} key={fault}>{fault}</Text>)}
           </View>
+          <Text style={styles.noFaultsLine}>_________</Text>
           {trailersStatusSummery}
         </ScrollView>
         <View style={styles.buttonsView}>
@@ -217,7 +220,7 @@ const DvirSummeryModal = ({
       };
     } else if (trailer1Valid !== null && trailer2Valid === null) {
       dataTrucks = {
-        labels: ['Trailer#1', 'Truck', 'Total'],
+        labels: ['Trailer 1', 'Truck', 'Total'],
         data: [
           Odds.tariler1.rafOdds / 100,
           Odds.truck.rafOdds / 100,
@@ -226,10 +229,10 @@ const DvirSummeryModal = ({
       };
     } else if (trailer1Valid !== null && trailer2Valid !== null) {
       dataTrucks = {
-        labels: ['Trailer#2', 'Trailer#1', 'Truck', 'Total'],
+        labels: ['Trailer 1', 'Trailer 2', 'Truck', 'Total'],
         data: [
-          Odds.tariler2.rafOdds / 100,
           Odds.tariler1.rafOdds / 100,
+          Odds.tariler2.rafOdds / 100,
           Odds.truck.rafOdds / 100,
           Odds.total.rafOdds / 100
         ]
@@ -244,8 +247,9 @@ const DvirSummeryModal = ({
           chartConfig={chartConfig}
           hideLegend={false}
         />
-        <Text style={styles.noFaultsText}>_________________________________</Text>
+        <Text style={styles.noFaultsText}>_____________________________</Text>
         <Text style={styles.noFaultsText}>There Is No Faults Found</Text>
+        <Text style={styles.noFaultsLine}>_________</Text>
         {trailersStatusSummery}
         {/* <View style={styles.imageContainer}> */}
         {/* <Image style={styles.Image} source={require('../../assets/SteeringWheel.png')} /> */}
@@ -271,23 +275,33 @@ const styles = StyleSheet.create({
   noFaultsText: {
     textAlign: 'center',
     fontSize: 26,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+  },
+  noFaultsLine: {
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '400',
+    color: 'white',
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    bottom: 2
   },
   trailerNoFaultsText: {
     textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '500',
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    paddingTop: 6
   },
   trailerFaultsText: {
     textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '400',
+    fontSize: 16,
+    fontWeight: '500',
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    paddingTop: 6
   },
   trailerFaults: {
     textAlign: 'center',
@@ -295,6 +309,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    paddingTop: 6
   },
   image: {
     width: 150,

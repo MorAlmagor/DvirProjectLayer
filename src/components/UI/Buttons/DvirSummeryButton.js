@@ -28,7 +28,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 15,
     fontSize: 17,
-    width: '80%'
+    width: '80%',
+    paddingVertical: 4
   },
   oddsText: {
     color: 'white',
@@ -38,11 +39,11 @@ const styles = StyleSheet.create({
     
   },
   container: {
-    backgroundColor: 'grey',
+    backgroundColor: '#a8a7a8',
     width: '100%',
     height: 40,
-    borderColor: Colors.primary,
-    borderWidth: 2,
+    // borderColor: Colors.primary,
+    // borderWidth: 2,
     borderRadius: 10,
     flexDirection: 'row'
   },
