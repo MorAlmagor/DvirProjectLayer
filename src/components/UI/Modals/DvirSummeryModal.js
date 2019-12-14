@@ -138,7 +138,7 @@ const DvirSummeryModal = ({
     },
   ];
 
-  const colors = [Colors.primary, '#BE066E', '#C30771'];
+  const colors = [Colors.primary, '#b52d7b', '#ba5991'];
   const keys = ['rank', 'test', 'test2'];
   // truck renk
 
@@ -156,15 +156,15 @@ const DvirSummeryModal = ({
                 contentInset={{ top: 30, bottom: 30 }}
               // horizontal={true}
               />
+            </View >
+            <View style={{ flexDirection: 'row', width: '90%', height: 40 }}>
+              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Full Rank</Text>
+              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Total Rank</Text>
+              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Truck</Text>
+              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Trailer 1</Text>
+              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Trailer 2</Text>
             </View>
-            <View style={{ flexDirection: 'row', width: '90%', height: 50 }}>
-              <Text style={{ textAlign: 'center', width: '20%' }}>Full Rank</Text>
-              <Text style={{ textAlign: 'center', width: '20%' }}>Total Rank</Text>
-              <Text style={{ textAlign: 'center', width: '20%' }}>Truck Score</Text>
-              <Text style={{ textAlign: 'center', width: '20%' }}>Trailer 1</Text>
-              <Text style={{ textAlign: 'center', width: '20%' }}>trailer 2</Text>
-            </View>
-            <Text>__________________Tap For Detail___________________</Text>
+            {/* <Text>__________________Tap For Detail___________________</Text> */}
             <DvirSummeryButton
               title="Total Rank"
               odds={totalOddsSummery.rafOdds.toFixed(0) + '%'}
@@ -180,8 +180,8 @@ const DvirSummeryModal = ({
               odds={truckSummery.rafOdds.toFixed(0) + '%'}
               onpress={() => navigation.navigate('SemiFaults', { Sum: truckSummery, type: 'Truck' })}
             />
-            {trailer1Valid && <DvirSummeryButton title="Trailer 1" odds={tariler1Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler1Summery, type: 'Trailer1' })} />}
-            {trailer2Valid && <DvirSummeryButton title="Trailer 2" odds={tariler2Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler2Summery, type: 'Trailer2' })} />}
+            {trailer1Valid && <DvirSummeryButton title="Trailer 1" odds={tariler1Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler1Summery, type: 'Trailer 1' })} />}
+            {trailer2Valid && <DvirSummeryButton title="Trailer 2" odds={tariler2Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler2Summery, type: 'Trailer 2' })} />}
             <TouchableOpacity
               onPress={() => navigation.navigate('Faults', {
                 truck: truckSummery,
@@ -216,7 +216,7 @@ const DvirSummeryModal = ({
 const styles = StyleSheet.create({
   modal: {
     zIndex: 500,
-    top: '7%',
+    top: '2%',
     // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
   },
   backdrop: {
