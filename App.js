@@ -32,7 +32,7 @@ const navigator = createStackNavigator({
   SemiFaults: SemiFaultsScreen
 },
 {
-  initialRouteName: 'Dvir',
+  initialRouteName: 'Camera',
   defaultNavigationOptions: {
     headerBackImage: <Icon name="md-arrow-round-back" color="white" size={30} />,
     headerStyle: {

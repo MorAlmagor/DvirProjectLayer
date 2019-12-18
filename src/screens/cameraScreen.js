@@ -6,10 +6,12 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
+import base64 from 'react-native-base64';
 import { FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 import { setUserImage } from '../store/actions/formActions';
 import MainButton from '../components/UI/Buttons/MainButton';
 
@@ -18,8 +20,20 @@ const CameraScreen = ({
   onSetImage,
 }) => {
   const [permissions, setPermissions] = useState({ camera: null, cameraRoll: null });
+  const [uguuKeyLink, setUguuKeyLink] = useState(false);
+  
 
-
+  if (uguuKeyLink) {
+    const uguuLinkEncode = base64.encode(uguuKeyLink);
+    const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
+    const linkToFatch = aiBotLink + uguuLinkEncode;
+    const tests = axios({
+      method: 'get',
+      url: linkToFatch,
+    });
+    tests.then((res) => console.log(res.data.plate));
+  }
+  
   const getPermissions = async () => {
     try {
       const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
@@ -41,30 +55,50 @@ const CameraScreen = ({
 
   const openCamRoll = async () => {
     if (permissions.cameraRoll) {
-      const { cancelled, base64 } = await ImagePicker.launchImageLibraryAsync({
+      const { cancelled, base64, uri } = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         base64: true,
-        allowsMultipleSelection: false
+        allowsMultipleSelection: false,
+        uri: true,
       });
       if (!cancelled) {
         const base64Image = `data:image/png;base64,${base64}`;
         onSetImage(base64Image);
-        navigation.navigate('Dvir');
+        const formData = new FormData();
+        formData.append('file', { uri, name: 'picture.jpg', type: 'image/jpg' });
+        const response = await axios.post('https://uguu.se/api.php?d=upload-tool', formData, {
+          responseType: 'text',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        });
+        const test = response.data;
+        setUguuKeyLink(test + '');
       }
     }
   };
 
   const openCam = async () => {
     if (permissions.camera) {
-      const { cancelled, base64 } = await ImagePicker.launchCameraAsync({
+      const { cancelled, base64, uri } = await ImagePicker.launchCameraAsync({
         base64: true,
         allowsEditing: false,
+        uri: true,
       });
 
       if (!cancelled) {
         const base64Image = `data:image/png;base64,${base64}`;
         onSetImage(base64Image);
-        navigation.navigate('Dvir');
+        const formData = new FormData();
+        formData.append('file', { uri, name: 'picture.jpg', type: 'image/jpg' });
+        const response = await axios.post('https://uguu.se/api.php?d=upload-tool', formData, {
+          responseType: 'text',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          }
+        });
+        const test = response.data;
+        setUguuKeyLink(test + '');
       }
     }
   };
