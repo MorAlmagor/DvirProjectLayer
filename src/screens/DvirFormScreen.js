@@ -44,8 +44,8 @@ const DvirFormScreen = ({
   const [checkBoxValue, setCheckBoxValue] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [loading, setLoading] = useState(false);
-
-
+  
+  
   const submitForm = () => {
     //
     
