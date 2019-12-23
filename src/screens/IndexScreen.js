@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable consistent-return */
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import {
   Text,
   View,
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { userIsConnect } from '../store/actions/appUiActions';
 import MainButton from '../components/UI/Buttons/MainButton';
+import * as authActions from '../store/actions/auth';
 
 const IndexScreen = ({
   userName,
@@ -21,7 +22,9 @@ const IndexScreen = ({
   onUserConnection,
   userIsConnected,
 }) => {
+  const dispatch = useDispatch();
   const [LocalData, setLocalData] = useState();
+  const [userFirstTime, setUserFirstTime] = useState(null);
   // לא לשכוח דביר סטאטוס //
   const dvirStatus = true;
 
@@ -29,7 +32,6 @@ const IndexScreen = ({
   setTimeout(() => {
     CheckConnectivity();
   }, 1000);
-
 
   const CheckConnectivity = () => {
     // For Android devices
@@ -64,10 +66,20 @@ const IndexScreen = ({
     }
   };
 
+  const logoutHandler = async (nav) => {
+    const action = authActions.logout(nav);
+    await dispatch(action);
+    navigation.navigate('Login');
+  };
+
   if (userIsConnected) {
     AsyncStorage.getItem('aocalDATA')
       .then((req) => JSON.parse(req))
       .then((json) => setLocalData(json))
+      .catch(() => alert('error!'));
+    AsyncStorage.getItem('firstTimeUser')
+      .then((req) => JSON.parse(req))
+      .then((json) => setUserFirstTime(json))
       .catch(() => alert('error!'));
     return (
       <View style={styles.container}>
@@ -84,7 +96,8 @@ const IndexScreen = ({
           {dvirStatus
             ? <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
             : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
-          <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>
+          {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
+          <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
         </View>
       </View>
     );

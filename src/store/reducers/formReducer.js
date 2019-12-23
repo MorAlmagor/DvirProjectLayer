@@ -1,6 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
+  truckNumber: '',
   currentDate: '',
   locationDetails: {
     coords: {
@@ -12,46 +13,46 @@ const initialState = {
   lastOdometer: '',
   truckImage: null,
   trailer1: {
-    trailerNumber: 2424242,
+    trailerNumber: false,
     brakeConnectionsTrailer1: {
       keyId: 'Brake Connections',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
     brakesTrailer1: {
       keyId: 'Brakes',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 10
     },
     couplingDevicesTrailer1: {
       keyId: 'Coupling Devices',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 7
     },
     couplingKingPinTrailer1: {
       keyId: 'Coupling King Pin',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
     doorsTrailer1: {
       keyId: 'Doors',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 2
     },
     hitchTrailer1: {
       keyId: 'Hitch',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 3
     },
     landingGearTrailer1: {
       keyId: 'Landing Gear',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
@@ -105,7 +106,7 @@ const initialState = {
     }
   },
   trailer2: {
-    trailerNumber: 23423424,
+    trailerNumber: false,
     brakeConnectionsTrailer2: {
       keyId: 'Brake Connections',
       status: true,
@@ -144,55 +145,55 @@ const initialState = {
     },
     landingGearTrailer2: {
       keyId: 'Landing Gear',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 4
     },
     lightsTrailer2: {
       keyId: 'Lights',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 2
     },
     reflectorsTrailer2: {
       keyId: 'Reflectors',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 2
     },
     roofTrailer2: {
       keyId: 'Roof',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 2
     },
     suspensionSystemTrailer2: {
       keyId: 'Suspension System',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
     strapsTrailer2: {
       keyId: 'Straps',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 1
     },
     tarpulinTrailer2: {
       keyId: 'Tarpulin',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 3
     },
     tiresTrailer2: {
       keyId: 'Tires',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
     wheelsAndRimTrailer2: {
       keyId: 'Wheels And Rim',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     }
@@ -200,25 +201,25 @@ const initialState = {
   truckStatus: {
     airCompresor: {
       keyId: 'Air Compresor',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
     airLines: {
       keyId: 'Air Lines',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 4
     },
     battery: {
       keyId: 'Battery',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 5
     },
     beltsAndHoses: {
       keyId: 'Belts Ans Hoses',
-      status: false,
+      status: true,
       dateModified: '',
       Score: 2
     },
@@ -567,6 +568,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         carrier: action.payload
+      };
+    case actionTypes.SET_TRUCK_NUMBER:
+      return {
+        ...state,
+        truckNumber: action.payload
       };
     case actionTypes.UPDATE_TRAILER2_NUMBER:
       return {

@@ -1,3 +1,5 @@
+/* eslint-disable spaced-comment */
+/* eslint-disable prefer-template */
 /* eslint-disable no-alert */
 import React, { useState, useEffect } from 'react';
 import {
@@ -12,28 +14,84 @@ import { connect } from 'react-redux';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { setUserImage } from '../store/actions/formActions';
+import { setUserImage, setTruckNumber } from '../store/actions/formActions';
 import MainButton from '../components/UI/Buttons/MainButton';
 
 const CameraScreen = ({
   navigation,
   onSetImage,
+  onSaveTruckNumber
 }) => {
   const [permissions, setPermissions] = useState({ camera: null, cameraRoll: null });
   const [uguuKeyLink, setUguuKeyLink] = useState(false);
-  
+
+  ///// demi ////
+  const demiTrucksState = [
+    {
+      licenceNum: '4R55T4S5R4T',
+      onTrip: false,
+    },
+    {
+      licenceNum: '4Y44R4S4FG4',
+      onTrip: false,
+    },
+    {
+      licenceNum: '2W31G35E4RD',
+      onTrip: false,
+    },
+    {
+      licenceNum: '432G123S524G',
+      onTrip: false,
+    },
+    {
+      licenceNum: '15SR63G15GG',
+      onTrip: false,
+    },
+    {
+      licenceNum: '18SR63G19GG',
+      onTrip: false,
+    },
+    {
+      licenceNum: 'KIAPET',
+      onTrip: false,
+    },
+    {
+      licenceNum: '6XSU832',
+      onTrip: false,
+    },
+  ];
+  //////////////
 
   if (uguuKeyLink) {
     const uguuLinkEncode = base64.encode(uguuKeyLink);
     const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
     const linkToFatch = aiBotLink + uguuLinkEncode;
+    setTimeout(() => {
+      alert('The vehicle is not detected by the system. Please type the vehicle number and select a vehicle from the list');
+      navigation.navigate('SelectTruck');
+    }, 20000);
     const tests = axios({
       method: 'get',
       url: linkToFatch,
     });
-    tests.then((res) => console.log(res.data.plate));
+    tests.then((res) => validTruckNumFromImage(res.data.plate));
   }
-  
+
+  const validTruckNumFromImage = (truckNum) => {
+    let validBool = false;
+    for (let i = 0; i < demiTrucksState.length; i += 1) {
+      if (truckNum === demiTrucksState[i].licenceNum) {
+        onSaveTruckNumber(demiTrucksState[i].licenceNum);
+        validBool = true;
+      }
+    }
+    if (validBool) {
+      navigation.navigate('Dvir');
+    } else {
+      navigation.navigate('SelectTruck');
+    }
+  };
+
   const getPermissions = async () => {
     try {
       const { status } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
@@ -55,9 +113,8 @@ const CameraScreen = ({
 
   const openCamRoll = async () => {
     if (permissions.cameraRoll) {
-      const { cancelled, base64, uri } = await ImagePicker.launchImageLibraryAsync({
+      const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
-        base64: true,
         allowsMultipleSelection: false,
         uri: true,
       });
@@ -80,8 +137,7 @@ const CameraScreen = ({
 
   const openCam = async () => {
     if (permissions.camera) {
-      const { cancelled, base64, uri } = await ImagePicker.launchCameraAsync({
-        base64: true,
+      const { cancelled, uri } = await ImagePicker.launchCameraAsync({
         allowsEditing: false,
         uri: true,
       });
@@ -171,7 +227,8 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSetImage: (imageBase64) => dispatch(setUserImage(imageBase64))
+    onSetImage: (imageBase64) => dispatch(setUserImage(imageBase64)),
+    onSaveTruckNumber: (truckNum) => dispatch(setTruckNumber(truckNum))
   };
 };
 
