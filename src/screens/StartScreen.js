@@ -4,19 +4,41 @@ import {
   View,
   Image,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  AsyncStorage
 } from 'react-native';
+import { useDispatch } from 'react-redux';
+import * as authActions from '../store/actions/auth';
 import Colors from '../Colors/Colors';
 
 
 const StartScreen = ({ navigation }) => {
+//
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    setTimeout(() => { navigation.navigate('Index'); }, 4000);
+  useEffect(async () => {
+    const userData = await AsyncStorage.getItem('userData');
+    if (!userData) {
+      navigation.navigate('Login');
+    } else {
+      const transformData = JSON.parse(userData);
+      if (transformData.token === null) {
+        navigation.navigate('Login');
+      } else {
+        const { token, userId, expirationDate } = transformData;
+        const expiryDate = new Date(expirationDate);
+        if (expiryDate <= new Date() || !token || !userId) {
+          navigation.navigate('Login');
+        } else {
+          navigation.navigate('Index');
+          dispatch(authActions.authenticate(token, userId));
+        }
+      }
+    }
   }, []);
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
       <View style={styles.container}>
         <Image
           style={styles.image}

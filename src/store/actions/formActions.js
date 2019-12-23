@@ -7,6 +7,13 @@ export const changeCheckTruckStatus = (keyId) => {
   };
 };
 
+export const setTruckNumber = (truckNum) => {
+  return {
+    type: actionTypes.SET_TRUCK_NUMBER,
+    payload: truckNum
+  };
+};
+
 export const changeCheckTrailer1Status = (keyId) => {
   return {
     type: actionTypes.CHANGE_CHECK_TRAILER1_STATUS,

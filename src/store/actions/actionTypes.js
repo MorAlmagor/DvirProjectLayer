@@ -15,3 +15,4 @@ export const CHANGE_CARRIER = 'CHANGE_CARRIER';
 export const USER_IS_CONNECT = 'USER_IS_CONNECT';
 export const SET_DATA = 'SET_DATA';
 export const SET_ODDS_SUMMERY = 'SET_ODDS_SUMMERY';
+export const SET_TRUCK_NUMBER = 'SET_TRUCK_NUMBER';

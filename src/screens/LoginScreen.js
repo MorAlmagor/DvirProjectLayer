@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,27 +9,62 @@ import {
   Keyboard,
   TextInput,
   Platform,
-  Image
+  Alert,
+  // Image
 } from 'react-native';
+import { useDispatch } from 'react-redux';
+import * as authActions from '../store/actions/auth';
 import MainButton from '../components/UI/Buttons/MainButton';
 import Colors from '../Colors/Colors';
+import SpinerModal, {} from '../components/UI/Spiner/SpinerModal';
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+
+const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('bari@gmail.com');
+  const [error, setError] = useState('');
+  const [password, setPassword] = useState('123456');
+  
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An Error Occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [
+    error
+  ]);
+
+  const authHandler = async () => {
+    const action = authActions.login(
+      email,
+      password
+    );
+    setIsLoading(true);
+    setError(null);
+    try {
+      await dispatch(action);
+      navigation.navigate('Index');
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false);
+  };
 
   return (
     <ScrollView>
+      {isLoading && <SpinerModal />}
       <TouchableWithoutFeedback onPress={() => {
         Keyboard.dismiss();
       }}
       >
         {/* <View style={styles.image}>
           <Image
-            source={require('../../assets/ic_just3.png')}
-          /> */}
+            source={require('../../assets/ic_just2.png')}
+          />
+        </View> */}
         <View style={styles.container}>
-          <Text style={styles.textStyle}>SIGN UP</Text>
+          <Text style={styles.textStyle}>Authenticate</Text>
           <TextInput
             style={styles.input}
             keyboardType="email-address"
@@ -52,8 +87,8 @@ const LoginScreen = () => {
           />
           {password.length < 12 && <Text style={styles.textWords}>Your password must be at least 8 characters</Text>}
 
-          <MainButton onPress={() => { }}>
-            SIGN UP
+          <MainButton onpress={() => authHandler()}>
+            LOGIN
           </MainButton>
         </View>
         {/* </View> */}

@@ -15,6 +15,8 @@ import MapScreen from './src/screens/MapScreen';
 import TestScreen from './src/screens/TestScreen';
 import AllFaultsScreen from './src/screens/AllFaultsScreen';
 import SemiFaultsScreen from './src/screens/SemiFaultsScreen';
+import SelectTruckScreen from './src/screens/SelectTruckScreen';
+
 import Colors from './src/Colors/Colors';
 
 
@@ -29,10 +31,11 @@ const navigator = createStackNavigator({
   Reports: OldReportsScreen,
   Test: TestScreen,
   Faults: AllFaultsScreen,
-  SemiFaults: SemiFaultsScreen
+  SemiFaults: SemiFaultsScreen,
+  SelectTruck: SelectTruckScreen
 },
 {
-  initialRouteName: 'Camera',
+  initialRouteName: 'OpenApp',
   defaultNavigationOptions: {
     headerBackImage: <Icon name="md-arrow-round-back" color="white" size={30} />,
     headerStyle: {

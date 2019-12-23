@@ -1,58 +1,65 @@
 import React from 'react';
-import axios from 'axios';
 import {
   View,
   Text,
+  StyleSheet,
+  Platform,
+  AsyncStorage,
+  Button
 } from 'react-native';
 
 const TestScreen = () => {
+  //
 
-
-  const tests = axios({
-    method: 'get',
-    url: 'http://31.220.62.151:1880/lprclassifier/aHR0cHM6Ly9hLnVndXUuc2UvUWxNc3hQblVacXA2X3BpY3R1cmUuanBn',
-  });
-  tests.then((res) => console.log(res));
-
+  // const blaa = async () => {
+  //   const userData = await AsyncStorage.getItem('userData');
+  //   const transformData = JSON.parse(userData);
+  // };
   return (
     <View>
-      <Text>blaa</Text>
+      <Text>smvsmv</Text>
+      <Button title="dvsvsd" onPress={() => blaa()} />
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  titleStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    marginVertical: 12,
+    marginLeft: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
+  textStyle: {
+    fontSize: 16,
+    fontWeight: '400',
+    alignSelf: 'flex-start',
+    marginVertical: 12,
+    marginLeft: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
+  inputC: {
+    marginTop: 15,
+    height: 40,
+    width: 180,
+    padding: 12,
+    top: 14,
+    marginVertical: 4,
+    marginLeft: 10,
+    borderColor: '#aa0061',
+    borderWidth: 1,
+    borderRadius: 26,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
+  input: {
+    alignItems: 'center'
+  }
+});
+
+// const mapStateToProps = (state) => {
+
+// }
+
 export default TestScreen;
-
-{/* <TouchableOpacity>
-<View style={{ width: '80%', alignItems: 'center', borderColor: Colors.primary, borderWidth: 2, borderRadius: 10, overflow: 'hidden', marginVertical: 20 }}>
-  <ProgressChart
-    data={dataTrucks}
-    width={Dimensions.get('window').width * 0.8}
-    height={220}
-    chartConfig={chartConfig}
-    hideLegend={false}
-  />
-</View>
-</TouchableOpacity> */}
-
-// const dataTrucks = {
-//   labels: ["Truck", "Bike", "Run"], // optional
-//   data: [0.4, 0.6, 0.8]
-// };
-
-// const chartConfig = {
-//   backgroundColor: '#e26a00',
-//   backgroundGradientFrom: '#fb8c00',
-//   backgroundGradientTo: '#ffa726',
-//   decimalPlaces: 2, // optional, defaults to 2dp
-//   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-//   labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-//   style: {
-//     borderRadius: 16
-//   },
-//   propsForDots: {
-//     r: '6',
-//     strokeWidth: '2',
-//     stroke: '#ffa726'
-//   }
-// };

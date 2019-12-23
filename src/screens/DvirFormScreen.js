@@ -15,7 +15,7 @@ import {
   NetInfo,
   AsyncStorage,
 } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import Form from '../components/Form/Form';
 import FormSubmission from '../components/FormSubmission/FormSubmission';
 import Modal from '../components/UI/Modals/DvirSummeryModal';
@@ -29,10 +29,11 @@ const DvirFormScreen = ({
   truckProperties,
   trailerModal,
   fromState,
-  onSaveData
+  onSaveData,
+  token
 }) => {
 
-
+  console.log(token);
   const cleanUpHandler = () => {
     setModalShow(false);
     setCheckBoxValue(false);
@@ -40,11 +41,11 @@ const DvirFormScreen = ({
     submitForm();
   };
   
-  const [modalShow, setModalShow] = useState(true);
+  const [modalShow, setModalShow] = useState(false);
   const [checkBoxValue, setCheckBoxValue] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+ 
   
   const submitForm = () => {
     //
@@ -112,7 +113,7 @@ const DvirFormScreen = ({
     // For Android devices
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
-        if (!isConnected) {                               /////////////// DONT-FORGOT//////////////////////
+        if (isConnected) {
           fatchDataToServer();
         } else {
           Alert.alert(
@@ -154,7 +155,7 @@ const DvirFormScreen = ({
     };
 
     const fatchDataToServer = async () => {
-      const response = await fetch('https://dvir-project-server.firebaseio.com/data.json', {
+      const response = await fetch(`https://dvir-project-server.firebaseio.com/data.json?auth=${token}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -256,7 +257,8 @@ const mapStateToProps = (state) => {
   return {
     imageBase64: state.form.truckImage,
     trailerModal: state.appUI.trailerModalShow,
-    fromState: state.form
+    fromState: state.form,
+    token: state.auth.token
   };
 };
 
