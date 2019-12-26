@@ -4,9 +4,11 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Platform
+  Platform,
+  Text
 } from 'react-native';
 import TruckList from '../components/UI/MapReturnSection/TruckList';
+import Colors from '../Colors/Colors';
 
 const SelectTruckScreen = ({ navigation }) => {
   //
@@ -60,7 +62,7 @@ const SelectTruckScreen = ({ navigation }) => {
         updateTruckList.push(truckList[i]);
       }
     }
-    //
+    
     TrucklistToShow = (
       <FlatList
         keyExtractor={(truckNo) => truckNo.licenceNum}
@@ -81,22 +83,32 @@ const SelectTruckScreen = ({ navigation }) => {
 
 
   return (
-    <View>
-      <TextInput
-        placeholderTextColor="grey"
-        style={styles.inputC}
-        value={textInput}
-        autoCorrect={false}
-        onChangeText={(text) => inputHandler(text)}
-      />
-      {TrucklistToShow}
+    <View style={{ alignItems: 'center' }}>
+      <View>
+        <Text style={styles.titleStyle}>Please type Your Vehicle Licence Plate</Text>
+      </View>
+      <View>
+        <TextInput
+          placeholderTextColor="grey"
+          placeholder="Tap Your Vehicle Licence Plate Here!"
+          style={styles.inputC}
+          value={textInput}
+          autoCorrect={false}
+          onChangeText={(text) => inputHandler(text)}
+        />
+      </View>
+      <View style={{ marginTop: 20 }}>
+        {TrucklistToShow}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   titleStyle: {
-    fontSize: 18,
+    marginTop: 20,
+    fontSize: 20,
+    color: Colors.primary,
     fontWeight: 'bold',
     alignSelf: 'flex-start',
     marginVertical: 12,
@@ -113,15 +125,14 @@ const styles = StyleSheet.create({
   },
   inputC: {
     marginTop: 15,
-    height: 40,
-    width: 180,
+    height: 50,
+    width: '90%',
     padding: 12,
     top: 14,
-    marginVertical: 4,
-    marginLeft: 10,
     borderColor: '#aa0061',
     borderWidth: 1,
     borderRadius: 26,
+    textAlign: 'center',
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
   },
   input: {

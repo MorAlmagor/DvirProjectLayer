@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-alert */
 /* eslint-disable consistent-return */
 import React, { useState } from 'react';
@@ -23,18 +24,15 @@ const IndexScreen = ({
   userIsConnected,
 }) => {
   const dispatch = useDispatch();
-  const [LocalData, setLocalData] = useState();
   const [userFirstTime, setUserFirstTime] = useState(null);
   // לא לשכוח דביר סטאטוס //
   const dvirStatus = true;
 
-  // DONT FORGOT TIMER //
   setTimeout(() => {
     CheckConnectivity();
   }, 1000);
 
   const CheckConnectivity = () => {
-    // For Android devices
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
         if (isConnected) {
@@ -44,7 +42,6 @@ const IndexScreen = ({
         }
       });
     } else {
-      // For iOS devices
       NetInfo.isConnected.addEventListener(
         'connectionChange',
         handleFirstConnectivityChange()
@@ -73,34 +70,53 @@ const IndexScreen = ({
   };
 
   if (userIsConnected) {
-    AsyncStorage.getItem('aocalDATA')
-      .then((req) => JSON.parse(req))
-      .then((json) => setLocalData(json))
-      .catch(() => alert('error!'));
     AsyncStorage.getItem('firstTimeUser')
       .then((req) => JSON.parse(req))
       .then((json) => setUserFirstTime(json))
       .catch(() => alert('error!'));
-    return (
-      <View style={styles.container}>
-        <View>
-          <Image
-            style={styles.image}
-            source={require('../../assets/ic_just2.png')}
-          />
+    if (userFirstTime) {
+      return (
+        <View style={styles.container}>
+          <View>
+            <Image
+              style={styles.image}
+              source={require('../../assets/ic_just2.png')}
+            />
+          </View>
+          <Text style={styles.userNameText}>
+            Hello {userName}
+          </Text>
+          <View style={styles.buttonsContainer}>
+            {dvirStatus
+              ? <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
+              : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
+            <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>
+            <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+          </View>
         </View>
-        <Text style={styles.userNameText}>
-          Hello {userName}
-        </Text>
-        <View style={styles.buttonsContainer}>
-          {dvirStatus
-            ? <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
-            : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
-          {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
-          <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <View>
+            <Image
+              style={styles.image}
+              source={require('../../assets/ic_just2.png')}
+            />
+          </View>
+          <Text style={styles.userNameText}>
+            Hello {userName}
+          </Text>
+          <View style={styles.buttonsContainer}>
+            {dvirStatus
+              ? <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
+              : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
+            {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
+            <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
   if (!userIsConnected) {
     return (

@@ -33,11 +33,12 @@ const TruckList = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: '3%',
+    
     width: '100%',
     height: 50,
-    borderColor: 'black',
-    backgroundColor: 'grey'
+    borderBottomColor: '#d9d9d9',
+    borderBottomWidth: 2
+    
   },
   numText: {
     textAlign: 'center',

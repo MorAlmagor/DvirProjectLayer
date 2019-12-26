@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -34,6 +35,7 @@ const LoginScreen = ({ navigation }) => {
   }, [
     error
   ]);
+
 
   const authHandler = async () => {
     const action = authActions.login(

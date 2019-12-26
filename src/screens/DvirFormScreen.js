@@ -15,7 +15,7 @@ import {
   NetInfo,
   AsyncStorage,
 } from 'react-native';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import Form from '../components/Form/Form';
 import FormSubmission from '../components/FormSubmission/FormSubmission';
 import Modal from '../components/UI/Modals/DvirSummeryModal';
@@ -30,10 +30,9 @@ const DvirFormScreen = ({
   trailerModal,
   fromState,
   onSaveData,
-  token
+  token,
+  truckNum
 }) => {
-
-  console.log(token);
   const cleanUpHandler = () => {
     setModalShow(false);
     setCheckBoxValue(false);
@@ -72,6 +71,7 @@ const DvirFormScreen = ({
       date: fromState.currentDate,
       longitude: fromState.locationDetails.coords.longitude,
       latitude: fromState.locationDetails.coords.latitude,
+      truckNumber: truckNum,
       carrier: fromState.carrier,
       odometer: fromState.lastOdometer,
       truckImage: fromState.truckImage,
@@ -167,11 +167,12 @@ const DvirFormScreen = ({
         setLoading(false);
         const resetLocalData = [];
         try {
-          await AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+          AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
         } catch (error) {
           alert('error');
         }
-        Alert.alert('   the form has been sent successfully', '                           Drive carefuly!');
+        AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
+        Alert.alert(' form has been sent successfully');
         navigation.navigate('Index');
       }
       if (response.status === 404) {
@@ -187,21 +188,21 @@ const DvirFormScreen = ({
       }
     };
 
-    const storeData = async (json) => {
+    const storeData = (json) => {
       let tempLocalDATA = json;
       if (tempLocalDATA === null) {
         tempLocalDATA = [];
       }
       tempLocalDATA.push(DATA);
       try {
-        await AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
+        AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
         alert('saved');
       } catch (error) {
         alert('error');
       }
     };
 
-    const retrieveData = async () => {
+    const retrieveData = () => {
       AsyncStorage.getItem('aocalDATA')
         .then((req) => JSON.parse(req))
         .then((json) => storeData(json))
@@ -209,8 +210,8 @@ const DvirFormScreen = ({
     };
 
 
-    const SaveDataLocaly = async () => {
-      await retrieveData();
+    const SaveDataLocaly = () => {
+      retrieveData();
       onSaveData(DATA);
       setLoading(false);
       navigation.navigate('Index');
@@ -258,7 +259,8 @@ const mapStateToProps = (state) => {
     imageBase64: state.form.truckImage,
     trailerModal: state.appUI.trailerModalShow,
     fromState: state.form,
-    token: state.auth.token
+    token: state.auth.token,
+    truckNum: state.form.truckNumber
   };
 };
 
