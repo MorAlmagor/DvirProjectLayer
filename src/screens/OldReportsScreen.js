@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
@@ -33,11 +33,25 @@ export const LocalyForms = ({ navigation }) => {
   //
   const [localData, setLocalData] = useState(false);
 
+  const loadLocalData = () => {
+    AsyncStorage.getItem('aocalDATA')
+      .then((req) => {
+        const json = JSON.parse(req);
+        setLocalData(json);
+      })
+      .catch(() => alert('error!'));
+  };
+
+  useEffect(() => {
+    loadLocalData();
+  }, []);
+
   const deleteLocalForm = async (index) => {
     const newData = localData;
     newData.splice(index, 1);
     try {
       await AsyncStorage.setItem('aocalDATA', JSON.stringify(newData));
+      loadLocalData();
     } catch (error) {
       alert('error');
     }
@@ -99,11 +113,6 @@ export const LocalyForms = ({ navigation }) => {
       alert('Oops Something went wrong');
     }
   };
-
-  AsyncStorage.getItem('aocalDATA')
-    .then((req) => JSON.parse(req))
-    .then((json) => setLocalData(json))
-    .catch(() => alert('error!'));
 
   return (
     <View>

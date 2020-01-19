@@ -2,7 +2,7 @@
 /* eslint-disable spaced-comment */
 /* eslint-disable prefer-template */
 /* eslint-disable no-alert */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -65,26 +65,30 @@ const CameraScreen = ({
   ];
   //////////////
 
-  if (uguuKeyLink) {
-    const uguuLinkEncode = base64.encode(uguuKeyLink);
-    const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
-    const linkToFatch = aiBotLink + uguuLinkEncode;
-    // const tests = axios({
-    //   method: 'get',
-    //   url: linkToFatch,
-    // });
-    // tests.then((res) => validTruckNumFromImage(res.data.plate));
-    const tests = axios.get(linkToFatch)
-      .catch((error) => {
-        if (error) {
-          setLoading(false);
-          setUguuKeyLink(false);
-          navigation.navigate('SelectTruck');
-          alert('Sorry the system did not recognize your vehicle');
-        }
-      });
-    tests.then((res) => validTruckNumFromImage(res.data.plate));
-  }
+  useEffect(() => {
+    if (uguuKeyLink) {
+      const uguuLinkEncode = base64.encode(uguuKeyLink);
+      const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
+      const linkToFatch = aiBotLink + uguuLinkEncode;
+      // const tests = axios({
+      //   method: 'get',
+      //   url: linkToFatch,
+      // });
+      // tests.then((res) => validTruckNumFromImage(res.data.plate));
+      axios.get(linkToFatch)
+        .then((res) => {
+          validTruckNumFromImage(res.data.plate);
+        })
+        .catch((error) => {
+          if (error) {
+            setUguuKeyLink(false);
+            setLoading(false);
+            navigation.navigate('SelectTruck');
+            alert('Sorry the system did not recognize your vehicle');
+          }
+        });
+    }
+  }, [uguuKeyLink]);
 
   const validTruckNumFromImage = (truckNum) => {
     let validBool = false;
@@ -99,13 +103,13 @@ const CameraScreen = ({
 
   const navigate = (bool) => {
     if (bool) {
-      setLoading(false);
       setUguuKeyLink(false);
+      setLoading(false);
       navigation.navigate('Dvir');
       alert('System recognize your vehicle Successfully');
     } else {
-      setLoading(false);
       setUguuKeyLink(false);
+      setLoading(false);
       navigation.navigate('SelectTruck');
       alert('Sorry the system did not recognize your vehicle');
     }

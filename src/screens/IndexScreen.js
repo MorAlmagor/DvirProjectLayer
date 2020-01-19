@@ -18,10 +18,10 @@ import MainButton from '../components/UI/Buttons/MainButton';
 import * as authActions from '../store/actions/auth';
 
 const IndexScreen = ({
-  userName,
   navigation,
   onUserConnection,
   userIsConnected,
+  userName
 }) => {
   const dispatch = useDispatch();
   const [userFirstTime, setUserFirstTime] = useState(null);
@@ -172,14 +172,11 @@ const styles = StyleSheet.create({
   }
 });
 
-IndexScreen.defaultProps = {
-  userName: 'Yaron'
-};
-
 const mapStateToProps = (state) => {
   return {
     userIsConnected: state.appUI.userConnect,
-    DATA: state.appUI.DATA
+    DATA: state.appUI.DATA,
+    userName: state.user.name
   };
 };
 

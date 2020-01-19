@@ -15,11 +15,11 @@ export default (state = initialState, action) => {
         token: action.token,
         userId: action.userId
       };
-      case LOGOUT:
-        return {
-          token: null,
-          userId: null
-        };
+    case LOGOUT:
+      return {
+        token: null,
+        userId: null
+      };
     default:
       return state;
   }

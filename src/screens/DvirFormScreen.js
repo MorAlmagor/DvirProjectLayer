@@ -5,6 +5,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable prefer-template */
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Text,
   View,
@@ -31,20 +32,20 @@ const DvirFormScreen = ({
   fromState,
   onSaveData,
   token,
-  truckNum
+  truckNum,
+  userUID
 }) => {
+  const [modalShow, setModalShow] = useState(false);
+  const [checkBoxValue, setCheckBoxValue] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const cleanUpHandler = () => {
     setModalShow(false);
     setCheckBoxValue(false);
     setClicked(false);
     submitForm();
   };
-  
-  const [modalShow, setModalShow] = useState(false);
-  const [checkBoxValue, setCheckBoxValue] = useState(false);
-  const [clicked, setClicked] = useState(false);
-  const [loading, setLoading] = useState(false);
- 
   
   const submitForm = () => {
     //
@@ -67,6 +68,8 @@ const DvirFormScreen = ({
     const trailer2Arr = [];
     const truckStatusArr = [];
     const DATA = {
+      company: '',
+      userUID,
       time: currentTime,
       date: fromState.currentDate,
       longitude: fromState.locationDetails.coords.longitude,
@@ -155,15 +158,9 @@ const DvirFormScreen = ({
     };
 
     const fatchDataToServer = async () => {
-      const response = await fetch(`https://dvir-project-server.firebaseio.com/data.json?auth=${token}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(DATA)
-      });
-
-      if (response.ok) {
+      
+      const response = await axios.post(`https://dvir-project-server.firebaseio.com/reports.json?auth=${token}`, DATA);
+      if (response) {
         setLoading(false);
         const resetLocalData = [];
         try {
@@ -174,9 +171,7 @@ const DvirFormScreen = ({
         AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
         Alert.alert(' form has been sent successfully');
         navigation.navigate('Index');
-      }
-      if (response.status === 404) {
-
+      } else {
         Alert.alert(
           'Oops Something went wrong',
           [
@@ -184,7 +179,6 @@ const DvirFormScreen = ({
             { text: 'Try Again', style: 'destructive', onPress: submitForm },
           ]
         );
-
       }
     };
 
@@ -257,10 +251,11 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     imageBase64: state.form.truckImage,
-    trailerModal: state.appUI.trailerModalShow,
     fromState: state.form,
+    truckNum: state.form.truckNumber,
+    trailerModal: state.appUI.trailerModalShow,
     token: state.auth.token,
-    truckNum: state.form.truckNumber
+    userUID: state.auth.userId,
   };
 };
 

@@ -3,29 +3,29 @@ export const data = {
     ups: {
       drivers: [
         {
-          name: 'jhon',
-          lastName: 'dui',
+          name: 'bari',
+          lastName: 'yuda brother',
           age: '56',
           id: '3125687898',
           licenceNum: '4R55T4S5R4T',
           licenceType: '2',
           phoneNumber: '03001231213',
-          mail: 'dora@gmail.com',
+          mail: 'bari@gmail.com',
           driverID: 'B1321',
-          lastReports: [],
+          userID: 'XmZla6C110ejpBAxlS3b30mYDYR2',
           tripStatus: false
         },
         {
-          name: 'david',
-          lastName: 'migdal',
+          name: 'yuda',
+          lastName: 'sapar',
           age: '45',
           id: '312897456',
           licenceNum: '4Y44R4S4FG4',
           licenceType: '2',
           phoneNumber: '03001231415',
-          mail: 'vlidfg@gmail.com',
+          mail: 'yuda@gmail.com',
           driverID: 'B1232',
-          lastReports: [],
+          userID: 'RlPSssz2OGeOWm5A2x3drGRGAqi2',
           tripStatus: false
         },
         {
@@ -38,7 +38,7 @@ export const data = {
           phoneNumber: '03001231617',
           mail: 'vavae@gmail.com',
           driverID: 'B2121',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -51,7 +51,7 @@ export const data = {
           phoneNumber: '03001231819',
           mail: 'maya@gmail.com',
           driverID: 'B4545',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -64,7 +64,7 @@ export const data = {
           phoneNumber: '03001232122',
           mail: 'namaya@gmail.com',
           driverID: 'B4857',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -77,7 +77,7 @@ export const data = {
           phoneNumber: '03001232324',
           mail: 'nodemand@gmail.com',
           driverID: 'B9878',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -90,7 +90,7 @@ export const data = {
           phoneNumber: '03001232526',
           mail: 'noobfotall@gmail.com',
           driverID: 'B5465',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -103,7 +103,7 @@ export const data = {
           phoneNumber: '03001232728',
           mail: 'killgoto@gmail.com',
           driverID: 'B5456',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -116,7 +116,7 @@ export const data = {
           phoneNumber: '03001232922',
           mail: 'babayaga@gmail.com',
           driverID: 'B6666',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -129,7 +129,7 @@ export const data = {
           phoneNumber: '03001233031',
           mail: 'migaga@gmail.com',
           driverID: 'B8758',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -142,7 +142,7 @@ export const data = {
           phoneNumber: '03001233233',
           mail: 'guliver@gmail.com',
           driverID: 'B6395',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -155,7 +155,7 @@ export const data = {
           phoneNumber: '03001233435',
           mail: 'gangrty@gmail.com',
           driverID: 'B4142',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -168,7 +168,7 @@ export const data = {
           phoneNumber: '03001233637',
           mail: 'glad@gmail.com',
           driverID: 'B4425',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -181,7 +181,7 @@ export const data = {
           phoneNumber: '03001233839',
           mail: 'shem@gmail.com',
           driverID: 'B5563',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -194,7 +194,7 @@ export const data = {
           phoneNumber: '03001235568',
           mail: 'shimon@gmail.com',
           driverID: 'B1158',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         }
       ],
@@ -6500,8 +6500,7 @@ export const data = {
             }
           }
         }
-      ],
-      faults: []
+      ]
     },
     hunterbg: {
       drivers: [
@@ -6515,7 +6514,7 @@ export const data = {
           phoneNumber: '03008881213',
           mail: 'dorma@gmail.com',
           driverID: 'C1321',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6528,7 +6527,7 @@ export const data = {
           phoneNumber: '03008881415',
           mail: 'vlimdfg@gmail.com',
           driverID: 'C1232',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6541,7 +6540,7 @@ export const data = {
           phoneNumber: '03888231617',
           mail: 'vmavae@gmail.com',
           driverID: 'C2121',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6554,7 +6553,7 @@ export const data = {
           phoneNumber: '03001231888',
           mail: 'mamya@gmail.com',
           driverID: 'C4545',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6567,7 +6566,7 @@ export const data = {
           phoneNumber: '03008882122',
           mail: 'namayma@gmail.com',
           driverID: 'C4857',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6580,7 +6579,7 @@ export const data = {
           phoneNumber: '03008882324',
           mail: 'nodemanmd@gmail.com',
           driverID: 'C9878',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6593,7 +6592,7 @@ export const data = {
           phoneNumber: '03008882526',
           mail: 'noobfotalml@gmail.com',
           driverID: 'C5465',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6606,7 +6605,7 @@ export const data = {
           phoneNumber: '88801232728',
           mail: 'kilmlgoto@gmail.com',
           driverID: 'C5456',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6619,7 +6618,7 @@ export const data = {
           phoneNumber: '03008882922',
           mail: 'babmymayaga@gmail.com',
           driverID: 'C6666',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6632,7 +6631,7 @@ export const data = {
           phoneNumber: '03001288831',
           mail: 'migagamy@gmail.com',
           driverID: 'C8758',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6645,7 +6644,7 @@ export const data = {
           phoneNumber: '03888233233',
           mail: 'gufrfrliver@gmail.com',
           driverID: 'C6395',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6658,7 +6657,7 @@ export const data = {
           phoneNumber: '03001238885',
           mail: 'gangrffty@gmail.com',
           driverID: 'C4142',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6671,7 +6670,7 @@ export const data = {
           phoneNumber: '03088833637',
           mail: 'gfflad@gmail.com',
           driverID: 'C4425',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6684,7 +6683,7 @@ export const data = {
           phoneNumber: '03001238889',
           mail: 'shemb@gmail.com',
           driverID: 'C5563',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -6697,7 +6696,7 @@ export const data = {
           phoneNumber: '03008885568',
           mail: 'shimonDE@gmail.com',
           driverID: 'C1158',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         }
       ],
@@ -13002,35 +13001,34 @@ export const data = {
             }
           }
         }
-      ],
-      faults: []
+      ]
     },
     cita: {
       drivers: [
         {
-          name: 'mike',
-          lastName: 'duid',
-          age: '56',
+          name: 'ziv',
+          lastName: 'magnezi',
+          age: '27',
           id: '3125098898',
           licenceNum: '4R55T5S5R4T',
           licenceType: '2',
           phoneNumber: '03008721213',
-          mail: 'dormXa@gmail.com',
+          mail: 'ziv@gmail.com',
           driverID: 'CA1321',
-          lastReports: [],
+          userID: 'z9T4blDxNpSzpDQpHDMYkHkx2ld2',
           tripStatus: false
         },
         {
-          name: 'dora',
-          lastName: 'migddal',
-          age: '45',
+          name: 'yudit',
+          lastName: 'magnezi',
+          age: '49',
           id: '312980456',
           licenceNum: '4Y4T54S4FG4',
           licenceType: '2',
           phoneNumber: '03088172415',
-          mail: 'vlimdfXg@gmail.com',
+          mail: 'yudit@gmail.com',
           driverID: 'CA1232',
-          lastReports: [],
+          userID: 'n9y8lXzORyMQaUdhlPSGtFCgHF63',
           tripStatus: false
         },
         {
@@ -13043,7 +13041,7 @@ export const data = {
           phoneNumber: '03728231617',
           mail: 'vmaXvae@gmail.com',
           driverID: 'CA2121',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13056,7 +13054,7 @@ export const data = {
           phoneNumber: '03001721888',
           mail: 'mamyXa@gmail.com',
           driverID: 'CA4545',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13069,7 +13067,7 @@ export const data = {
           phoneNumber: '03008887222',
           mail: 'namaymXa@gmail.com',
           driverID: 'CA4857',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13082,7 +13080,7 @@ export const data = {
           phoneNumber: '03007282324',
           mail: 'nodeXmanmd@gmail.com',
           driverID: 'CA9878',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13095,7 +13093,7 @@ export const data = {
           phoneNumber: '03008882726',
           mail: 'noobfotaXlml@gmail.com',
           driverID: 'CA5465',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13108,7 +13106,7 @@ export const data = {
           phoneNumber: '88807232728',
           mail: 'kilmXlgoto@gmail.com',
           driverID: 'CA5456',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13121,7 +13119,7 @@ export const data = {
           phoneNumber: '03008887222',
           mail: 'babmyXmayaga@gmail.com',
           driverID: 'CA6666',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13134,7 +13132,7 @@ export const data = {
           phoneNumber: '03001287231',
           mail: 'migagamXy@gmail.com',
           driverID: 'CA8758',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13147,7 +13145,7 @@ export const data = {
           phoneNumber: '72888233233',
           mail: 'Xgufrfrliver@gmail.com',
           driverID: 'CA6395',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13160,7 +13158,7 @@ export const data = {
           phoneNumber: '03002712885',
           mail: 'ganXgrffty@gmail.com',
           driverID: 'CA4142',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13173,7 +13171,7 @@ export const data = {
           phoneNumber: '07288833637',
           mail: 'gXfflad@gmail.com',
           driverID: 'CA4425',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13186,7 +13184,7 @@ export const data = {
           phoneNumber: '03007238889',
           mail: 'sheXmb@gmail.com',
           driverID: 'CA5563',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         },
         {
@@ -13199,7 +13197,7 @@ export const data = {
           phoneNumber: '03728885568',
           mail: 'sXhimonDE@gmail.com',
           driverID: 'CA1158',
-          lastReports: [],
+          userID: '',
           tripStatus: false
         }
       ],
@@ -19505,8 +19503,7 @@ export const data = {
             }
           }
         }
-      ],
-      faults: []
+      ]
     }
   }
 };
