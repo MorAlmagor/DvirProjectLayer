@@ -35,7 +35,7 @@ const navigator = createStackNavigator({
   SelectTruck: SelectTruckScreen
 },
 {
-  initialRouteName: 'OpenApp',
+  initialRouteName: 'Login',
   defaultNavigationOptions: {
     headerBackImage: <Icon name="md-arrow-round-back" color="white" size={30} />,
     headerStyle: {

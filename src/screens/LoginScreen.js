@@ -1,3 +1,8 @@
+/* eslint-disable radix */
+/* eslint-disable space-in-parens */
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
+/* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -10,18 +15,27 @@ import {
   TextInput,
   Platform,
   Alert,
+  AsyncStorage
   // Image
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, connect } from 'react-redux';
+import axios from 'axios';
 import * as authActions from '../store/actions/auth';
 import MainButton from '../components/UI/Buttons/MainButton';
 import Colors from '../Colors/Colors';
 import SpinerModal, {} from '../components/UI/Spiner/SpinerModal';
+import { setUserData } from '../store/actions/userAction';
+import { setTruckList } from '../store/actions/trucksAction';
+import { setTrailerList } from '../store/actions/trailersAction';
 
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({
+  navigation,
+  onUpdateUserData,
+  onUpdateTrucklist,
+  onUpdateTrailerlist,
+}) => {
   const dispatch = useDispatch();
-
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('bari@gmail.com');
   const [error, setError] = useState('');
@@ -36,19 +50,93 @@ const LoginScreen = ({ navigation }) => {
   ]);
 
   const authHandler = async () => {
-    const action = authActions.login(
-      email,
-      password
-    );
     setIsLoading(true);
     setError(null);
     try {
-      await dispatch(action);
-      navigation.navigate('Index');
+      const response = await fetch(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyB9TwILl4WehUFU2fzJTNYw2vpRAptkpVI',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            returnSecureToken: true
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorResData = await response.json();
+        const errorID = errorResData.error.message;
+        let message = 'Something Went Worng!';
+        if (errorID === 'EMAIL_NOT_FOUND') {
+          message = 'Email Not Exsist in System';
+        } else if (errorID === 'INVALID_PASSWORD') {
+          message = 'This Password Is Not Valid';
+        }
+        throw new Error(message);
+      }
+
+      const resData = await response.json();
+      const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+      dispatch(authActions.authenticate(resData.idToken, resData.localId));
+      saveUserTokenLocaly(resData.idToken, resData.localId, expirationDate);
+      getUserFromServer(resData.idToken, resData.localId);
     } catch (err) {
       setError(err.message);
     }
     setIsLoading(false);
+  };
+
+  const saveUserTokenLocaly = (token, userId, expirationDate ) => {
+    AsyncStorage.setItem('userData', JSON.stringify({
+      token,
+      userId,
+      expirationDate: expirationDate.toISOString()
+    }));
+  };
+
+  const getUserFromServer = (token, userId) => {
+    axios.get(`https://dvir-project-server.firebaseio.com/users/-Lyk-7s4l6Eugje0wzNp.json?auth=${token}`)
+      .then((res) => {
+        const users = res.data;
+        for (let i = 0; i < users.length; i += 1) {
+          if (users[i].userUID === userId) {
+            userFoundGetDataFromServer(users[i].company, token, userId);
+            break;
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        alert('Sorry, Cant Get User Details');
+      });
+  };
+
+  const userFoundGetDataFromServer = (company, token, userUID) => {
+    axios.get(`https://dvir-project-server.firebaseio.com/companysData/-LysoMQNqw_qplWWGgoR/${company}.json?auth=${token}`)
+      .then((res) => {
+        findUser(userUID, res.data.drivers);
+        onUpdateTrucklist(res.data.vehicle);
+        onUpdateTrailerlist(res.data.trailers);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert('Sorry, Cant Get Company Details. Try Again');
+      });
+  };
+
+  const findUser = async (userUID, driversDATA) => {
+    for (let i = 0; i < driversDATA.length; i += 1) {
+      if (userUID === driversDATA[i].userID) {
+        onUpdateUserData(driversDATA[i]);
+        break;
+      }
+    }
+    navigation.navigate('Index');
   };
 
   return (
@@ -91,7 +179,6 @@ const LoginScreen = ({ navigation }) => {
             LOGIN
           </MainButton>
         </View>
-        {/* </View> */}
       </TouchableWithoutFeedback>
     </ScrollView>
   );
@@ -139,4 +226,18 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LoginScreen;
+const mapStateToProps = (state) => {
+  return {
+    userName: state.user.name
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpdateUserData: (userData) => dispatch(setUserData(userData)),
+    onUpdateTrucklist: (companyTruckList) => dispatch(setTruckList(companyTruckList)),
+    onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

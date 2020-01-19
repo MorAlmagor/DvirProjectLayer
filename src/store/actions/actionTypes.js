@@ -16,3 +16,6 @@ export const USER_IS_CONNECT = 'USER_IS_CONNECT';
 export const SET_DATA = 'SET_DATA';
 export const SET_ODDS_SUMMERY = 'SET_ODDS_SUMMERY';
 export const SET_TRUCK_NUMBER = 'SET_TRUCK_NUMBER';
+export const SET_USER_DATA = 'SET_USER_DATA';
+export const SET_TRUCK_LIST = 'SET_TRUCK_LIST';
+export const SET_TRAILER_LIST = 'SET_TRAILER_LIST';

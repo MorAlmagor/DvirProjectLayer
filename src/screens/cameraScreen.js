@@ -1,7 +1,8 @@
+/* eslint-disable no-else-return */
 /* eslint-disable spaced-comment */
 /* eslint-disable prefer-template */
 /* eslint-disable no-alert */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { setUserImage, setTruckNumber } from '../store/actions/formActions';
 import MainButton from '../components/UI/Buttons/MainButton';
+import SpinerModal from '../components/UI/Spiner/SpinerModal';
 
 const CameraScreen = ({
   navigation,
@@ -24,6 +26,7 @@ const CameraScreen = ({
 }) => {
   const [permissions, setPermissions] = useState({ camera: null, cameraRoll: null });
   const [uguuKeyLink, setUguuKeyLink] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   ///// demi ////
   const demiTrucksState = [
@@ -62,20 +65,30 @@ const CameraScreen = ({
   ];
   //////////////
 
-  if (uguuKeyLink) {
-    const uguuLinkEncode = base64.encode(uguuKeyLink);
-    const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
-    const linkToFatch = aiBotLink + uguuLinkEncode;
-    setTimeout(() => {
-      alert('The vehicle is not detected by the system. Please type the vehicle number and select a vehicle from the list');
-      navigation.navigate('SelectTruck');
-    }, 20000);
-    const tests = axios({
-      method: 'get',
-      url: linkToFatch,
-    });
-    tests.then((res) => validTruckNumFromImage(res.data.plate));
-  }
+  useEffect(() => {
+    if (uguuKeyLink) {
+      const uguuLinkEncode = base64.encode(uguuKeyLink);
+      const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
+      const linkToFatch = aiBotLink + uguuLinkEncode;
+      // const tests = axios({
+      //   method: 'get',
+      //   url: linkToFatch,
+      // });
+      // tests.then((res) => validTruckNumFromImage(res.data.plate));
+      axios.get(linkToFatch)
+        .then((res) => {
+          validTruckNumFromImage(res.data.plate);
+        })
+        .catch((error) => {
+          if (error) {
+            setUguuKeyLink(false);
+            setLoading(false);
+            navigation.navigate('SelectTruck');
+            alert('Sorry the system did not recognize your vehicle');
+          }
+        });
+    }
+  }, [uguuKeyLink]);
 
   const validTruckNumFromImage = (truckNum) => {
     let validBool = false;
@@ -85,10 +98,20 @@ const CameraScreen = ({
         validBool = true;
       }
     }
-    if (validBool) {
+    navigate(validBool);
+  };
+
+  const navigate = (bool) => {
+    if (bool) {
+      setUguuKeyLink(false);
+      setLoading(false);
       navigation.navigate('Dvir');
+      alert('System recognize your vehicle Successfully');
     } else {
+      setUguuKeyLink(false);
+      setLoading(false);
       navigation.navigate('SelectTruck');
+      alert('Sorry the system did not recognize your vehicle');
     }
   };
 
@@ -131,6 +154,7 @@ const CameraScreen = ({
         });
         const test = response.data;
         setUguuKeyLink(test + '');
+        setLoading(true);
       }
     }
   };
@@ -155,35 +179,41 @@ const CameraScreen = ({
         });
         const test = response.data;
         setUguuKeyLink(test + '');
+        setLoading(true);
       }
     }
   };
 
-  return (
-
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.userText}>Please Take Picture Of The Front Of Your Vehicle</Text>
-      </View>
-      <View style={styles.buttonsContainer}>
-        <MainButton onpress={openCam}><FontAwesome name="camera" size={30} /></MainButton>
-      </View>
-
-      <View>
-        <Text style={styles.divaider}>─────  or  ─────</Text>
-      </View>
-
-      <View style={styles.container1}>
+  if (!loading) {
+    return (
+      <View style={styles.container}>
         <View>
-          <Text style={styles.userText}>Select A Photo from your Gallery</Text>
+          <Text style={styles.userText}>Please Take Picture Of The Front Of Your Vehicle</Text>
         </View>
-        <View style={styles.buttonsContainer1}>
-          <MainButton onpress={openCamRoll}><FontAwesome name="image" size={30} /></MainButton>
+        <View style={styles.buttonsContainer}>
+          <MainButton onpress={openCam}><FontAwesome name="camera" size={30} /></MainButton>
         </View>
 
+        <View>
+          <Text style={styles.divaider}>─────  or  ─────</Text>
+        </View>
+
+        <View style={styles.container1}>
+          <View>
+            <Text style={styles.userText}>Select A Photo from your Gallery</Text>
+          </View>
+          <View style={styles.buttonsContainer1}>
+            <MainButton onpress={openCamRoll}><FontAwesome name="image" size={30} /></MainButton>
+          </View>
+
+        </View>
       </View>
-    </View>
-  );
+    );
+  } else {
+    return (
+      <SpinerModal />
+    );
+  }
 };
 
 const styles = StyleSheet.create({

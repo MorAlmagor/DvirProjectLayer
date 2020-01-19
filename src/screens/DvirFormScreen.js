@@ -5,6 +5,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable prefer-template */
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Text,
   View,
@@ -15,7 +16,7 @@ import {
   NetInfo,
   AsyncStorage,
 } from 'react-native';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import Form from '../components/Form/Form';
 import FormSubmission from '../components/FormSubmission/FormSubmission';
 import Modal from '../components/UI/Modals/DvirSummeryModal';
@@ -30,22 +31,21 @@ const DvirFormScreen = ({
   trailerModal,
   fromState,
   onSaveData,
-  token
+  token,
+  truckNum,
+  userUID
 }) => {
-
-  console.log(token);
+  const [modalShow, setModalShow] = useState(false);
+  const [checkBoxValue, setCheckBoxValue] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const cleanUpHandler = () => {
     setModalShow(false);
     setCheckBoxValue(false);
     setClicked(false);
     submitForm();
   };
-  
-  const [modalShow, setModalShow] = useState(false);
-  const [checkBoxValue, setCheckBoxValue] = useState(false);
-  const [clicked, setClicked] = useState(false);
-  const [loading, setLoading] = useState(false);
- 
   
   const submitForm = () => {
     //
@@ -68,10 +68,13 @@ const DvirFormScreen = ({
     const trailer2Arr = [];
     const truckStatusArr = [];
     const DATA = {
+      company: '',
+      userUID,
       time: currentTime,
       date: fromState.currentDate,
       longitude: fromState.locationDetails.coords.longitude,
       latitude: fromState.locationDetails.coords.latitude,
+      truckNumber: truckNum,
       carrier: fromState.carrier,
       odometer: fromState.lastOdometer,
       truckImage: fromState.truckImage,
@@ -155,27 +158,20 @@ const DvirFormScreen = ({
     };
 
     const fatchDataToServer = async () => {
-      const response = await fetch(`https://dvir-project-server.firebaseio.com/data.json?auth=${token}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(DATA)
-      });
-
-      if (response.ok) {
+      
+      const response = await axios.post(`https://dvir-project-server.firebaseio.com/reports.json?auth=${token}`, DATA);
+      if (response) {
         setLoading(false);
         const resetLocalData = [];
         try {
-          await AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+          AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
         } catch (error) {
           alert('error');
         }
-        Alert.alert('   the form has been sent successfully', '                           Drive carefuly!');
+        AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
+        Alert.alert(' form has been sent successfully');
         navigation.navigate('Index');
-      }
-      if (response.status === 404) {
-
+      } else {
         Alert.alert(
           'Oops Something went wrong',
           [
@@ -183,25 +179,24 @@ const DvirFormScreen = ({
             { text: 'Try Again', style: 'destructive', onPress: submitForm },
           ]
         );
-
       }
     };
 
-    const storeData = async (json) => {
+    const storeData = (json) => {
       let tempLocalDATA = json;
       if (tempLocalDATA === null) {
         tempLocalDATA = [];
       }
       tempLocalDATA.push(DATA);
       try {
-        await AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
+        AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
         alert('saved');
       } catch (error) {
         alert('error');
       }
     };
 
-    const retrieveData = async () => {
+    const retrieveData = () => {
       AsyncStorage.getItem('aocalDATA')
         .then((req) => JSON.parse(req))
         .then((json) => storeData(json))
@@ -209,8 +204,8 @@ const DvirFormScreen = ({
     };
 
 
-    const SaveDataLocaly = async () => {
-      await retrieveData();
+    const SaveDataLocaly = () => {
+      retrieveData();
       onSaveData(DATA);
       setLoading(false);
       navigation.navigate('Index');
@@ -256,9 +251,11 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     imageBase64: state.form.truckImage,
-    trailerModal: state.appUI.trailerModalShow,
     fromState: state.form,
-    token: state.auth.token
+    truckNum: state.form.truckNumber,
+    trailerModal: state.appUI.trailerModalShow,
+    token: state.auth.token,
+    userUID: state.auth.userId,
   };
 };
 
