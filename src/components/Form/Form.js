@@ -376,7 +376,9 @@ const trailerNO2 = [
   },
 ];
 
-const Form = () => {
+const Form = ({
+  navigation
+}) => {
   return (
     <>
       <FlatList
@@ -390,14 +392,14 @@ const Form = () => {
         data={trailerNO1}
         keyExtractor={(section) => section.title}
         renderItem={({ item }) => {
-          return <FormSection sectionInfo={item} />;
+          return <FormSection navigation={navigation} sectionInfo={item} />;
         }}
       />
       <FlatList
         data={trailerNO2}
         keyExtractor={(section) => section.title}
         renderItem={({ item }) => {
-          return <FormSection sectionInfo={item} />;
+          return <FormSection navigation={navigation} sectionInfo={item} />;
         }}
       />
     </>

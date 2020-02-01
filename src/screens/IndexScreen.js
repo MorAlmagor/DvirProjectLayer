@@ -21,13 +21,11 @@ const IndexScreen = ({
   navigation,
   onUserConnection,
   userIsConnected,
-  userName
+  userName,
+  TripStatus
 }) => {
   const dispatch = useDispatch();
   const [userFirstTime, setUserFirstTime] = useState(null);
-  // לא לשכוח דביר סטאטוס //
-  const dvirStatus = true;
-
   setTimeout(() => {
     CheckConnectivity();
   }, 1000);
@@ -74,7 +72,7 @@ const IndexScreen = ({
       .then((req) => JSON.parse(req))
       .then((json) => setUserFirstTime(json))
       .catch(() => alert('error!'));
-    if (userFirstTime) {
+    if (!userFirstTime) {
       return (
         <View style={styles.container}>
           <View>
@@ -87,10 +85,7 @@ const IndexScreen = ({
             Hello {userName}
           </Text>
           <View style={styles.buttonsContainer}>
-            {dvirStatus
-              ? <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
-              : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
-            <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>
+            <MainButton onpress={() => navigation.navigate('SelectTruck')}>Pre-Trip</MainButton>
             <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
           </View>
         </View>
@@ -108,8 +103,8 @@ const IndexScreen = ({
             Hello {userName}
           </Text>
           <View style={styles.buttonsContainer}>
-            {dvirStatus
-              ? <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
+            {!TripStatus
+              ? <MainButton onpress={() => navigation.navigate('SelectTruck')}>Pre-Trip</MainButton>
               : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
             {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
             <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
@@ -176,7 +171,8 @@ const mapStateToProps = (state) => {
   return {
     userIsConnected: state.appUI.userConnect,
     DATA: state.appUI.DATA,
-    userName: state.user.name
+    userName: state.user.name,
+    TripStatus: state.user.tripStatus
   };
 };
 

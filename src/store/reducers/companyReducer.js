@@ -1,18 +1,18 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
-  trucks: ''
+  companyData: ''
 };
 
-const trucksReducer = (state = initialState, action) => {
+const companyReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.SET_TRUCK_LIST:
+    case actionTypes.SAVE_COMPANY_DATA:
       return {
         ...state,
-        trucks: action.payload,
+        companyData: action.payload,
       };
     default: return state;
   }
 };
 
-export default trucksReducer;
+export default companyReducer;

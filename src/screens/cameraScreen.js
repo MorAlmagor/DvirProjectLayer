@@ -2,7 +2,7 @@
 /* eslint-disable spaced-comment */
 /* eslint-disable prefer-template */
 /* eslint-disable no-alert */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -22,59 +22,18 @@ import SpinerModal from '../components/UI/Spiner/SpinerModal';
 const CameraScreen = ({
   navigation,
   onSetImage,
-  onSaveTruckNumber
+  onSaveTruckNumber,
+  truckListData
 }) => {
   const [permissions, setPermissions] = useState({ camera: null, cameraRoll: null });
   const [uguuKeyLink, setUguuKeyLink] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  ///// demi ////
-  const demiTrucksState = [
-    {
-      licenceNum: '4R55T4S5R4T',
-      onTrip: false,
-    },
-    {
-      licenceNum: '4Y44R4S4FG4',
-      onTrip: false,
-    },
-    {
-      licenceNum: '2W31G35E4RD',
-      onTrip: false,
-    },
-    {
-      licenceNum: '432G123S524G',
-      onTrip: false,
-    },
-    {
-      licenceNum: '15SR63G15GG',
-      onTrip: false,
-    },
-    {
-      licenceNum: '18SR63G19GG',
-      onTrip: false,
-    },
-    {
-      licenceNum: 'KIAPET',
-      onTrip: false,
-    },
-    {
-      licenceNum: '6XSU832',
-      onTrip: false,
-    },
-  ];
-  //////////////
 
   useEffect(() => {
     if (uguuKeyLink) {
       const uguuLinkEncode = base64.encode(uguuKeyLink);
       const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
       const linkToFatch = aiBotLink + uguuLinkEncode;
-      // const tests = axios({
-      //   method: 'get',
-      //   url: linkToFatch,
-      // });
-      // tests.then((res) => validTruckNumFromImage(res.data.plate));
       axios.get(linkToFatch)
         .then((res) => {
           validTruckNumFromImage(res.data.plate);
@@ -92,9 +51,10 @@ const CameraScreen = ({
 
   const validTruckNumFromImage = (truckNum) => {
     let validBool = false;
-    for (let i = 0; i < demiTrucksState.length; i += 1) {
-      if (truckNum === demiTrucksState[i].licenceNum) {
-        onSaveTruckNumber(demiTrucksState[i].licenceNum);
+    const truckListKeys = Object.keys(truckListData);
+    for (let i = 0; i < truckListKeys.length; i += 1) {
+      if (truckNum === truckListKeys[i]) {
+        onSaveTruckNumber(truckListData[truckListKeys[i]]);
         validBool = true;
       }
     }
@@ -126,7 +86,7 @@ const CameraScreen = ({
         setPermissions({ camera: checkedStatus, cameraRoll: checkedStatus });
       }
     } catch (error) {
-      // console.error('Error');
+      console.error('Error');
     }
   };
 
@@ -255,6 +215,13 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = (state) => {
+  return {
+    truckListData: state.trucks.trucks
+  };
+};
+
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onSetImage: (imageBase64) => dispatch(setUserImage(imageBase64)),
@@ -262,4 +229,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(CameraScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(CameraScreen);

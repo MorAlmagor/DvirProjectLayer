@@ -30,7 +30,7 @@ const DvirSummeryModal = ({
   trailerRaf,
 }) => {
   //
-  
+
   const getSummery = (tempData, type) => {
     const tempDataArreyKeys = Object.keys(tempData);
     const tempFaults = [];
@@ -102,13 +102,13 @@ const DvirSummeryModal = ({
       };
     }
   };
-  
+
   const truckSummery = getSummery(truckStatus, true);
   const tariler1Summery = getSummery(trailer1Status, true);
   const tariler2Summery = getSummery(trailer2Status, true);
   const totalOddsSummery = totalSummery(trailer1Valid, trailer2Valid, truckSummery, tariler1Summery, tariler2Summery);
 
-  
+
   const dataScoreSummery = [
     {
       rank: 100,
@@ -154,17 +154,15 @@ const DvirSummeryModal = ({
                 colors={colors}
                 data={dataScoreSummery}
                 contentInset={{ top: 30, bottom: 30 }}
-              // horizontal={true}
               />
-            </View >
-            <View style={{ flexDirection: 'row', width: '90%', height: 40 }}>
-              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Full Rank</Text>
-              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Total Rank</Text>
-              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Truck</Text>
-              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Trailer 1</Text>
-              <Text style={{ textAlign: 'center', width: '20%', bottom: '2%', color: Colors.primary }}>Trailer 2</Text>
             </View>
-            {/* <Text>__________________Tap For Detail___________________</Text> */}
+            <View style={{ flexDirection: 'row', width: '90%', height: 40 }}>
+              <Text style={styles.graphBar}>Full Rank</Text>
+              <Text style={styles.graphBar}>Total Rank</Text>
+              <Text style={styles.graphBar}>Truck</Text>
+              <Text style={styles.graphBar}>Trailer 1</Text>
+              <Text style={styles.graphBar}>Trailer 2</Text>
+            </View>
             <DvirSummeryButton
               title="Total Rank"
               odds={totalOddsSummery.rafOdds.toFixed(0) + '%'}
@@ -219,6 +217,12 @@ const styles = StyleSheet.create({
     top: '2%',
     // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
   },
+  graphBar: {
+    textAlign: 'center',
+    width: '20%',
+    bottom: '2%',
+    color: Colors.primary
+  },
   backdrop: {
     alignItems: 'center',
     alignContent: 'flex-end',
@@ -261,7 +265,7 @@ const mapStateToProps = (state) => {
 
 // const mapDispatchToProps = (dispatch) => {
 //   return {
-    
+
 //   };
 // };
 

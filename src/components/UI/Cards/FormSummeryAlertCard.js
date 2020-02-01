@@ -52,12 +52,12 @@ const FormSummeryAlertCard = ({
   } else if (trailer1Active !== null && trailer1Active !== null) {
     TrailersDetails = (
       <View>
-        <Text style={styles.alertGuildText}>
-          {Trailer1Detail ? 'Trailer NO.1 Safe For Drive' : 'Trailer NO.1 Not Safe For Drive'}
-        </Text>
-        <Text style={styles.alertGuildText}>
-          {Trailer2Detail ? 'Trailer NO.2 Safe For Drive' : 'Trailer NO.2 Safe For Drive'}
-        </Text>
+        {trailer1Active
+          ? <Text style={styles.alertGuildText}> {Trailer1Detail ? `Trailer NO.${trailer1Active} Safe For Drive` : `Trailer NO.${trailer1Active} Not Safe For Drive`}</Text>
+          : <Text style={styles.alertGuildText}>Trailer NO.1 Not Add</Text>}
+        {trailer2Active
+          ? <Text style={styles.alertGuildText}> {Trailer2Detail ? `Trailer NO.${trailer2Active} Safe For Drive` : `Trailer NO.${trailer2Active} Not Safe For Drive`}</Text>
+          : <Text style={styles.alertGuildText}>Trailer NO.2 Not Add</Text>}
       </View>
     );
     SummeryAlert = (
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     width: Dimensions.get('window').width * 0.9,
-    paddingVertical:10,
+    paddingVertical: 10,
     marginBottom: 4,
     marginTop: 10
   },

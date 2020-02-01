@@ -1,17 +1,37 @@
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AutoScrolling from 'react-native-auto-scrolling';
 import {
   Text,
   View,
   Image,
   StyleSheet,
-  Platform
+  Platform,
+  TouchableOpacity
 } from 'react-native';
 import Colors from '../../../Colors/Colors';
 
-const SpinerModal = () => {
+const SpinerModal = (skip, navigateTo, nav, msgText) => {
+//
+  const [skipBool, setSkipBool] = useState(false);
+
+  // useEffect(() => {
+  //   setTimeout(() => setSkipBool(true), 5000);
+  // }, []);
+
+  let skipButton = null;
+  if (skip && navigateTo && nav && msgText) {
+    skipButton = (
+      <View>
+        <TouchableOpacity onPress={nav.navigate(navigateTo)}>
+          <Text>Tap to skip {msgText} </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  
+
   return (
     <View style={styles.backdrop}>
       <View style={styles.modal}>
@@ -23,6 +43,7 @@ const SpinerModal = () => {
               source={require('../../../../assets/longTruck.png')}
             />
           </AutoScrolling>
+          {skipBool && skipButton}
         </View>
       </View>
     </View>

@@ -2,7 +2,6 @@ import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
   trailerModalTitle: '',
-  trailerModalShow: false,
   trailer1ExpendSction: false,
   trailer2ExpendSction: false,
   userConnect: true,
@@ -18,7 +17,7 @@ const reducerUI = (state = initialState, action) => {
       return {
         ...state,
         trailerModalTitle: action.payload,
-        trailerModalShow: true
+        
       };
     case actionTypes.CHANGE_MODAL_SHOW:
       return {
@@ -44,6 +43,11 @@ const reducerUI = (state = initialState, action) => {
       return {
         ...state,
         DATA: action.payload
+      };
+    case actionTypes.SET_TRAILER_TITLE:
+      return {
+        ...state,
+        trailerModalTitle: action.payload
       };
     case actionTypes.SET_ODDS_SUMMERY:
       return {

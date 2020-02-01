@@ -12,22 +12,29 @@ import {
   TouchableOpacity,
   Platform
 } from 'react-native';
-import { openTrailerModal, ExpandSectionTrailer1, ExpandSectionTrailer2 } from '../../store/actions/appUiActions';
+import { ExpandSectionTrailer1, ExpandSectionTrailer2, updateTrailerTitle } from '../../store/actions/appUiActions';
 import CheckList from './CheckList';
 import Colors from '../../Colors/Colors';
 
 const FormSection = ({
   sectionInfo,
-  onAddTrailer,
   trailer1Valid,
   trailer2Valid,
   trailer1ExpendSctionBool,
   trailer2ExpendSctionBool,
   setExpandSectionTrailer1,
-  setExpandSectionTrailer2
+  setExpandSectionTrailer2,
+  onSetTrailerTitle,
+  navigation
 }) => {
   const [expandSection, setExpandSection] = useState(false);
   const { title, checkList } = sectionInfo;
+  
+
+  const navigateToAddTrailer = (trailerTitle) => {
+    onSetTrailerTitle(trailerTitle);
+    navigation.navigate('SelectTrailer');
+  };
 
   if (title === 'Trailer NO.1') {
     return (
@@ -46,10 +53,10 @@ const FormSection = ({
                 <Text style={{ ...styles.sectionTitle, color: '#25282A' }}>{trailer1ExpendSctionBool ? '-' : '+'}</Text>
               </View>
             </TouchableOpacity>
-            {trailer1ExpendSctionBool && <CheckList SectionTitle={title} List={checkList} />}
+            {trailer1ExpendSctionBool && <CheckList navigation={navigation} SectionTitle={title} List={checkList} />}
           </View>
 
-          : <TouchableOpacity onPress={() => onAddTrailer(title)}>
+          : <TouchableOpacity onPress={() => navigateToAddTrailer(title)}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
                 {title}
@@ -64,7 +71,7 @@ const FormSection = ({
     if (trailer1Valid && !trailer2Valid) {
       return (
         <View style={styles.section}>
-          <TouchableOpacity onPress={() => onAddTrailer(title)}>
+          <TouchableOpacity onPress={() => navigateToAddTrailer(title)}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>
                 {title}
@@ -73,7 +80,7 @@ const FormSection = ({
               <Text style={{ ...styles.sectionTitle, color: '#25282A' }}>{expandSection ? '-' : '+'}</Text>
             </View>
           </TouchableOpacity>
-          {expandSection && <CheckList SectionTitle={title} List={checkList} />}
+          {expandSection && <CheckList navigation={navigation} SectionTitle={title} List={checkList} />}
         </View>
       );
     } else if (trailer1Valid && trailer2Valid) {
@@ -88,7 +95,7 @@ const FormSection = ({
               <Text style={{ ...styles.sectionTitle, color: '#25282A' }}>{trailer2ExpendSctionBool ? '-' : '+'}</Text>
             </View>
           </TouchableOpacity>
-          {trailer2ExpendSctionBool && <CheckList SectionTitle={title} List={checkList} />}
+          {trailer2ExpendSctionBool && <CheckList navigation={navigation} SectionTitle={title} List={checkList} />}
         </View>
       );
     } else {
@@ -105,7 +112,7 @@ const FormSection = ({
             <Text style={{ ...styles.sectionTitle, color: '#25282A' }}>{expandSection ? '-' : '+'}</Text>
           </View>
         </TouchableOpacity>
-        {expandSection && <CheckList SectionTitle={title} List={checkList} />}
+        {expandSection && <CheckList navigation={navigation} SectionTitle={title} List={checkList} />}
       </View>
     );
   }
@@ -146,9 +153,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onAddTrailer: (title) => dispatch(openTrailerModal(title)),
     setExpandSectionTrailer1: () => dispatch(ExpandSectionTrailer1()),
-    setExpandSectionTrailer2: () => dispatch(ExpandSectionTrailer2())
+    setExpandSectionTrailer2: () => dispatch(ExpandSectionTrailer2()),
+    onSetTrailerTitle: (title) => dispatch(updateTrailerTitle(title))
   };
 };
 

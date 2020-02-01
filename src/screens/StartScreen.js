@@ -1,20 +1,24 @@
+/* eslint-disable no-console */
 /* eslint-disable no-alert */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
   Image,
   Dimensions,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  Text
 } from 'react-native';
 import axios from 'axios';
 import { useDispatch, connect } from 'react-redux';
-import * as authActions from '../store/actions/auth';
 import Colors from '../Colors/Colors';
+import * as authActions from '../store/actions/auth';
 import { setUserData } from '../store/actions/userAction';
 import { setTruckList } from '../store/actions/trucksAction';
 import { setTrailerList } from '../store/actions/trailersAction';
+import { changeCarrier } from '../store/actions/formActions';
+import { saveCompanyData } from '../store/actions/companyActions';
 
 
 const StartScreen = ({
@@ -22,8 +26,25 @@ const StartScreen = ({
   onUpdateUserData,
   onUpdateTrucklist,
   onUpdateTrailerlist,
+  onCarrierUpdate,
+  onCompanyDataSave
 }) => {
   //
+  const [skipBool, setSkipBool] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setSkipBool(true), 5000);
+  }, []);
+
+  let skipButton = false;
+  if (skipBool) {
+    skipButton = (
+      <View>
+        <Text>Tap To Skip Auto-Login </Text>
+      </View>
+    );
+  }
+
   const dispatch = useDispatch();
   useEffect(() => {
     AsyncStorage.getItem('userData').then((userData) => {
@@ -39,12 +60,12 @@ const StartScreen = ({
           if (expiryDate <= new Date() || !token || !userId) {
             navigation.navigate('Login');
           } else {
-            axios.get(`https://dvir-project-server.firebaseio.com/users/-Lyk-7s4l6Eugje0wzNp.json?auth=${token}`)
+            axios.get(`https://dvir-project-server.firebaseio.com/users/-M-0uwVMgVBoGMdqHfp9.json?auth=${token}`)
               .then((res) => {
-                const users = res.data;
+                const users = Object.keys(res.data);
                 for (let i = 0; i < users.length; i += 1) {
-                  if (users[i].userUID === userId) {
-                    userFoundGetDataFromServer(users[i].company, token, userId);
+                  if (users[i] === userId) {
+                    userFoundGetDataFromServer(res.data[users[i]], token, userId);
                     break;
                   }
                 }
@@ -60,13 +81,16 @@ const StartScreen = ({
       }
     });
   }, []);
-
+  //
   const userFoundGetDataFromServer = (company, token, userUID) => {
-    axios.get(`https://dvir-project-server.firebaseio.com/companysData/-LysoMQNqw_qplWWGgoR/${company}.json?auth=${token}`)
+    axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}.json?auth=${token}`)
       .then((res) => {
+        // להוסיף promise עדכון של היוזר
+        findUser(userUID, res.data.drivers);
         onUpdateTrucklist(res.data.vehicle);
         onUpdateTrailerlist(res.data.trailers);
-        findUser(userUID, res.data.drivers);
+        onCarrierUpdate(company);
+        onCompanyDataSave(res.data);
         navigation.navigate('Index');
       })
       .catch((err) => {
@@ -76,9 +100,10 @@ const StartScreen = ({
   };
 
   const findUser = (userUID, driversDATA) => {
-    for (let i = 0; i < driversDATA.length; i += 1) {
-      if (userUID === driversDATA[i].userID) {
-        onUpdateUserData(driversDATA[i]);
+    const drivers = Object.keys(driversDATA);
+    for (let i = 0; i < drivers.length; i += 1) {
+      if (userUID === drivers[i]) {
+        onUpdateUserData(driversDATA[drivers[i]]);
         break;
       }
     }
@@ -93,6 +118,7 @@ const StartScreen = ({
           navigation={navigation}
         />
       </View>
+      {skipButton}
     </TouchableOpacity>
   );
 };
@@ -116,7 +142,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onUpdateUserData: (userData) => dispatch(setUserData(userData)),
     onUpdateTrucklist: (companyTruckList) => dispatch(setTruckList(companyTruckList)),
-    onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList))
+    onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList)),
+    onCarrierUpdate: (text) => dispatch(changeCarrier(text)),
+    onCompanyDataSave: (companyData) => dispatch(saveCompanyData(companyData))
   };
 };
 
