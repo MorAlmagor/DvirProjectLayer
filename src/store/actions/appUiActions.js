@@ -1,10 +1,9 @@
 import * as actionTypes from './actionTypes';
 
-export const openTrailerModal = (title) => {
+export const updateTrailerTitle = (title) => {
   return {
     type: actionTypes.OPEN_TRAILER_MODAL,
-    payload: title,
-
+    payload: title
   };
 };
 
@@ -44,5 +43,12 @@ export const setOddsSummery = (summery) => {
   return {
     type: actionTypes.SET_ODDS_SUMMERY,
     payload: summery
+  };
+};
+
+export const setTrailerTitle = (title) => {
+  return {
+    type: actionTypes.SET_TRAILER_TITLE,
+    payload: title
   };
 };

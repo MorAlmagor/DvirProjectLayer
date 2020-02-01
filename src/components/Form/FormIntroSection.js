@@ -44,6 +44,7 @@ const FormIntroSection = ({
             style={styles.inputC}
             autoCorrect={false}
             onChangeText={(text) => onCarrierUpdate(text)}
+            editable={false}
           />
         </View>
         <View>

@@ -56,17 +56,17 @@ export const changeOdometer = (newOdometer) => {
   };
 };
 
-export const updateTrailer1Number = (trailerNumber) => {
+export const updateTrailer1 = (trailerData) => {
   return {
-    type: actionTypes.UPDATE_TRAILER1_NUMBER,
-    payload: trailerNumber
+    type: actionTypes.UPDATE_TRAILER1,
+    payload: trailerData
   };
 };
 
-export const updateTrailer2Number = (trailerNumber) => {
+export const updateTrailer2 = (trailerData) => {
   return {
-    type: actionTypes.UPDATE_TRAILER2_NUMBER,
-    payload: trailerNumber
+    type: actionTypes.UPDATE_TRAILER2,
+    payload: trailerData
   };
 };
 
@@ -74,5 +74,30 @@ export const changeCarrier = (text) => {
   return {
     type: actionTypes.CHANGE_CARRIER,
     payload: text
+  };
+};
+
+export const UpdateTruckStatus = (truckStatus) => {
+  return {
+    type: actionTypes.UPDATE_TRUCK_STATUS,
+    payload: truckStatus
+  };
+};
+
+export const removeTrailer1 = () => {
+  return {
+    type: actionTypes.REMOVE_TRAILER1,
+  };
+};
+
+export const removeTrailer2 = () => {
+  return {
+    type: actionTypes.REMOVE_TRAILER2,
+  };
+};
+
+export const switchTrailers = () => {
+  return {
+    type: actionTypes.SWITCH_TRAILERS,
   };
 };

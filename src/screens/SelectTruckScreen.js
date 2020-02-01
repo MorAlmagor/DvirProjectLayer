@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import {
   FlatList,
   View,
@@ -10,77 +11,51 @@ import {
 import TruckList from '../components/UI/MapReturnSection/TruckList';
 import Colors from '../Colors/Colors';
 
-const SelectTruckScreen = ({ navigation }) => {
+const SelectTruckScreen = ({
+  navigation,
+  truckListData,
+}) => {
   //
-
 
   const [textInputlangth, setTextInputlangth] = useState(0);
   const [textInput, setTextInput] = useState('');
-  const [truckList] = useState(
-    [
-      {
-        licenceNum: '4R55T4S5R4T',
-        onTrip: false,
-      },
-      {
-        licenceNum: '4Y44R4S4FG4',
-        onTrip: false,
-      },
-      {
-        licenceNum: '2W31G35E4RD',
-        onTrip: false,
-      },
-      {
-        licenceNum: '432G123S524G',
-        onTrip: false,
-      },
-      {
-        licenceNum: '15SR63G15GG',
-        onTrip: false,
-      },
-      {
-        licenceNum: '18SR63G19GG',
-        onTrip: false,
-      },
-      {
-        licenceNum: 'KIAPET',
-        onTrip: false,
-      },
-      {
-        licenceNum: '6XSU832',
-        onTrip: false,
-      },
-    ]
-  );
+  const [textxxx, setTextxxx] = useState('');
+
+  useEffect(() => {
+    const textLang = textxxx.toUpperCase();
+    setTextInput(textLang);
+    const test = textLang.split('');
+    setTextInputlangth(test.length);
+  }, [textxxx]);
 
   let TrucklistToShow = null;
-  if (textInputlangth > 1) {
+  if (textInputlangth > 3) {
     const updateTruckList = [];
-    for (let i = 0; i < truckList.length; i += 1) {
-      const tempFilter = truckList[i].licenceNum.indexOf(textInput);
+    const truckListKeys = Object.keys(truckListData);
+    for (let i = 0; i < truckListKeys.length; i += 1) {
+      const tempFilter = truckListKeys[i].indexOf(textInput);
       if (tempFilter !== -1) {
-        updateTruckList.push(truckList[i]);
+        updateTruckList.push(truckListData[truckListKeys[i]]);
       }
     }
-    
+
     TrucklistToShow = (
       <FlatList
-        keyExtractor={(truckNo) => truckNo.licenceNum}
+        keyExtractor={(truck) => truck.truckNum}
         data={updateTruckList}
         renderItem={({ item }) => {
-          return <TruckList truckNum={item.licenceNum} nav={navigation} />;
+          return (
+            <TruckList
+              truck={item}
+              odometer={item.addomer}
+              truckNum={item.truckNum}
+              nav={navigation}
+            />
+          );
         }}
       />
     );
   }
-
-  const inputHandler = (inputText) => {
-    const textLang = inputText.toUpperCase();
-    textLang.split('');
-    setTextInputlangth(textLang.length);
-    setTextInput(textLang);
-  };
-
 
   return (
     <View style={{ alignItems: 'center' }}>
@@ -94,7 +69,7 @@ const SelectTruckScreen = ({ navigation }) => {
           style={styles.inputC}
           value={textInput}
           autoCorrect={false}
-          onChangeText={(text) => inputHandler(text)}
+          onChangeText={(text) => setTextxxx(text)}
         />
       </View>
       <View style={{ marginTop: 20 }}>
@@ -140,8 +115,10 @@ const styles = StyleSheet.create({
   }
 });
 
-// const mapStateToProps = (state) => {
+const mapStateToProps = (state) => {
+  return {
+    truckListData: state.trucks.trucks
+  };
+};
 
-// }
-
-export default SelectTruckScreen;
+export default connect(mapStateToProps, null)(SelectTruckScreen);

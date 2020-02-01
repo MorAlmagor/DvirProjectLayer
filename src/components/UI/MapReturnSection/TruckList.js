@@ -8,24 +8,30 @@ import {
   StyleSheet,
   TouchableOpacity
 } from 'react-native';
-import { setTruckNumber } from '../../../store/actions/formActions';
+import { setTruckNumber, changeOdometer, UpdateTruckStatus } from '../../../store/actions/formActions';
 import Colors from '../../../Colors/Colors';
 
 const TruckList = ({
-  truckNum,
   onSaveTruckNumber,
+  onOdometerUpdate,
+  onUpdateTruckStatus,
+  truck,
+  index,
   nav
 }) => {
 //
-  const truckSelectedFandler = () => {
-    onSaveTruckNumber(truckNum);
+  const truckSelectedHandler = (truckIndex) => {
+    console.log(truckIndex);
+    onSaveTruckNumber(truck.truckNum);
+    onOdometerUpdate(truck.addomer);
+    onUpdateTruckStatus(truck.status);
     nav.navigate('Dvir');
   };
 
   return (
-    <TouchableOpacity onPress={() => truckSelectedFandler()}>
+    <TouchableOpacity onPress={() => truckSelectedHandler(index)}>
       <View style={styles.container}>
-        <Text style={styles.numText}>Truck Plate: {truckNum}</Text>
+        <Text style={styles.numText}>Truck Plate: {truck.truckNum}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -52,7 +58,10 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSaveTruckNumber: (truckNum) => dispatch(setTruckNumber(truckNum))
+    onSaveTruckNumber: (truckNum) => dispatch(setTruckNumber(truckNum)),
+    onOdometerUpdate: (odometer) => dispatch(changeOdometer(odometer)),
+    onUpdateTruckStatus: (truckData) => dispatch(UpdateTruckStatus(truckData)),
+
   };
 };
 

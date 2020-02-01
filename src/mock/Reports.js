@@ -1,12 +1,23 @@
 const reports = {
-  ups: [
-    {name: 'blblaa'}
-  ],
-  hunterbg: [],
-  cita: []
+  ups: {
+    doNotDelete: 'doNotDelete'
+  },
+  hunterbg: {
+    doNotDelete: 'doNotDelete'
+  },
+  cita: {
+    doNotDelete: 'doNotDelete'
+  }
 };
+
 const faults = {
-  ups: [],
-  hunterbg: [],
-  cita: []
+  ups: {
+    doNotDelete: 'doNotDelete'
+  },
+  hunterbg: {
+    doNotDelete: 'doNotDelete'
+  },
+  cita: {
+    doNotDelete: 'doNotDelete'
+  }
 };

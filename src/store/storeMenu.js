@@ -5,6 +5,7 @@ import appUIReducer from './reducers/appUiReducer';
 import userReducer from './reducers/userReducer';
 import trucksReducer from './reducers/trucksReducer';
 import trailersReducer from './reducers/trailerReducer';
+import companyReducer from './reducers/companyReducer';
 import auth from './reducers/auth';
 
 
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   trailers: trailersReducer,
   form: formReducer,
   appUI: appUIReducer,
+  company: companyReducer,
   auth,
 });
 

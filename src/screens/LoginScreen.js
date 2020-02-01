@@ -27,13 +27,14 @@ import SpinerModal, {} from '../components/UI/Spiner/SpinerModal';
 import { setUserData } from '../store/actions/userAction';
 import { setTruckList } from '../store/actions/trucksAction';
 import { setTrailerList } from '../store/actions/trailersAction';
-
+import { saveCompanyData } from '../store/actions/companyActions';
 
 const LoginScreen = ({
   navigation,
   onUpdateUserData,
   onUpdateTrucklist,
   onUpdateTrailerlist,
+  onCompanyDataSave
 }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -100,12 +101,12 @@ const LoginScreen = ({
   };
 
   const getUserFromServer = (token, userId) => {
-    axios.get(`https://dvir-project-server.firebaseio.com/users/-Lyk-7s4l6Eugje0wzNp.json?auth=${token}`)
+    axios.get(`https://dvir-project-server.firebaseio.com/users/-M-0uwVMgVBoGMdqHfp9.json?auth=${token}`)
       .then((res) => {
-        const users = res.data;
+        const users = Object.keys(res.data);
         for (let i = 0; i < users.length; i += 1) {
-          if (users[i].userUID === userId) {
-            userFoundGetDataFromServer(users[i].company, token, userId);
+          if (users[i] === userId) {
+            userFoundGetDataFromServer(res.data[users[i]], token, userId);
             break;
           }
         }
@@ -117,11 +118,12 @@ const LoginScreen = ({
   };
 
   const userFoundGetDataFromServer = (company, token, userUID) => {
-    axios.get(`https://dvir-project-server.firebaseio.com/companysData/-LysoMQNqw_qplWWGgoR/${company}.json?auth=${token}`)
+    axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}.json?auth=${token}`)
       .then((res) => {
         findUser(userUID, res.data.drivers);
         onUpdateTrucklist(res.data.vehicle);
         onUpdateTrailerlist(res.data.trailers);
+        onCompanyDataSave(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -130,9 +132,10 @@ const LoginScreen = ({
   };
 
   const findUser = async (userUID, driversDATA) => {
-    for (let i = 0; i < driversDATA.length; i += 1) {
-      if (userUID === driversDATA[i].userID) {
-        onUpdateUserData(driversDATA[i]);
+    const drivers = Object.keys(driversDATA);
+    for (let i = 0; i < drivers.length; i += 1) {
+      if (drivers[i] === userUID) {
+        onUpdateUserData(driversDATA[drivers[i]]);
         break;
       }
     }
@@ -146,11 +149,6 @@ const LoginScreen = ({
         Keyboard.dismiss();
       }}
       >
-        {/* <View style={styles.image}>
-          <Image
-            source={require('../../assets/ic_just2.png')}
-          />
-        </View> */}
         <View style={styles.container}>
           <Text style={styles.textStyle}>Authenticate</Text>
           <TextInput
@@ -236,7 +234,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onUpdateUserData: (userData) => dispatch(setUserData(userData)),
     onUpdateTrucklist: (companyTruckList) => dispatch(setTruckList(companyTruckList)),
-    onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList))
+    onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList)),
+    onCompanyDataSave: (companyData) => dispatch(saveCompanyData(companyData))
   };
 };
 
