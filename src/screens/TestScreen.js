@@ -18,14 +18,72 @@ const TestScreen = () => {
       post(blaa);
     });
 
-  // const reports = {
-  //   ups: {
-  //     doNotDelete: 'doNotDelete'
-  //   },
-  //   cita: {
-  //     doNotDelete: 'doNotDelete'
-  //   }
-  // };
+  const reports = {
+    ups: {
+      M34F45: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      M34DE5: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      N34F45: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      N3R445: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      NDFF45: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      }
+    },
+    cita: {
+      MZZ545: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      N34FAX: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      N3V445: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      NDF145: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      },
+      ZZN345: {
+        OpenForm: false,
+        closeForms: {
+          doNotDelete: 'doNotDelete'
+        }
+      }
+    }
+  };
 
   // const users = {
   //   n9y8lXzORyMQaUdhlPSGtFCgHF63: 'cita',
@@ -34,12 +92,12 @@ const TestScreen = () => {
   //   RlPSssz2OGeOWm5A2x3drGRGAqi2: 'ups'
   // };
 
-  // const post = (token) => {
-  //   console.log(token);
-  //   axios.post(`https://dvir-project-server.firebaseio.com/reports.json?auth=${token}`, reports)
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.log(err));
-  // };
+  const post = (token) => {
+    console.log(token);
+    axios.post(`https://dvir-project-server.firebaseio.com/reports.json?auth=${token}`, reports)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
 
 
   // const get = async (token) => {

@@ -15,8 +15,8 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Colors from '../Colors/Colors';
 import OldReports from '../components/UI/MapReturnSection/OldReports';
-
-
+// import { setSavedFormBool } from '../store/actions/appUiActions';
+// להוסיף מחיקה דרך הרידקס בקומנת ולחבר לרידדקס סטאק נביגגיטור
 export const OldReportsTab = ({ navigation }) => {
   //
   return (

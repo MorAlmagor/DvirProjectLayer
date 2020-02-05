@@ -28,13 +28,31 @@ import { setUserData } from '../store/actions/userAction';
 import { setTruckList } from '../store/actions/trucksAction';
 import { setTrailerList } from '../store/actions/trailersAction';
 import { saveCompanyData } from '../store/actions/companyActions';
+import { setPostTripMode } from '../store/actions/appUiActions';
+import { setLastReports } from '../store/actions/reportAction';
+import {
+  changeCarrier,
+  setTruckNumber,
+  changeOdometer,
+  UpdateTruckStatus,
+  updateTrailer1,
+  updateTrailer2
+} from '../store/actions/formActions';
 
 const LoginScreen = ({
   navigation,
   onUpdateUserData,
   onUpdateTrucklist,
   onUpdateTrailerlist,
-  onCompanyDataSave
+  onCompanyDataSave,
+  onCarrierUpdate,
+  onSaveTruckNumber,
+  onOdometerUpdate,
+  onUpdateTruckStatus,
+  onSelectTrailer1,
+  onSelectTrailer2,
+  onSetPostTripMode,
+  onSetLastReport
 }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -120,26 +138,56 @@ const LoginScreen = ({
   const userFoundGetDataFromServer = (company, token, userUID) => {
     axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}.json?auth=${token}`)
       .then((res) => {
-        findUser(userUID, res.data.drivers);
-        onUpdateTrucklist(res.data.vehicle);
-        onUpdateTrailerlist(res.data.trailers);
-        onCompanyDataSave(res.data);
+        findUser(userUID, res.data.drivers, res.data.vehicle, res.data, company, token);
       })
       .catch((err) => {
         console.log(err);
         alert('Sorry, Cant Get Company Details. Try Again');
       });
   };
+  
+  const getLastTruckReportFromServer = (company, truckNumber, token) => {
+    axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${truckNumber}.json?auth=${token}`)
+      .then((res) => {
+        onSetLastReport(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        navigation.navigate('Login');
+      });
+  };
 
-  const findUser = async (userUID, driversDATA) => {
+  const findUser = (userUID, driversDATA, trucksData, bigData, company, token) => {
+    onCarrierUpdate(company);
+    onUpdateTrucklist(bigData.vehicle);
+    onUpdateTrailerlist(bigData.trailers);
+    onCompanyDataSave(bigData);
     const drivers = Object.keys(driversDATA);
     for (let i = 0; i < drivers.length; i += 1) {
-      if (drivers[i] === userUID) {
+      if (userUID === drivers[i]) {
         onUpdateUserData(driversDATA[drivers[i]]);
+        if (driversDATA[drivers[i]].bindTruck !== false) {
+          console.log('bind');
+          onSetPostTripMode(true);
+          onSaveTruckNumber(driversDATA[drivers[i]].bindTruck);
+          onOdometerUpdate(trucksData[driversDATA[drivers[i]].bindTruck].addomer);
+          onUpdateTruckStatus(bigData.vehicle[driversDATA[drivers[i]].bindTruck].status);
+          if (driversDATA[drivers[i]].bindTrailer1) {
+            console.log('bindT1');
+            onSelectTrailer1(bigData.trailers[driversDATA[drivers[i]].bindTrailer1]);
+          }
+          if (driversDATA[drivers[i]].bindTrailer2) {
+            console.log('bindT2');
+            onSelectTrailer2(bigData.trailers[driversDATA[drivers[i]].bindTrailer2]);
+          }
+          getLastTruckReportFromServer(company, driversDATA[drivers[i]].bindTruck, token);
+          navigation.navigate('Index');
+        } else {
+          navigation.navigate('Index');
+        }
         break;
       }
     }
-    navigation.navigate('Index');
   };
 
   return (
@@ -150,15 +198,17 @@ const LoginScreen = ({
       }}
       >
         <View style={styles.container}>
-          <Text style={styles.textStyle}>Authenticate</Text>
+          <Text style={styles.textStyle}>SIGN UP</Text>
           <TextInput
             style={styles.input}
             keyboardType="email-address"
-            placeholder="johndoe@example.com"
+            placeholder="example@example.com"
             placeholderTextColor="grey"
             textContentType="username"
             value={email}
             onChangeText={setEmail}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
           <TextInput
             secureTextEntry
@@ -170,16 +220,25 @@ const LoginScreen = ({
             maxLength={12}
             value={password}
             onChangeText={setPassword}
+            autoCorrect={false}
+
           />
-          {password.length < 12 && <Text style={styles.textWords}>Your password must be at least 8 characters</Text>}
+          {/* לא לשכוח בפינישים לפני פאנל */}
+          { password.length < 12 ? <Text style={styles.textWords}>Password must be at least 8 characters</Text> : null}
 
           <MainButton onpress={() => authHandler()}>
-            LOGIN
+            SIGN UP
           </MainButton>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>
   );
+};
+
+LoginScreen.navigationOptions = () => {
+  return {
+    header: null
+  };
 };
 
 const styles = StyleSheet.create({
@@ -235,7 +294,17 @@ const mapDispatchToProps = (dispatch) => {
     onUpdateUserData: (userData) => dispatch(setUserData(userData)),
     onUpdateTrucklist: (companyTruckList) => dispatch(setTruckList(companyTruckList)),
     onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList)),
-    onCompanyDataSave: (companyData) => dispatch(saveCompanyData(companyData))
+    onCompanyDataSave: (companyData) => dispatch(saveCompanyData(companyData)),
+
+    onCarrierUpdate: (text) => dispatch(changeCarrier(text)),
+    onSaveTruckNumber: (truckNum) => dispatch(setTruckNumber(truckNum)),
+    onOdometerUpdate: (odometer) => dispatch(changeOdometer(odometer)),
+    onUpdateTruckStatus: (truckData) => dispatch(UpdateTruckStatus(truckData)),
+    onSelectTrailer1: (trailerData) => dispatch(updateTrailer1(trailerData)),
+    onSelectTrailer2: (trailerData) => dispatch(updateTrailer2(trailerData)),
+    onSetPostTripMode: (bool) => dispatch(setPostTripMode(bool)),
+    onSetLastReport: (lastReportObj) => dispatch(setLastReports(lastReportObj))
+
   };
 };
 

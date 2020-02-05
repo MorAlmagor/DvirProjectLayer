@@ -6,6 +6,7 @@ import userReducer from './reducers/userReducer';
 import trucksReducer from './reducers/trucksReducer';
 import trailersReducer from './reducers/trailerReducer';
 import companyReducer from './reducers/companyReducer';
+import reportReducer from './reducers/reportReducer';
 import auth from './reducers/auth';
 
 
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   form: formReducer,
   appUI: appUIReducer,
   company: companyReducer,
+  report: reportReducer,
   auth,
 });
 

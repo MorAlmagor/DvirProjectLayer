@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-curly-newline */
+/* eslint-disable operator-linebreak */
+/* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable no-else-return */
 import React from 'react';
 import {
@@ -23,8 +26,8 @@ const CheckList = ({
   onRemoveTrailer1,
   onRemoveTrailer2,
   trailers,
-  onSwitchtrailer2toTrailer1
-
+  onSwitchtrailer2toTrailer1,
+  postTripMode
 }) => {
 //
   const editTrailerNumber = (title) => {
@@ -92,13 +95,16 @@ const CheckList = ({
   if (SectionTitle === 'Trailer NO.1' || SectionTitle === 'Trailer NO.2') {
     return (
       <View>
-        <View>
-          <TouchableOpacity onPress={() => editTrailerNumber(SectionTitle)}>
-            <Text>
-            Tap To Edit {SectionTitle} Number
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {!postTripMode ?
+          <View>
+            <TouchableOpacity onPress={() => editTrailerNumber(SectionTitle)}>
+              <Text>
+                Tap To Edit {SectionTitle} Number
+              </Text>
+            </TouchableOpacity>
+          </View>
+          : null
+        }
         <FlatList
           data={List}
           keyExtractor={(checkItem) => checkItem.keyId}
@@ -111,14 +117,17 @@ const CheckList = ({
             );
           }}
         />
-        <View>
-          <TouchableOpacity onPress={() => deleteTrailer(SectionTitle)}>
-            {/* לסדר UI */}
-            <Text style={{ color: 'red' }}>
-            remove {SectionTitle}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {!postTripMode ?
+          <View>
+            <TouchableOpacity onPress={() => deleteTrailer(SectionTitle)}>
+              {/* לסדר UI */}
+              <Text style={{ color: 'red' }}>
+              remove {SectionTitle}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          : null
+        }
       </View>
     );
   } else {
@@ -163,7 +172,8 @@ const mapStateToProps = (state) => {
   return {
     trailer1valid: state.form.trailer1.trailerNumber,
     trailer2valid: state.form.trailer2.trailerNumber,
-    trailers: state.trailers.trailers
+    trailers: state.trailers.trailers,
+    postTripMode: state.appUI.postTripMode
   };
 };
 

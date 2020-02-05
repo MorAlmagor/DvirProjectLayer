@@ -52,3 +52,17 @@ export const setTrailerTitle = (title) => {
     payload: title
   };
 };
+
+export const setSavedFormBool = (bool) => {
+  return {
+    type: actionTypes.SET_SAVED_FORM_BOOL,
+    payload: bool
+  };
+};
+
+export const setPostTripMode = (bool) => {
+  return {
+    type: actionTypes.SET_POST_TRIP_MODE,
+    payload: bool
+  };
+};

@@ -8,7 +8,10 @@ const initialState = {
   DATA: null,
   truckRaf: 40,
   trailerRaf: 30,
-  oddsSummery: null
+  oddsSummery: null,
+  savedFormBool: false,
+  postTripMode: false
+  
 };
 
 const reducerUI = (state = initialState, action) => {
@@ -18,6 +21,11 @@ const reducerUI = (state = initialState, action) => {
         ...state,
         trailerModalTitle: action.payload,
         
+      };
+    case actionTypes.SET_SAVED_FORM_BOOL:
+      return {
+        ...state,
+        trailerModalShow: action.payload
       };
     case actionTypes.CHANGE_MODAL_SHOW:
       return {
@@ -43,6 +51,11 @@ const reducerUI = (state = initialState, action) => {
       return {
         ...state,
         DATA: action.payload
+      };
+    case actionTypes.SET_POST_TRIP_MODE:
+      return {
+        ...state,
+        postTripMode: action.payload
       };
     case actionTypes.SET_TRAILER_TITLE:
       return {
