@@ -17,8 +17,17 @@ import * as authActions from '../store/actions/auth';
 import { setUserData } from '../store/actions/userAction';
 import { setTruckList } from '../store/actions/trucksAction';
 import { setTrailerList } from '../store/actions/trailersAction';
-import { changeCarrier } from '../store/actions/formActions';
+import { setPostTripMode } from '../store/actions/appUiActions';
 import { saveCompanyData } from '../store/actions/companyActions';
+import { setLastReports } from '../store/actions/reportAction';
+import {
+  changeCarrier,
+  setTruckNumber,
+  changeOdometer,
+  UpdateTruckStatus,
+  updateTrailer1,
+  updateTrailer2
+} from '../store/actions/formActions';
 
 
 const StartScreen = ({
@@ -27,7 +36,14 @@ const StartScreen = ({
   onUpdateTrucklist,
   onUpdateTrailerlist,
   onCarrierUpdate,
-  onCompanyDataSave
+  onCompanyDataSave,
+  onSaveTruckNumber,
+  onOdometerUpdate,
+  onUpdateTruckStatus,
+  onSelectTrailer1,
+  onSelectTrailer2,
+  onSetPostTripMode,
+  onSetLastReport
 }) => {
   //
   const [skipBool, setSkipBool] = useState(false);
@@ -85,13 +101,7 @@ const StartScreen = ({
   const userFoundGetDataFromServer = (company, token, userUID) => {
     axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}.json?auth=${token}`)
       .then((res) => {
-        // להוסיף promise עדכון של היוזר
-        findUser(userUID, res.data.drivers);
-        onUpdateTrucklist(res.data.vehicle);
-        onUpdateTrailerlist(res.data.trailers);
-        onCarrierUpdate(company);
-        onCompanyDataSave(res.data);
-        navigation.navigate('Index');
+        findUser(userUID, res.data.drivers, res.data.vehicle, res.data, company, token);
       })
       .catch((err) => {
         console.log(err);
@@ -99,11 +109,45 @@ const StartScreen = ({
       });
   };
 
-  const findUser = (userUID, driversDATA) => {
+  const getLastTruckReportFromServer = (company, truckNumber, token) => {
+    axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${truckNumber}.json?auth=${token}`)
+      .then((res) => {
+        onSetLastReport(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        navigation.navigate('Login');
+      });
+  };
+
+  const findUser = (userUID, driversDATA, trucksData, bigData, company, token) => {
+    onCarrierUpdate(company);
+    onUpdateTrucklist(bigData.vehicle);
+    onUpdateTrailerlist(bigData.trailers);
+    onCompanyDataSave(bigData);
     const drivers = Object.keys(driversDATA);
     for (let i = 0; i < drivers.length; i += 1) {
       if (userUID === drivers[i]) {
         onUpdateUserData(driversDATA[drivers[i]]);
+        if (driversDATA[drivers[i]].bindTruck !== false) {
+          console.log('bind');
+          onSetPostTripMode(true);
+          onSaveTruckNumber(driversDATA[drivers[i]].bindTruck);
+          onOdometerUpdate(trucksData[driversDATA[drivers[i]].bindTruck].addomer);
+          onUpdateTruckStatus(bigData.vehicle[driversDATA[drivers[i]].bindTruck].status);
+          if (driversDATA[drivers[i]].bindTrailer1) {
+            console.log('bindT1');
+            onSelectTrailer1(bigData.trailers[driversDATA[drivers[i]].bindTrailer1]);
+          }
+          if (driversDATA[drivers[i]].bindTrailer2) {
+            console.log('bindT2');
+            onSelectTrailer2(bigData.trailers[driversDATA[drivers[i]].bindTrailer2]);
+          }
+          getLastTruckReportFromServer(company, driversDATA[drivers[i]].bindTruck, token);
+          navigation.navigate('Index');
+        } else {
+          navigation.navigate('Index');
+        }
         break;
       }
     }
@@ -144,7 +188,14 @@ const mapDispatchToProps = (dispatch) => {
     onUpdateTrucklist: (companyTruckList) => dispatch(setTruckList(companyTruckList)),
     onUpdateTrailerlist: (companyTrailerList) => dispatch(setTrailerList(companyTrailerList)),
     onCarrierUpdate: (text) => dispatch(changeCarrier(text)),
-    onCompanyDataSave: (companyData) => dispatch(saveCompanyData(companyData))
+    onCompanyDataSave: (companyData) => dispatch(saveCompanyData(companyData)),
+    onSaveTruckNumber: (truckNum) => dispatch(setTruckNumber(truckNum)),
+    onOdometerUpdate: (odometer) => dispatch(changeOdometer(odometer)),
+    onUpdateTruckStatus: (truckData) => dispatch(UpdateTruckStatus(truckData)),
+    onSelectTrailer1: (trailerData) => dispatch(updateTrailer1(trailerData)),
+    onSelectTrailer2: (trailerData) => dispatch(updateTrailer2(trailerData)),
+    onSetPostTripMode: (bool) => dispatch(setPostTripMode(bool)),
+    onSetLastReport: (lastReportObj) => dispatch(setLastReports(lastReportObj))
   };
 };
 

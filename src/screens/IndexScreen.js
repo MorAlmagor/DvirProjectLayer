@@ -13,7 +13,7 @@ import {
   Image,
   AsyncStorage
 } from 'react-native';
-import { userIsConnect } from '../store/actions/appUiActions';
+import { userIsConnect, setSavedFormBool } from '../store/actions/appUiActions';
 import MainButton from '../components/UI/Buttons/MainButton';
 import * as authActions from '../store/actions/auth';
 
@@ -22,13 +22,28 @@ const IndexScreen = ({
   onUserConnection,
   userIsConnected,
   userName,
-  TripStatus
+  TripStatus,
+  onSavedFormAlert,
+  savedForm
 }) => {
   const dispatch = useDispatch();
   const [userFirstTime, setUserFirstTime] = useState(null);
   setTimeout(() => {
     CheckConnectivity();
   }, 1000);
+
+  const searchSavedForms = () => {
+    AsyncStorage.getItem('aocalDATA')
+      .then((req) => JSON.parse(req))
+      .then((json) => {
+        if (json[0].userUID) {
+          onSavedFormAlert(true);
+        } else {
+          onSavedFormAlert(false);
+        }
+      })
+      .catch(() => onSavedFormAlert(false));
+  };
 
   const CheckConnectivity = () => {
     if (Platform.OS === 'android') {
@@ -91,6 +106,7 @@ const IndexScreen = ({
         </View>
       );
     } else {
+      searchSavedForms();
       return (
         <View style={styles.container}>
           <View>
@@ -102,10 +118,13 @@ const IndexScreen = ({
           <Text style={styles.userNameText}>
             Hello {userName}
           </Text>
+          {/* {savedForm && <Text style={styles.offlineText}>
+            You have form Saved Loclaly in old reports section
+          </Text>} */}
           <View style={styles.buttonsContainer}>
             {!TripStatus
               ? <MainButton onpress={() => navigation.navigate('SelectTruck')}>Pre-Trip</MainButton>
-              : <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>}
+              : <MainButton onpress={() => navigation.navigate('Dvir')}>Post-Trip</MainButton>}
             {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
             <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
           </View>
@@ -133,6 +152,13 @@ const IndexScreen = ({
     );
   }
 };
+
+IndexScreen.navigationOptions = () => {
+  return {
+    header: null
+  };
+};
+
 const styles = StyleSheet.create({
   buttonsContainer: {
     height: '40%',
@@ -172,13 +198,15 @@ const mapStateToProps = (state) => {
     userIsConnected: state.appUI.userConnect,
     DATA: state.appUI.DATA,
     userName: state.user.name,
-    TripStatus: state.user.tripStatus
+    TripStatus: state.user.tripStatus,
+    savedForm: state.appUI.savedFormBool
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUserConnection: (isConnect) => dispatch(userIsConnect(isConnect))
+    onUserConnection: (isConnect) => dispatch(userIsConnect(isConnect)),
+    onSavedFormAlert: (bool) => dispatch(setSavedFormBool(bool)),
   };
 };
 

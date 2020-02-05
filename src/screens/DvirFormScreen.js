@@ -1,3 +1,5 @@
+/* eslint-disable no-else-return */
+/* eslint-disable semi */
 /* eslint-disable no-alert */
 /* eslint-disable padded-blocks */
 /* eslint-disable dot-notation */
@@ -37,7 +39,8 @@ const DvirFormScreen = ({
   userCompany,
   tripStatus,
   trailersData,
-  companyObj
+  companyObj,
+  postTripMode
 }) => {
   const [modalShow, setModalShow] = useState(false);
   const [checkBoxValue, setCheckBoxValue] = useState(false);
@@ -48,7 +51,8 @@ const DvirFormScreen = ({
     setModalShow(false);
     setCheckBoxValue(false);
     setClicked(false);
-    submitForm();
+    // לסדר קלין אפ אחרי שליחה לא גמור בעליל פאק מי לייף!
+    navigation.navigate('Index');
   };
 
   const submitForm = () => {
@@ -115,7 +119,111 @@ const DvirFormScreen = ({
       DATA['trailer1Number'] = fromState.trailer1.trailerNumber;
       DATA['trailer2Number'] = fromState.trailer2.trailerNumber;
     }
+    // /////////////////////////////////////////////////////// end form data to post - reports ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    // /////////////////////////////////////////////////////// start update status - company data ////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // update companyObj
+    const bigData = companyObj;
+    const statusSwitch = bigData.drivers[userUID].tripStatus;
+
+    // // driver update onTrip Status //
+    bigData.drivers[userUID].tripStatus = !statusSwitch;
+    if (postTripMode) {
+      bigData.drivers[userUID]['bindTruck'] = false;
+      bigData.drivers[userUID]['bindTrailer1'] = false;
+      bigData.drivers[userUID]['bindTrailer2'] = false;
+    } else {
+      bigData.drivers[userUID]['bindTruck'] = truckNum;
+      bigData.drivers[userUID]['bindTrailer1'] = fromState.trailer1.trailerNumber;
+      bigData.drivers[userUID]['bindTrailer2'] = fromState.trailer2.trailerNumber;
+    }
+
+    // Trucks //
+    bigData.vehicle[truckNum] = {
+      ...bigData.vehicle[truckNum],
+      addomer: fromState.lastOdometer,
+      onTrip: !fromState.onTrip,
+      status: fromState.truckStatus,
+    };
+    // // trailers //
+    const trailersDataToServer = trailersData;
+    const trailer1Num = fromState.trailer1.trailerNumber
+    const trailer2Num = fromState.trailer2.trailerNumber
+    if (trailer1Num && !trailer2Num) {
+      const switchTrailerStatus = trailersDataToServer[trailer1Num].onTrip;
+      trailersDataToServer[trailer1Num] = {
+        onTrip: !switchTrailerStatus,
+        status: {
+          brakeConnections: fromState.trailer1.brakeConnectionsTrailer1,
+          brakes: fromState.trailer1.brakesTrailer1,
+          couplingDevices: fromState.trailer1.couplingDevicesTrailer1,
+          couplingKingPin: fromState.trailer1.couplingKingPinTrailer1,
+          doors: fromState.trailer1.doorsTrailer1,
+          hitch: fromState.trailer1.hitchTrailer1,
+          landingGear: fromState.trailer1.landingGearTrailer1,
+          lights: fromState.trailer1.lightsTrailer1,
+          reflectors: fromState.trailer1.reflectorsTrailer1,
+          roof: fromState.trailer1.roofTrailer1,
+          suspensionSystem: fromState.trailer1.suspensionSystemTrailer1,
+          straps: fromState.trailer1.strapsTrailer1,
+          tarpulin: fromState.trailer1.tarpulinTrailer1,
+          tires: fromState.trailer1.tiresTrailer1,
+          wheelsAndRim: fromState.trailer1.wheelsAndRimTrailer1
+        },
+        trailerID: trailersDataToServer[trailer1Num].trailerID,
+        trailerNumber: trailersDataToServer[trailer1Num].trailerNumber
+      };
+    } else if (trailer1Num && trailer2Num) {
+      const switchTrailer1Status = trailersDataToServer[trailer1Num].onTrip;
+      const switchTrailer2Status = trailersDataToServer[trailer2Num].onTrip;
+      trailersDataToServer[trailer1Num] = {
+        onTrip: !switchTrailer1Status,
+        status: {
+          brakeConnections: fromState.trailer1.brakeConnectionsTrailer1,
+          brakes: fromState.trailer1.brakesTrailer1,
+          couplingDevices: fromState.trailer1.couplingDevicesTrailer1,
+          couplingKingPin: fromState.trailer1.couplingKingPinTrailer1,
+          doors: fromState.trailer1.doorsTrailer1,
+          hitch: fromState.trailer1.hitchTrailer1,
+          landingGear: fromState.trailer1.landingGearTrailer1,
+          lights: fromState.trailer1.lightsTrailer1,
+          reflectors: fromState.trailer1.reflectorsTrailer1,
+          roof: fromState.trailer1.roofTrailer1,
+          suspensionSystem: fromState.trailer1.suspensionSystemTrailer1,
+          straps: fromState.trailer1.strapsTrailer1,
+          tarpulin: fromState.trailer1.tarpulinTrailer1,
+          tires: fromState.trailer1.tiresTrailer1,
+          wheelsAndRim: fromState.trailer1.wheelsAndRimTrailer1
+        },
+        trailerID: trailersDataToServer[trailer1Num].trailerID,
+        trailerNumber: trailersDataToServer[trailer1Num].trailerNumber
+      };
+      trailersDataToServer[trailer2Num] = {
+        onTrip: !switchTrailer2Status,
+        status: {
+          brakeConnections: fromState.trailer2.brakeConnectionsTrailer2,
+          brakes: fromState.trailer2.brakesTrailer2,
+          couplingDevices: fromState.trailer2.couplingDevicesTrailer2,
+          couplingKingPin: fromState.trailer2.couplingKingPinTrailer2,
+          doors: fromState.trailer2.doorsTrailer2,
+          hitch: fromState.trailer2.hitchTrailer2,
+          landingGear: fromState.trailer2.landingGearTrailer2,
+          lights: fromState.trailer2.lightsTrailer2,
+          reflectors: fromState.trailer2.reflectorsTrailer2,
+          roof: fromState.trailer2.roofTrailer2,
+          suspensionSystem: fromState.trailer2.suspensionSystemTrailer2,
+          straps: fromState.trailer2.strapsTrailer2,
+          tarpulin: fromState.trailer2.tarpulinTrailer2,
+          tires: fromState.trailer2.tiresTrailer2,
+          wheelsAndRim: fromState.trailer2.wheelsAndRimTrailer2
+        },
+        trailerID: trailersDataToServer[trailer2Num].trailerID,
+        trailerNumber: trailersDataToServer[trailer2Num].trailerNumber
+      };
+    }
+    bigData.trailers = trailersDataToServer;
     // For Android devices
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
@@ -126,7 +234,7 @@ const DvirFormScreen = ({
             'Oops Something went wrong',
             'Please Check Your Conection',
             [
-              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly },
+              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly(bigData) },
               { text: 'Try Again', style: 'destructive', onPress: submitForm },
             ]
           );
@@ -151,7 +259,7 @@ const DvirFormScreen = ({
           'Oops Something went wrong',
           'Please Check Your Conection',
           [
-            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly },
+            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly(bigData) },
             { text: 'Try Again', style: 'destructive', onPress: submitForm },
           ]
         );
@@ -162,120 +270,38 @@ const DvirFormScreen = ({
 
     const fatchDataToServer = async () => {
 
-      const response = await axios.post(`https://dvir-project-server.firebaseio.com/reports/-LzbsM2wKeCAPE55DiRL/${userCompany}/.json?auth=${token}`, DATA);
-      if (response) {
-        // setLoading(false);
-        const resetLocalData = [];
-        try {
-          AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
-          AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
-          updateCompanyObjServer(fromState.trailer1.trailerNumber, fromState.trailer2.trailerNumber);
-        } catch (error) {
-          alert('error');
-        }
-        Alert.alert(' form has been sent successfully');
-        navigation.navigate('Index');
+      if (postTripMode) {
+        
+        // להשלים :)
       } else {
-        Alert.alert(
-          'Oops Something went wrong',
-          [
-            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly },
-            { text: 'Try Again', style: 'destructive', onPress: submitForm },
-          ]
-        );
+        const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/OpenForm/.json?auth=${token}`, DATA);
+        if (response) {
+          // setLoading(false);
+          const resetLocalData = [];
+          try {
+            AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
+            AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+            AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
+            //
+            axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
+              .then((res) => console.log(res))
+              .catch((err) => console.log(err));
+          } catch (error) {
+            alert('error');
+          }
+          Alert.alert(' form has been sent successfully');
+          setLoading(false);
+          setModalShow(true);
+        } else {
+          Alert.alert(
+            'Oops Something went wrong',
+            [
+              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly(bigData) },
+              { text: 'Try Again', style: 'destructive', onPress: submitForm },
+            ]
+          );
+        }
       }
-    };
-
-    const updateCompanyObjServer = (trailer1Num, trailer2Num) => {
-      const bigData = companyObj;
-      const statusSwitch = bigData.drivers[userUID].tripStatus;
-      // // driver update onTrip Status //
-      bigData.drivers[userUID].tripStatus = !statusSwitch;
-
-      // Trucks //
-      bigData.vehicle[truckNum] = {
-        ...bigData.vehicle[truckNum],
-        addomer: fromState.lastOdometer,
-        status: !fromState.truckStatus,
-      };
-      // // trailers //
-      const trailersDataToServer = trailersData;
-      if (trailer1Num && !trailer2Num) {
-        const switchTrailerStatus = trailersDataToServer[trailer1Num].onTrip;
-        trailersDataToServer[trailer1Num] = {
-          onTrip: !switchTrailerStatus,
-          status: {
-            brakeConnections: fromState.trailer1.brakeConnectionsTrailer1,
-            brakes: fromState.trailer1.brakesTrailer1,
-            couplingDevices: fromState.trailer1.couplingDevicesTrailer1,
-            couplingKingPin: fromState.trailer1.couplingKingPinTrailer1,
-            doors: fromState.trailer1.doorsTrailer1,
-            hitch: fromState.trailer1.hitchTrailer1,
-            landingGear: fromState.trailer1.landingGearTrailer1,
-            lights: fromState.trailer1.lightsTrailer1,
-            reflectors: fromState.trailer1.reflectorsTrailer1,
-            roof: fromState.trailer1.roofTrailer1,
-            suspensionSystem: fromState.trailer1.suspensionSystemTrailer1,
-            straps: fromState.trailer1.strapsTrailer1,
-            tarpulin: fromState.trailer1.tarpulinTrailer1,
-            tires: fromState.trailer1.tiresTrailer1,
-            wheelsAndRim: fromState.trailer1.wheelsAndRimTrailer1
-          },
-          trailerID: trailersDataToServer[trailer1Num].trailerID,
-          trailerNumber: trailersDataToServer[trailer1Num].trailerNumber
-        };
-      } else if (trailer1Num && trailer2Num) {
-        const switchTrailer1Status = trailersDataToServer[trailer1Num].onTrip;
-        const switchTrailer2Status = trailersDataToServer[trailer2Num].onTrip;
-        trailersDataToServer[trailer1Num] = {
-          onTrip: !switchTrailer1Status,
-          status: {
-            brakeConnections: fromState.trailer1.brakeConnectionsTrailer1,
-            brakes: fromState.trailer1.brakesTrailer1,
-            couplingDevices: fromState.trailer1.couplingDevicesTrailer1,
-            couplingKingPin: fromState.trailer1.couplingKingPinTrailer1,
-            doors: fromState.trailer1.doorsTrailer1,
-            hitch: fromState.trailer1.hitchTrailer1,
-            landingGear: fromState.trailer1.landingGearTrailer1,
-            lights: fromState.trailer1.lightsTrailer1,
-            reflectors: fromState.trailer1.reflectorsTrailer1,
-            roof: fromState.trailer1.roofTrailer1,
-            suspensionSystem: fromState.trailer1.suspensionSystemTrailer1,
-            straps: fromState.trailer1.strapsTrailer1,
-            tarpulin: fromState.trailer1.tarpulinTrailer1,
-            tires: fromState.trailer1.tiresTrailer1,
-            wheelsAndRim: fromState.trailer1.wheelsAndRimTrailer1
-          },
-          trailerID: trailersDataToServer[trailer1Num].trailerID,
-          trailerNumber: trailersDataToServer[trailer1Num].trailerNumber
-        };
-        trailersDataToServer[trailer2Num] = {
-          onTrip: !switchTrailer2Status,
-          status: {
-            brakeConnections: fromState.trailer2.brakeConnectionsTrailer2,
-            brakes: fromState.trailer2.brakesTrailer2,
-            couplingDevices: fromState.trailer2.couplingDevicesTrailer2,
-            couplingKingPin: fromState.trailer2.couplingKingPinTrailer2,
-            doors: fromState.trailer2.doorsTrailer2,
-            hitch: fromState.trailer2.hitchTrailer2,
-            landingGear: fromState.trailer2.landingGearTrailer2,
-            lights: fromState.trailer2.lightsTrailer2,
-            reflectors: fromState.trailer2.reflectorsTrailer2,
-            roof: fromState.trailer2.roofTrailer2,
-            suspensionSystem: fromState.trailer2.suspensionSystemTrailer2,
-            straps: fromState.trailer2.strapsTrailer2,
-            tarpulin: fromState.trailer2.tarpulinTrailer2,
-            tires: fromState.trailer2.tiresTrailer2,
-            wheelsAndRim: fromState.trailer2.wheelsAndRimTrailer2
-          },
-          trailerID: trailersDataToServer[trailer2Num].trailerID,
-          trailerNumber: trailersDataToServer[trailer2Num].trailerNumber
-        };
-      }
-      bigData.trailers = trailersDataToServer;
-      axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
-        .then((res) => console.log(res))
-        .catch((err) => console.log(err));
     };
 
     const storeData = (json) => {
@@ -291,23 +317,31 @@ const DvirFormScreen = ({
         alert('error');
       }
     };
-
+  
     const retrieveData = () => {
       AsyncStorage.getItem('aocalDATA')
         .then((req) => JSON.parse(req))
         .then((json) => storeData(json))
         .catch((error) => alert(error));
     };
-
-
-    const SaveDataLocaly = () => {
+  
+    const retrieveCompanyUpdateServerData = () => {
+      AsyncStorage.getItem('aocalCOMPANY')
+        .then((req) => JSON.parse(req))
+        .then((json) => storeData(json))
+        .catch((error) => alert(error));
+    };
+  
+  
+    const SaveDataLocaly = (companysCurrentObj) => {
       retrieveData();
+      retrieveCompanyUpdateServerData(companysCurrentObj)
       onSaveData(DATA);
       setLoading(false);
       navigation.navigate('Index');
     };
-
   };
+
 
   return (
     <ScrollView>
@@ -326,6 +360,7 @@ const DvirFormScreen = ({
           modalshowHandler={setModalShow}
           checkboxVal={checkBoxValue}
           setCheckBoxHandler={setCheckBoxValue}
+          submitFNC={submitForm}
         />
         {modalShow && <Modal navigation={navigation} modalshowHandler={setModalShow} clean={cleanUpHandler} />}
         {trailerModal && <AddTrailerModal />}
@@ -333,6 +368,18 @@ const DvirFormScreen = ({
       </View>
     </ScrollView>
   );
+};
+
+DvirFormScreen.navigationOptions = (modalShow) => {
+  if (modalShow) {
+    return {
+      header: null
+    };
+  } else {
+    return {
+
+    };
+  }
 };
 
 const styles = StyleSheet.create({
@@ -357,8 +404,8 @@ const mapStateToProps = (state) => {
     TripStatus: state.user.tripStatus,
     truckListData: state.trucks.trucks,
     trailersData: state.trailers.trailers,
-    companyObj: state.company.companyData
-    // יש מצב יש בעיה במשיכה מהרידקס
+    companyObj: state.company.companyData,
+    postTripMode: state.appUI.postTripMode
   };
 };
 

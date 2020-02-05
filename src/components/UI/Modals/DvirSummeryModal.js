@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable prefer-template */
 /* eslint-disable no-else-return */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { StackedBarChart } from 'react-native-svg-charts';
 import {
@@ -30,6 +30,13 @@ const DvirSummeryModal = ({
   trailerRaf,
 }) => {
   //
+  const [timerValid, setTimerValid] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimerValid(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getSummery = (tempData, type) => {
     const tempDataArreyKeys = Object.keys(tempData);
@@ -199,9 +206,7 @@ const DvirSummeryModal = ({
               />
             </TouchableOpacity>
             <View>
-              <MainButton onpress={() => clean()}>
-                Submit
-              </MainButton>
+              {timerValid && <MainButton onpress={() => clean()}>OK!</MainButton>}
             </View>
           </View>
         </ScrollView>

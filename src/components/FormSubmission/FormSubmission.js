@@ -5,7 +5,8 @@ import {
   View,
   CheckBox,
   StyleSheet,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import MainButton from '../UI/Buttons/MainButton';
@@ -14,23 +15,43 @@ import Colors from '../../Colors/Colors';
 
 const FormSubmission = ({
   checkboxVal,
-  modalshowHandler,
   clickedHandler,
   setCheckBoxHandler,
   clicked,
   navigation,
   locationCoords,
   userCarrier,
-  odometer
+  odometer,
+  submitFNC
 }) => {
   const odometerBool = odometer !== '';
   const carrierBool = userCarrier !== '';
+
   const submitHandler = () => {
     if (checkboxVal && locationCoords.longitude && odometerBool && carrierBool) {
-      modalshowHandler(true);
+      submitFNC();
     } else {
       clickedHandler(true);
     }
+  };
+
+
+  const lastFormValidation = () => {
+    Alert.alert(
+      'A request will verify that the details you entered are correct',
+      'There is no way to go back or make changes here...',
+      [
+        {
+          text: 'Wait!',
+          onPress: () => (null),
+          style: 'cancel',
+        },
+        {
+          text: 'OK, Submit',
+          onPress: () => submitHandler()
+        },
+      ],
+    );
   };
 
   return (
@@ -62,7 +83,7 @@ const FormSubmission = ({
         && <Text style={styles.termsOfUsealert}>Please Type Your Carrier</Text>}
       {clicked && !odometerBool
         && <Text style={styles.termsOfUsealert}>Please type Truck Odometer</Text>}
-      <MainButton onpress={submitHandler}>SUBMIT</MainButton>
+      <MainButton onpress={lastFormValidation}>SUBMIT</MainButton>
     </View>
   );
 };
