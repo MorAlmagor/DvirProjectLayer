@@ -40,7 +40,9 @@ const DvirFormScreen = ({
   tripStatus,
   trailersData,
   companyObj,
-  postTripMode
+  postTripMode,
+  lastPreTripObj,
+  // ///////////
 }) => {
   const [modalShow, setModalShow] = useState(false);
   const [checkBoxValue, setCheckBoxValue] = useState(false);
@@ -123,7 +125,7 @@ const DvirFormScreen = ({
 
 
     // /////////////////////////////////////////////////////// start update status - company data ////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     // update companyObj
     const bigData = companyObj;
     const statusSwitch = bigData.drivers[userUID].tripStatus;
@@ -144,7 +146,7 @@ const DvirFormScreen = ({
     bigData.vehicle[truckNum] = {
       ...bigData.vehicle[truckNum],
       addomer: fromState.lastOdometer,
-      onTrip: !fromState.onTrip,
+      onTrip: !statusSwitch,
       status: fromState.truckStatus,
     };
     // // trailers //
@@ -152,9 +154,8 @@ const DvirFormScreen = ({
     const trailer1Num = fromState.trailer1.trailerNumber
     const trailer2Num = fromState.trailer2.trailerNumber
     if (trailer1Num && !trailer2Num) {
-      const switchTrailerStatus = trailersDataToServer[trailer1Num].onTrip;
       trailersDataToServer[trailer1Num] = {
-        onTrip: !switchTrailerStatus,
+        onTrip: !statusSwitch,
         status: {
           brakeConnections: fromState.trailer1.brakeConnectionsTrailer1,
           brakes: fromState.trailer1.brakesTrailer1,
@@ -176,10 +177,8 @@ const DvirFormScreen = ({
         trailerNumber: trailersDataToServer[trailer1Num].trailerNumber
       };
     } else if (trailer1Num && trailer2Num) {
-      const switchTrailer1Status = trailersDataToServer[trailer1Num].onTrip;
-      const switchTrailer2Status = trailersDataToServer[trailer2Num].onTrip;
       trailersDataToServer[trailer1Num] = {
-        onTrip: !switchTrailer1Status,
+        onTrip: !statusSwitch,
         status: {
           brakeConnections: fromState.trailer1.brakeConnectionsTrailer1,
           brakes: fromState.trailer1.brakesTrailer1,
@@ -201,7 +200,7 @@ const DvirFormScreen = ({
         trailerNumber: trailersDataToServer[trailer1Num].trailerNumber
       };
       trailersDataToServer[trailer2Num] = {
-        onTrip: !switchTrailer2Status,
+        onTrip: !statusSwitch,
         status: {
           brakeConnections: fromState.trailer2.brakeConnectionsTrailer2,
           brakes: fromState.trailer2.brakesTrailer2,
@@ -271,8 +270,29 @@ const DvirFormScreen = ({
     const fatchDataToServer = async () => {
 
       if (postTripMode) {
-        
-        // להשלים :)
+        const truckReportData = lastPreTripObj;
+        const openForm = truckReportData.OpenForm;
+        if (typeof truckReportData === 'object') {
+          truckReportData.OpenForm = false;
+          truckReportData.closeForms[date] = {
+            preTripForm: openForm,
+            postTripForm: DATA
+          }
+          setLoading(false);
+          setModalShow(true);
+        }
+        axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/.json?auth=${token}`, truckReportData)
+          .then(() => {
+            axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
+              .then(() => {
+                setLoading(false);
+                setModalShow(true);
+                AsyncStorage.removeItem('lastReport');
+              })
+              .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err));
+
       } else {
         const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/OpenForm/.json?auth=${token}`, DATA);
         if (response) {
@@ -282,6 +302,7 @@ const DvirFormScreen = ({
             AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
             AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
             AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
+            AsyncStorage.setItem('lastReport', JSON.stringify(DATA));
             //
             axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
               .then((res) => console.log(res))
@@ -317,22 +338,22 @@ const DvirFormScreen = ({
         alert('error');
       }
     };
-  
+
     const retrieveData = () => {
       AsyncStorage.getItem('aocalDATA')
         .then((req) => JSON.parse(req))
         .then((json) => storeData(json))
         .catch((error) => alert(error));
     };
-  
+
     const retrieveCompanyUpdateServerData = () => {
       AsyncStorage.getItem('aocalCOMPANY')
         .then((req) => JSON.parse(req))
         .then((json) => storeData(json))
         .catch((error) => alert(error));
     };
-  
-  
+
+
     const SaveDataLocaly = (companysCurrentObj) => {
       retrieveData();
       retrieveCompanyUpdateServerData(companysCurrentObj)
@@ -342,32 +363,37 @@ const DvirFormScreen = ({
     };
   };
 
-
-  return (
-    <ScrollView>
-      <View>
-        {!tripStatus
-          ? <Text style={styles.title}>Pre-Trip</Text>
-          : <Text style={styles.title}>Pre-Trip</Text>}
-        <FormIntroSection
-          truckProperties={truckProperties}
-          dvirStatus={false}
-        />
-        <Form navigation={navigation} />
-        <FormSubmission
-          clickedHandler={setClicked}
-          clicked={clicked}
-          modalshowHandler={setModalShow}
-          checkboxVal={checkBoxValue}
-          setCheckBoxHandler={setCheckBoxValue}
-          submitFNC={submitForm}
-        />
-        {modalShow && <Modal navigation={navigation} modalshowHandler={setModalShow} clean={cleanUpHandler} />}
-        {trailerModal && <AddTrailerModal />}
-        {loading && <SpinerModal />}
-      </View>
-    </ScrollView>
-  );
+  if (modalShow) {
+    return (
+      <Modal navigation={navigation} modalshowHandler={setModalShow} clean={cleanUpHandler} />
+    )
+  } else {
+    console.log(!tripStatus)
+    return (
+      <ScrollView>
+        <View>
+          {tripStatus
+            ? <Text style={styles.title}>Post-Trip</Text>
+            : <Text style={styles.title}>Pre-Trip</Text>}
+          <FormIntroSection
+            truckProperties={truckProperties}
+            dvirStatus={false}
+          />
+          <Form navigation={navigation} />
+          <FormSubmission
+            clickedHandler={setClicked}
+            clicked={clicked}
+            modalshowHandler={setModalShow}
+            checkboxVal={checkBoxValue}
+            setCheckBoxHandler={setCheckBoxValue}
+            submitFNC={submitForm}
+          />
+          {trailerModal && <AddTrailerModal />}
+          {loading && <SpinerModal />}
+        </View>
+      </ScrollView>
+    );
+  }
 };
 
 DvirFormScreen.navigationOptions = (modalShow) => {
@@ -401,11 +427,12 @@ const mapStateToProps = (state) => {
     token: state.auth.token,
     userUID: state.auth.userId,
     userCompany: state.form.carrier,
-    TripStatus: state.user.tripStatus,
+    tripStatus: state.user.tripStatus,
     truckListData: state.trucks.trucks,
     trailersData: state.trailers.trailers,
     companyObj: state.company.companyData,
-    postTripMode: state.appUI.postTripMode
+    postTripMode: state.appUI.postTripMode,
+    lastPreTripObj: state.report.lastReport
   };
 };
 
