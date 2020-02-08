@@ -150,67 +150,65 @@ const DvirSummeryModal = ({
   // truck renk
 
   return (
-    <View style={styles.backdrop}>
-      <View style={styles.modal}>
-        <ScrollView>
-          <View style={{ width: '100%', alignItems: 'center', marginVertical: 10 }}>
-            <View style={{ width: '90%', height: 200 }}>
-              <StackedBarChart
-                style={{ height: 200 }}
-                keys={keys}
-                colors={colors}
-                data={dataScoreSummery}
-                contentInset={{ top: 30, bottom: 30 }}
-              />
-            </View>
-            <View style={{ flexDirection: 'row', width: '90%', height: 40 }}>
-              <Text style={styles.graphBar}>Full Rank</Text>
-              <Text style={styles.graphBar}>Total Rank</Text>
-              <Text style={styles.graphBar}>Truck</Text>
-              <Text style={styles.graphBar}>Trailer 1</Text>
-              <Text style={styles.graphBar}>Trailer 2</Text>
-            </View>
-            <DvirSummeryButton
-              title="Total Rank"
-              odds={totalOddsSummery.rafOdds.toFixed(0) + '%'}
-              onpress={() => navigation.navigate('Faults', {
-                truck: truckSummery,
-                tariler1: tariler1Summery,
-                tariler2: tariler2Summery,
-                total: totalOddsSummery
-              })}
+    <View style={styles.modal}>
+      <ScrollView>
+        <View style={{ width: '100%', alignItems: 'center', marginVertical: 10 }}>
+          <View style={{ width: '90%', height: 200 }}>
+            <StackedBarChart
+              style={{ height: 200 }}
+              keys={keys}
+              colors={colors}
+              data={dataScoreSummery}
+              contentInset={{ top: 30, bottom: 30 }}
             />
-            <DvirSummeryButton
-              title="Truck"
-              odds={truckSummery.rafOdds.toFixed(0) + '%'}
-              onpress={() => navigation.navigate('SemiFaults', { Sum: truckSummery, type: 'Truck' })}
-            />
-            {trailer1Valid && <DvirSummeryButton title="Trailer 1" odds={tariler1Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler1Summery, type: 'Trailer 1' })} />}
-            {trailer2Valid && <DvirSummeryButton title="Trailer 2" odds={tariler2Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler2Summery, type: 'Trailer 2' })} />}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Faults', {
-                truck: truckSummery,
-                tariler1: tariler1Summery,
-                tariler2: tariler2Summery,
-                total: totalOddsSummery
-              })}
-            >
-              <FormSummeryAlertCard
-                tariler1Summery={tariler1Summery}
-                tariler2Summery={tariler2Summery}
-                truckSummery={truckSummery}
-                truckRaf={truckRaf}
-                trailerRaf={trailerRaf}
-                trailer1Active={trailer1Valid}
-                trailer2Active={trailer2Valid}
-              />
-            </TouchableOpacity>
-            <View>
-              {timerValid && <MainButton onpress={() => clean()}>OK!</MainButton>}
-            </View>
           </View>
-        </ScrollView>
-      </View>
+          <View style={{ flexDirection: 'row', width: '90%', height: 40 }}>
+            <Text style={styles.graphBar}>Full Rank</Text>
+            <Text style={styles.graphBar}>Total Rank</Text>
+            <Text style={styles.graphBar}>Truck</Text>
+            <Text style={styles.graphBar}>Trailer 1</Text>
+            <Text style={styles.graphBar}>Trailer 2</Text>
+          </View>
+          <DvirSummeryButton
+            title="Total Rank"
+            odds={totalOddsSummery.rafOdds.toFixed(0) + '%'}
+            onpress={() => navigation.navigate('Faults', {
+              truck: truckSummery,
+              tariler1: tariler1Summery,
+              tariler2: tariler2Summery,
+              total: totalOddsSummery
+            })}
+          />
+          <DvirSummeryButton
+            title="Truck"
+            odds={truckSummery.rafOdds.toFixed(0) + '%'}
+            onpress={() => navigation.navigate('SemiFaults', { Sum: truckSummery, type: 'Truck' })}
+          />
+          {trailer1Valid && <DvirSummeryButton title="Trailer 1" odds={tariler1Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler1Summery, type: 'Trailer 1' })} />}
+          {trailer2Valid && <DvirSummeryButton title="Trailer 2" odds={tariler2Summery.rafOdds.toFixed(0) + '%'} onpress={() => navigation.navigate('SemiFaults', { Sum: tariler2Summery, type: 'Trailer 2' })} />}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Faults', {
+              truck: truckSummery,
+              tariler1: tariler1Summery,
+              tariler2: tariler2Summery,
+              total: totalOddsSummery
+            })}
+          >
+            <FormSummeryAlertCard
+              tariler1Summery={tariler1Summery}
+              tariler2Summery={tariler2Summery}
+              truckSummery={truckSummery}
+              truckRaf={truckRaf}
+              trailerRaf={trailerRaf}
+              trailer1Active={trailer1Valid}
+              trailer2Active={trailer2Valid}
+            />
+          </TouchableOpacity>
+          <View>
+            {timerValid && <MainButton onpress={() => clean()}>OK!</MainButton>}
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };

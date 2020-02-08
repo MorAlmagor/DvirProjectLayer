@@ -1,7 +1,13 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-alert */
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
+
+import axios from 'axios';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
 import {
   Text,
   View,
@@ -9,22 +15,31 @@ import {
   AsyncStorage,
   ScrollView,
   Platform,
-  NetInfo
+  NetInfo,
 } from 'react-native';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Icon from 'react-native-vector-icons/Ionicons';
 import Colors from '../Colors/Colors';
 import OldReports from '../components/UI/MapReturnSection/OldReports';
-// import { setSavedFormBool } from '../store/actions/appUiActions';
-// להוסיף מחיקה דרך הרידקס בקומנת ולחבר לרידדקס סטאק נביגגיטור
-export const OldReportsTab = ({ navigation }) => {
+import PreTripPage from '../components/UI/Modals/PreTripPage';
+
+export const OldReportsTab = (props) => {
+  const [reportData, setReportData] = useState(false);
+  useEffect(() => {
+    if (!reportData) {
+      AsyncStorage.getItem('lastReport')
+        .then((val) => {
+          setReportData(JSON.parse(val));
+        });
+    }
+  }, []);
   //
   return (
     <View>
       <View style={styles.headerView}>
-        <Text style={styles.headerText}>Old Reports</Text>
+        <Text style={styles.headerText}>Old Report</Text>
       </View>
-      <Text style={styles.emptinessText}>There Is No Reports From You</Text>
+      { reportData
+        ? <PreTripPage data={reportData} />
+        : <Text style={styles.emptinessText}>There Is No Reports From You</Text>}
     </View>
   );
 };
@@ -151,8 +166,22 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = (state) => {
+  return {
+    truckNum: state.form.truckNumber,
+    token: state.auth.token,
+    userCompany: state.form.carrier,
+  };
+};
 
-export default createBottomTabNavigator({
+const mapDispatchToProps = (dispatch) => {
+  return {
+    //
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(createBottomTabNavigator({
 
   Old_Reports: {
     screen: OldReportsTab,
@@ -179,4 +208,4 @@ export default createBottomTabNavigator({
     }
   },
 
-});
+}));
