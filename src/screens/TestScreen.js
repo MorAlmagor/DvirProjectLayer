@@ -5,7 +5,7 @@ import React from 'react';
 import {
   View,
   Text,
-  AsyncStorage
+  // AsyncStorage
 } from 'react-native';
 // import axios from 'axios';
 import { connect } from 'react-redux';
@@ -128,37 +128,36 @@ const TestScreen = ({
   //     .catch((err) => console.log(err));
   // };
   const BullShitFunctionName = () => {
-    console.log(lastPreTripObj);
-    const truckReportData = lastPreTripObj;
-    const openForm = truckReportData.OpenForm;
-    const date = new Date();
-    if (typeof truckReportData === 'object') {
-      const closeFormDateKeys = Object.keys(truckReportData.closeForms);
-      if (closeFormDateKeys[0] === 'doNotDelete') {
-        truckReportData.OpenForm = false;
-        truckReportData.closeForms[date] = {
-          preTripForm: openForm,
-          postTripForm: 'DATAtoSERVER'
-        };
-        console.log(truckReportData);
-
+    const truckOldData = lastPreTripObj.closeForms;
+    if (truckOldData) {
+      const keysArr = Object.keys(truckOldData);
+      const day180 = 86400000 * 2;
+      const current = new Date();
+      const sixMounthAgoDate = new Date(current.getTime() - day180);
+      const UpdateKeys = [];
+      for (let i = 0; i < keysArr.length; i += 1) {
+        if (keysArr[i] !== 'doNotDelete') {
+          const tempSavedDate = new Date(keysArr[i]);
+          if (sixMounthAgoDate > tempSavedDate) {
+            UpdateKeys.push(keysArr[i]);
+          }
+        }
       }
+      console.log('UpdateKeys');
+      console.log(UpdateKeys);
+      console.log('truckOldData');
+      console.log(Object.keys(truckOldData));
+      for (let j = 0; j < UpdateKeys.length; j += 1) {
+        delete truckOldData[UpdateKeys[j]];
+      }
+      console.log('NEW truckOldData');
+      console.log(truckOldData);
     }
   };
-  
-  
-  
-  
-  
-  
-  
+
   
   // const test = new Object;
-  const test = {
-    a: 1,
-    b: 2,
-    c: 3
-  };
+  
   
   
   // const test1 = new Object;
@@ -166,25 +165,8 @@ const TestScreen = ({
   //   preTripForm: openForm,
   //   postTripForm: 'DATAtoSERVER'
   // };
-  
-  const testKeys = Object.keys(test);
-  testKeys.push(date);
-  
-  const testval = Object.values(test);
-  testval.push({
-    preTripForm: openForm,
-    postTripForm: 'DATAtoSERVER'
-  });
-  const ans = new Object;
-  for (let i = 0; i < testKeys.length; i += 1) {
-    ans[testKeys[i]] = testval[i];
-  }
   // console.log(ans);
-  
-  
-  
-  
-  
+
   
   // ///////////////// code ////////////////////
   // truckReportData.OpenForm = false;
@@ -198,7 +180,7 @@ const TestScreen = ({
   // truckReportData.closeForms[`${date}`] = {
   //   a: 1,
   //   b: 2
-  // };
+  // // };
   // חצי שנה אחורה
   // const day180 = 86400000 * 180;
   //   const current = new Date();
