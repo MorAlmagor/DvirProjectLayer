@@ -54,7 +54,7 @@ const DvirFormScreen = ({
     setCheckBoxValue(false);
     setClicked(false);
     // לסדר קלין אפ אחרי שליחה לא גמור בעליל פאק מי לייף!
-    navigation.navigate('Index');
+    navigation.navigate('Index', { type: 'lockApp' });
   };
 
   const submitForm = () => {
@@ -267,10 +267,36 @@ const DvirFormScreen = ({
       }
     };
 
+    const updateCloseFormObjByDate = () => {
+      const truckOldData = lastPreTripObj.closeForms;
+      if (truckOldData) {
+        const keysArr = Object.keys(truckOldData);
+        const day180 = 86400000 * 180;
+        const current = new Date();
+        const sixMounthAgoDate = new Date(current.getTime() - day180);
+        const UpdateKeys = [];
+        for (let i = 0; i < keysArr.length; i += 1) {
+          if (keysArr[i] !== 'doNotDelete') {
+            const tempSavedDate = new Date(keysArr[i]);
+            if (sixMounthAgoDate > tempSavedDate) {
+              UpdateKeys.push(keysArr[i]);
+            }
+          }
+        }
+        for (let j = 0; j < UpdateKeys.length; j += 1) {
+          delete truckOldData[UpdateKeys[j]];
+        }
+      }
+      return truckOldData;
+    };
+
     const fatchDataToServer = async () => {
 
       if (postTripMode) {
         const truckReportData = lastPreTripObj;
+        const newCloseForm = updateCloseFormObjByDate();
+        truckReportData.closeForms = newCloseForm
+
         const openForm = truckReportData.OpenForm;
         if (typeof truckReportData === 'object') {
           truckReportData.OpenForm = false;
@@ -278,20 +304,18 @@ const DvirFormScreen = ({
             preTripForm: openForm,
             postTripForm: DATA
           }
-          setLoading(false);
-          setModalShow(true);
+          axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/.json?auth=${token}`, truckReportData)
+            .then(() => {
+              axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
+                .then(() => {
+                  setLoading(false);
+                  setModalShow(true);
+                  AsyncStorage.removeItem('lastReport');
+                })
+                .catch((err) => console.log(err));
+            })
+            .catch((err) => console.log(err));
         }
-        axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/.json?auth=${token}`, truckReportData)
-          .then(() => {
-            axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
-              .then(() => {
-                setLoading(false);
-                setModalShow(true);
-                AsyncStorage.removeItem('lastReport');
-              })
-              .catch((err) => console.log(err));
-          })
-          .catch((err) => console.log(err));
 
       } else {
         const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/OpenForm/.json?auth=${token}`, DATA);

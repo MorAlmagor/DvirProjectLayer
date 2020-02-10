@@ -44,13 +44,12 @@ export const login = (email, password) => {
   };
 };
 
-export const logout = (navigation) => {
+export const logout = () => {
   AsyncStorage.setItem('userData', JSON.stringify({
     token: null,
     userId: null,
     expirationDate: null
   }));
-  navigation.navigate('Login');
 };
 
 const autoLogin = (token, userId, expirationDate) => {

@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-lonely-if */
 /* eslint-disable no-else-return */
 /* eslint-disable no-alert */
 /* eslint-disable consistent-return */
@@ -11,7 +13,8 @@ import {
   NetInfo,
   Alert,
   Image,
-  AsyncStorage
+  AsyncStorage,
+  BackHandler
 } from 'react-native';
 import { userIsConnect, setSavedFormBool } from '../store/actions/appUiActions';
 import MainButton from '../components/UI/Buttons/MainButton';
@@ -23,28 +26,22 @@ const IndexScreen = ({
   userIsConnected,
   userName,
   TripStatus,
-  onSavedFormAlert,
-  savedForm
 }) => {
   const dispatch = useDispatch();
   const [userFirstTime, setUserFirstTime] = useState(null);
+  const [lock, setLock] = useState(false);
   setTimeout(() => {
     CheckConnectivity();
   }, 1000);
 
-  const searchSavedForms = () => {
-    AsyncStorage.getItem('aocalDATA')
-      .then((req) => JSON.parse(req))
-      .then((json) => {
-        if (json[0].userUID) {
-          onSavedFormAlert(true);
-        } else {
-          onSavedFormAlert(false);
-        }
-      })
-      .catch(() => onSavedFormAlert(false));
-  };
-
+  if (navigation.state.params !== undefined) {
+    const type = navigation.state.params.type;
+    if (type === 'lockApp') {
+      if (lock === false) {
+        setLock(true);
+      }
+    }
+  }
   const CheckConnectivity = () => {
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
@@ -78,6 +75,7 @@ const IndexScreen = ({
 
   const logoutHandler = async (nav) => {
     const action = authActions.logout(nav);
+
     await dispatch(action);
     navigation.navigate('Login');
   };
@@ -106,30 +104,55 @@ const IndexScreen = ({
         </View>
       );
     } else {
-      searchSavedForms();
-      return (
-        <View style={styles.container}>
-          <View>
-            <Image
-              style={styles.image}
-              source={require('../../assets/ic_just2.png')}
-            />
+      if (lock) {
+        return (
+          <View style={styles.container}>
+            <View>
+              <Image
+                style={styles.image}
+                source={require('../../assets/ic_just2.png')}
+              />
+            </View>
+            <Text style={styles.userNameText}>
+              Hello {userName}
+            </Text>
+            {/* {savedForm && <Text style={styles.offlineText}>
+                You have form Saved Loclaly in old reports section
+              </Text>} */}
+            <View style={styles.buttonsContainer}>
+              {TripStatus
+                ? <MainButton onpress={() => alert('Successfully submitted form You will not be able to submit forms any time soon')}>Pre-Trip</MainButton>
+                : <MainButton onpress={() => navigation.navigate('Dvir')}>Post-Trip</MainButton>}
+              {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
+              <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+            </View>
           </View>
-          <Text style={styles.userNameText}>
-            Hello {userName}
-          </Text>
-          {/* {savedForm && <Text style={styles.offlineText}>
-            You have form Saved Loclaly in old reports section
-          </Text>} */}
-          <View style={styles.buttonsContainer}>
-            {!TripStatus
-              ? <MainButton onpress={() => navigation.navigate('SelectTruck')}>Pre-Trip</MainButton>
-              : <MainButton onpress={() => navigation.navigate('Dvir')}>Post-Trip</MainButton>}
-            {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
-            <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+        );
+      } else {
+        return (
+          <View style={styles.container}>
+            <View>
+              <Image
+                style={styles.image}
+                source={require('../../assets/ic_just2.png')}
+              />
+            </View>
+            <Text style={styles.userNameText}>
+              Hello {userName}
+            </Text>
+            {/* {savedForm && <Text style={styles.offlineText}>
+              You have form Saved Loclaly in old reports section
+            </Text>} */}
+            <View style={styles.buttonsContainer}>
+              {!TripStatus
+                ? <MainButton onpress={() => navigation.navigate('SelectTruck')}>Pre-Trip</MainButton>
+                : <MainButton onpress={() => navigation.navigate('Dvir')}>Post-Trip</MainButton>}
+              {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
+              <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+            </View>
           </View>
-        </View>
-      );
+        );
+      }
     }
   }
   if (!userIsConnected) {
