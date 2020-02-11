@@ -1,5 +1,5 @@
 /* eslint-disable radix */
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, BackHandler } from 'react-native';
 
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
@@ -44,12 +44,19 @@ export const login = (email, password) => {
   };
 };
 
-export const logout = () => {
+export const logout = (nav) => {
+  nav.navigate('Login');
   AsyncStorage.setItem('userData', JSON.stringify({
     token: null,
     userId: null,
     expirationDate: null
   }));
+  exitApp();
+};
+
+const exitApp = () => {
+  BackHandler.exitApp();
+  return true;
 };
 
 const autoLogin = (token, userId, expirationDate) => {
