@@ -22,23 +22,54 @@ import OldReports from '../components/UI/MapReturnSection/OldReports';
 import PreTripPage from '../components/UI/Modals/PreTripPage';
 
 export const OldReportsTab = (props) => {
-  const [reportData, setReportData] = useState(false);
+  const [allReportData, setAllReportData] = useState(false);
+  const [userData, setUserData] = useState(false);
+  const [company, setCompany] = useState(false);
+  const [userForm, setUserForm] = useState(false);
+
   useEffect(() => {
-    if (!reportData) {
-      AsyncStorage.getItem('lastReport')
-        .then((val) => {
-          setReportData(JSON.parse(val));
-        });
-    }
+    AsyncStorage.getItem('userCompany')
+      .then((userCompany) => {
+        const tempCompany = JSON.parse(userCompany);
+        setCompany(tempCompany);
+        AsyncStorage.getItem('userData')
+          .then((user) => {
+            const temp = JSON.parse(user);
+            setUserData(temp);
+          });
+      });
   }, []);
-  //
+
+
+  if (!allReportData && company && userData) {
+    axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/.json?auth=${userData.token}`)
+      .then((res) => {
+        setAllReportData(res.data);
+        findUserForm(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  const findUserForm = (data) => {
+    const truckKeys = Object.keys(data);
+    const userUID = userData.userId;
+    for (let i = 0; i < truckKeys.length; i += 1) {
+      if (data[truckKeys[i]].OpenForm !== false) {
+        if (data[truckKeys[i]].OpenForm.userUID === userUID) {
+          setUserForm(data[truckKeys[i]].OpenForm);
+        }
+      }
+    }
+  };
+  
+  
   return (
     <View>
       <View style={styles.headerView}>
-        <Text style={styles.headerText}>Old Report</Text>
+        <Text style={styles.headerText}>History</Text>
       </View>
-      { reportData
-        ? <PreTripPage data={reportData} />
+      { userForm
+        ? <PreTripPage data={userForm} />
         : <Text style={styles.emptinessText}>There Is No Reports From You</Text>}
     </View>
   );

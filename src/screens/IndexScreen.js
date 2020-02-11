@@ -14,7 +14,6 @@ import {
   Alert,
   Image,
   AsyncStorage,
-  BackHandler
 } from 'react-native';
 import { userIsConnect, setSavedFormBool } from '../store/actions/appUiActions';
 import MainButton from '../components/UI/Buttons/MainButton';
@@ -74,10 +73,24 @@ const IndexScreen = ({
   };
 
   const logoutHandler = async (nav) => {
-    const action = authActions.logout(nav);
+    Alert.alert(
+      'Are Sure?',
+      'Connection details will be removed from the system',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => logOutActions(nav) },
+      ],
+      { cancelable: false },
+    );
+  };
 
+  const logOutActions = async (nav) => {
+    const action = authActions.logout(nav);
     await dispatch(action);
-    navigation.navigate('Login');
   };
 
   if (userIsConnected) {

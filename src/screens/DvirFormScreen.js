@@ -310,7 +310,6 @@ const DvirFormScreen = ({
                 .then(() => {
                   setLoading(false);
                   setModalShow(true);
-                  AsyncStorage.removeItem('lastReport');
                 })
                 .catch((err) => console.log(err));
             })

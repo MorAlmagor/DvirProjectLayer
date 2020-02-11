@@ -158,6 +158,7 @@ const LoginScreen = ({
   };
 
   const findUser = (userUID, driversDATA, trucksData, bigData, company, token) => {
+    AsyncStorage.setItem('userCompany', JSON.stringify(company));
     onCarrierUpdate(company);
     onUpdateTrucklist(bigData.vehicle);
     onUpdateTrailerlist(bigData.trailers);
