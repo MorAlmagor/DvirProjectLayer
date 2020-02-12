@@ -69,7 +69,7 @@ export const OldReportsTab = (props) => {
         <Text style={styles.headerText}>History</Text>
       </View>
       { userForm
-        ? <PreTripPage data={userForm} />
+        ? <ScrollView><PreTripPage data={userForm} /></ScrollView>
         : <Text style={styles.emptinessText}>There Is No Reports From You</Text>}
     </View>
   );
