@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
 import {
   Text,
   View,
@@ -22,7 +23,8 @@ const FormSummeryAlertCard = ({
   truckRaf,
   trailerRaf,
   trailer1Active,
-  trailer2Active
+  trailer2Active,
+  postTripMode
 }) => {
   const TruckDetail = truckRaf > truckSummery.score;
   const Trailer1Detail = trailerRaf > tariler1Summery.score;
@@ -44,11 +46,19 @@ const FormSummeryAlertCard = ({
         {Trailer1Detail ? 'Trailer NO.1 Add To Truck & Safe For Drive' : 'Trailer NO.1 Not Safe For Drive' }
       </Text>
     );
-    SummeryAlert = (
-      <Text style={styles.alertGuildText}>
-        {TruckDetail && Trailer1Detail ? 'You\'r Allow To Ride, Drive Carefuly' : 'You\'r Not Allowed To Drive' }
-      </Text>
-    );
+    if (postTripMode) {
+      SummeryAlert = (
+        <Text style={styles.alertGuildText}>
+          {TruckDetail && Trailer1Detail ? 'Thank you for reporting the form saved' : 'Thank you for reporting the form saved \n You\'r Not Allowed To Drive' }
+        </Text>
+      );
+    } else {
+      SummeryAlert = (
+        <Text style={styles.alertGuildText}>
+          {TruckDetail && Trailer1Detail ? 'You\'r Allow To Ride, Drive Carefuly' : 'You\'r Not Allowed To Drive' }
+        </Text>
+      );
+    }
   } else if (trailer1Active !== null && trailer1Active !== null) {
     TrailersDetails = (
       <View>
@@ -104,5 +114,10 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = (state) => {
+  return {
+    postTripMode: state.appUI.postTripMode,
+  };
+};
 
-export default FormSummeryAlertCard;
+export default connect(mapStateToProps, null)(FormSummeryAlertCard);

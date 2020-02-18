@@ -1,229 +1,156 @@
-/* eslint-disable padded-blocks */
-/* eslint-disable no-multiple-empty-lines */
-/* eslint-disable no-undef */
-import React from 'react';
-import {
-  View,
-  Text,
-  // AsyncStorage
-} from 'react-native';
-// import axios from 'axios';
+/* eslint-disable max-len */
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import {
+  FlatList,
+  View,
+  TextInput,
+  StyleSheet,
+  Platform,
+  Text,
+  Dimensions
+} from 'react-native';
+import TrailerList from '../components/UI/MapReturnSection/TrailerList';
+import Colors from '../Colors/Colors';
+import ModalsButton from '../components/UI/Buttons/ModalsButton';
 
-const TestScreen = ({
-  lastPreTripObj,
+const SelectTrailerScreen = ({
+  navigation,
+  trailerListData,
+  trailerTitle,
+  trailer1Number
 }) => {
   //
+  const [textxxx, setTextxxx] = useState('');
+  const [textInputlangth, setTextInputlangth] = useState(0);
+  const [textInput, setTextInput] = useState('');
 
-  // AsyncStorage.getItem('userData')
-  //   .then((userData) => {
-  //     const test = JSON.parse(userData);
-  //     const blaa = test.token;
-  //     post(blaa);
-  //   });
+  useEffect(() => {
+    const textLang = textxxx.toUpperCase();
+    setTextInput(textLang);
+    const test = textLang.split('');
+    setTextInputlangth(test.length);
+  }, [textxxx]);
 
-  // const reports = {
-  //   ups: {
-  //     M34F45: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     M34DE5: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     N34F45: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     N3R445: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     NDFF45: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     }
-  //   },
-  //   cita: {
-  //     MZZ545: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     N34FAX: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     N3V445: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     NDF145: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     },
-  //     ZZN345: {
-  //       OpenForm: false,
-  //       closeForms: {
-  //         doNotDelete: 'doNotDelete'
-  //       }
-  //     }
-  //   }
-  // };
-
-  // const users = {
-  //   n9y8lXzORyMQaUdhlPSGtFCgHF63: 'cita',
-  //   z9T4blDxNpSzpDQpHDMYkHkx2ld2: 'cita',
-  //   XmZla6C110ejpBAxlS3b30mYDYR2: 'ups',
-  //   RlPSssz2OGeOWm5A2x3drGRGAqi2: 'ups'
-  // };
-
-  // const post = (token) => {
-  //   console.log(token);
-  //   axios.post(`https://dvir-project-server.firebaseio.com/reports.json?auth=${token}`, reports)
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.log(err));
-  // };
-
-
-  // const get = async (token) => {
-  //   await axios.get(`https://dvir-project-server.firebaseio.com/reports/-LzYKay-KcRRQSMa1D1p/ups.json?auth=${token}`)
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.log(err));
-  // };
-
-  // const del = () => {
-  //   axios.delete('https://react-burger-app-9b9c5.firebaseio.com/-LyVgH73c_k6vdM0Qgvh.json')
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.log(err));
-  // };
-
-  // const put = async () => {
-  //   const newDATA = {
-  //     name: 'avi',
-  //     lastName: 'shami',
-  //     age: '32',
-  //     car: 'volvo'
-  //   };
-  //   await axios.put('https://react-burger-app-9b9c5.firebaseio.com/users.json', newDATA)
-  //     .then((res) => console.log(res))
-  //     .catch((err) => console.log(err));
-  // };
-  const BullShitFunctionName = () => {
-    const truckOldData = lastPreTripObj.closeForms;
-    if (truckOldData) {
-      const keysArr = Object.keys(truckOldData);
-      const day180 = 86400000 * 2;
-      const current = new Date();
-      const sixMounthAgoDate = new Date(current.getTime() - day180);
-      const UpdateKeys = [];
-      for (let i = 0; i < keysArr.length; i += 1) {
-        if (keysArr[i] !== 'doNotDelete') {
-          const tempSavedDate = new Date(keysArr[i]);
-          if (sixMounthAgoDate > tempSavedDate) {
-            UpdateKeys.push(keysArr[i]);
-          }
-        }
+  let trailerListToShow = null;
+  if (textInputlangth > 3) {
+    const updateTrailerList = [];
+    const trailerListKeys = Object.keys(trailerListData);
+    for (let i = 0; i < trailerListKeys.length; i += 1) {
+      const tempFilter = trailerListKeys[i].indexOf(textInput);
+      if (!trailer1Number && !trailerListData[trailerListKeys[i]].onTrip && tempFilter !== -1) {
+        updateTrailerList.push(trailerListData[trailerListKeys[i]]);
+      } else if (trailer1Number !== trailerListKeys[i] && tempFilter !== -1 && !trailerListData[trailerListKeys[i]].onTrip) {
+        updateTrailerList.push(trailerListData[trailerListKeys[i]]);
       }
-      console.log('UpdateKeys');
-      console.log(UpdateKeys);
-      console.log('truckOldData');
-      console.log(Object.keys(truckOldData));
-      for (let j = 0; j < UpdateKeys.length; j += 1) {
-        delete truckOldData[UpdateKeys[j]];
-      }
-      console.log('NEW truckOldData');
-      console.log(truckOldData);
     }
-  };
 
-  
-  // const test = new Object;
-  
-  
-  
-  // const test1 = new Object;
-  // test1[date] = {
-  //   preTripForm: openForm,
-  //   postTripForm: 'DATAtoSERVER'
-  // };
-  // console.log(ans);
+    trailerListToShow = (
+      <FlatList
+        keyExtractor={(trailer) => trailer.trailerNumber}
+        data={updateTrailerList}
+        renderItem={({ item }) => {
+          return (
+            <TrailerList
+              trailerData={item}
+              trailerNum={item.trailerNumber}
+              trailerType={trailerTitle}
+              nav={navigation}
+            />
+          );
+        }}
+      />
+    );
+  }
 
-  
-  // ///////////////// code ////////////////////
-  // truckReportData.OpenForm = false;
-  
-  // const test = new Object;
-  // test[date] = {
-  //   preTripForm: openForm,
-  //   postTripForm: 'DATAtoSERVER'
-  // };
-  
-  // truckReportData.closeForms[`${date}`] = {
-  //   a: 1,
-  //   b: 2
-  // // };
-  // חצי שנה אחורה
-  // const day180 = 86400000 * 180;
-  //   const current = new Date();
-  //   const sixMounthAgoDate = new Date(current.getTime() - day180);
-  //   sixMounthAgoDate.toLocaleDateString();
-  //   console.log(sixMounthAgoDate);
-  
-  
-
-
-  
-  BullShitFunctionName();
   return (
-    <View>
-      <Text>smvsmv</Text>
+    <View style={styles.container}>
+      <Text style={styles.trailerNoText}>{trailerTitle}</Text>
+      <View>
+        <TextInput
+          onChangeText={(text) => setTextxxx(text)}
+          placeholder="Trailer Plate No."
+          value={textInput}
+          placeholderTextColor="grey"
+          style={styles.input}
+          autoCorrect={false}
+        />
+      </View>
+      <View style={{ marginTop: 20 }}>
+        {trailerListToShow}
+      </View>
+      <View style={styles.buttonsRow}>
+        <View style={styles.buttonsView}>
+          <ModalsButton onpress={() => navigation.goBack()}>Go back</ModalsButton>
+        </View>
+      </View>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    top: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: '20%',
+  },
+  trailerNoText: {
+    marginTop: '20%',
+    fontSize: 20,
+    color: Colors.primary,
+    fontWeight: '500',
+    alignItems: 'center',
+    marginVertical: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
+  textStyle: {
+    fontSize: 16,
+    fontWeight: '400',
+    alignSelf: 'flex-start',
+    marginVertical: 12,
+    marginLeft: 12,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
+  inputC: {
+    marginTop: 15,
+    height: 50,
+    width: '90%',
+    padding: 12,
+    top: 14,
+    borderColor: '#aa0061',
+    borderWidth: 1,
+    borderRadius: 26,
+    textAlign: 'center',
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+  },
+  input: {
+    height: 50,
+    width: 300,
+    width: Dimensions.get('window').width < 450 ? 280 : 300,
+    padding: 12,
+    marginVertical: Dimensions.get('window').height < 450 ? 8 : 10,
+    borderColor: '#aa0061',
+    borderWidth: 1,
+    borderRadius: 26,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto', אל תשני ביינתים
+    paddingVertical: 12,
+    paddingHorizontal: 12
+  },
+  buttonsRow: {
+    paddingTop: '70%',
+  }
+});
+
 const mapStateToProps = (state) => {
   return {
-    lastPreTripObj: state.report.lastReport
-
+    trailerListData: state.trailers.trailers,
+    trailerTitle: state.appUI.trailerModalTitle,
+    trailer1Number: state.form.trailer1.trailerNumber
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onSaveData: (DATA) => dispatch(setData(DATA))
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TestScreen);
-
-
-// const blaa = () => {
-//   AsyncStorage.getItem('firstTimeUser')
-//     .then((firstTimeUser) => {
-//       console.log(firstTimeUser);
-//     });
-// };
-
-// const blaa = async () => {
-//   const firstTimeUser = await AsyncStorage.getItem('firstTimeUser');
-//   console.log(firstTimeUser);
-// };
+export default connect(mapStateToProps, null)(SelectTrailerScreen);

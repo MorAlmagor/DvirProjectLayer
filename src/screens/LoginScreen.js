@@ -56,7 +56,7 @@ const LoginScreen = ({
 }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('bari@gmail.com');
+  const [email, setEmail] = useState('ziv@gmail.com');
   const [error, setError] = useState('');
   const [password, setPassword] = useState('123456');
   
@@ -224,7 +224,6 @@ const LoginScreen = ({
             autoCorrect={false}
 
           />
-          {/* לא לשכוח בפינישים לפני פאנל */}
           { password.length < 12 ? <Text style={styles.textWords}>Password must be at least 8 characters</Text> : null}
 
           <MainButton onpress={() => authHandler()}>

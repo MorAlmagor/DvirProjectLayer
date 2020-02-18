@@ -769,295 +769,295 @@ const reducer = (state = initialState, action) => {
           airCompresor: {
             keyId: 'Air Compresor',
             status: action.payload.airCompresor.status,
-            dateModified: action.payload.airCompresor,
+            dateModified: action.payload.airCompresor.dateModified,
             Score: 5
           },
           airLines: {
             keyId: 'Air Lines',
             status: action.payload.airLines.status,
-            dateModified: action.payload.airLines,
+            dateModified: action.payload.airLines.dateModified,
             Score: 4
           },
           battery: {
             keyId: 'Battery',
             status: action.payload.battery.status,
-            dateModified: action.payload.battery,
+            dateModified: action.payload.battery.dateModified,
             Score: 5
           },
           beltsAndHoses: {
             keyId: 'Belts Ans Hoses',
             status: action.payload.beltsAndHoses.status,
-            dateModified: action.payload.beltsAndHoses,
+            dateModified: action.payload.beltsAndHoses.dateModified,
             Score: 2
           },
           body: {
             keyId: 'Body',
             status: action.payload.body.status,
-            dateModified: action.payload.body,
+            dateModified: action.payload.body.dateModified,
             Score: 1
           },
           brakeAccessories: {
             keyId: 'Brake Accessories ',
             status: action.payload.brakeAccessories.status,
-            dateModified: action.payload.brakeAccessories,
+            dateModified: action.payload.brakeAccessories.dateModified,
             Score: 4
           },
           brakesParking: {
             keyId: 'Brakes Parking',
             status: action.payload.brakesParking.status,
-            dateModified: action.payload.brakesParking,
+            dateModified: action.payload.brakesParking.dateModified,
             Score: 5
           },
           brakesService: {
             keyId: 'Brakes Service',
             status: action.payload.brakesService.status,
-            dateModified: action.payload.brakesService,
+            dateModified: action.payload.brakesService.dateModified,
             Score: 5
           },
           clutch: {
             keyId: 'Clutch',
             status: action.payload.clutch.status,
-            dateModified: action.payload.clutch,
+            dateModified: action.payload.clutch.dateModified,
             Score: 3
           },
           couplingDevices: {
             keyId: 'Coupling Devices',
             status: action.payload.couplingDevices.status,
-            dateModified: action.payload.couplingDevices,
+            dateModified: action.payload.couplingDevices.dateModified,
             Score: 2
           },
           driverLine: {
             keyId: 'Driver Line',
             status: action.payload.driverLine.status,
-            dateModified: action.payload.driverLine,
+            dateModified: action.payload.driverLine.dateModified,
             Score: 2
           },
           engine: {
             keyId: 'Engine',
             status: action.payload.engine.status,
-            dateModified: action.payload.engine,
+            dateModified: action.payload.engine.dateModified,
             Score: 7
           },
           exhaust: {
             keyId: 'Exhaust',
             status: action.payload.exhaust.status,
-            dateModified: action.payload.exhaust,
+            dateModified: action.payload.exhaust.dateModified,
             Score: 2
           },
           fifthWheel: {
             keyId: 'Fifth Wheel',
             status: action.payload.fifthWheel.status,
-            dateModified: action.payload.fifthWheel,
+            dateModified: action.payload.fifthWheel.dateModified,
             Score: 2
           },
           fluidLevel: {
             keyId: 'Fluid Level',
             status: action.payload.fluidLevel.status,
-            dateModified: action.payload.fluidLevel,
+            dateModified: action.payload.fluidLevel.dateModified,
             Score: 5
           },
           frameAndAssembly: {
             keyId: 'Frame And Assembly',
             status: action.payload.frameAndAssembly.status,
-            dateModified: action.payload.frameAndAssembly,
+            dateModified: action.payload.frameAndAssembly.dateModified,
             Score: 3
           },
           frontAxle: {
             keyId: 'Front Axle',
             status: action.payload.frontAxle.status,
-            dateModified: action.payload.frontAxle,
+            dateModified: action.payload.frontAxle.dateModified,
             Score: 4
           },
           fuleTanks: {
             keyId: 'Fule Tanks',
             status: action.payload.fuleTanks.status,
-            dateModified: action.payload.fuleTanks,
+            dateModified: action.payload.fuleTanks.dateModified,
             Score: 0
           },
           generator: {
             keyId: 'Generator',
             status: action.payload.generator.status,
-            dateModified: action.payload.generator,
+            dateModified: action.payload.generator.dateModified,
             Score: 3
           },
           horn: {
             keyId: 'Horn',
             status: action.payload.horn.status,
-            dateModified: action.payload.horn,
+            dateModified: action.payload.horn.dateModified,
             Score: 1
           },
           lightHead: {
             keyId: 'LightHead',
             status: action.payload.lightHead.status,
-            dateModified: action.payload.lightHead,
+            dateModified: action.payload.lightHead.dateModified,
             Score: 2
           },
           lightStop: {
             keyId: 'Light Stop',
             status: action.payload.lightStop.status,
-            dateModified: action.payload.lightStop,
+            dateModified: action.payload.lightStop.dateModified,
             Score: 3
           },
           lightTail: {
             keyId: 'Light Tail',
             status: action.payload.lightTail.status,
-            dateModified: action.payload.lightTail,
+            dateModified: action.payload.lightTail.dateModified,
             Score: 1
           },
           lightDash: {
             keyId: 'Light Dash',
             status: action.payload.lightDash.status,
-            dateModified: action.payload.lightDash,
+            dateModified: action.payload.lightDash.dateModified,
             Score: 1
           },
           lightTurnIndicators: {
             keyId: 'Light Turn Indicators',
             status: action.payload.lightTurnIndicators.status,
-            dateModified: action.payload.lightTurnIndicators,
+            dateModified: action.payload.lightTurnIndicators.dateModified,
             Score: 2
           },
           mirrors: {
             keyId: 'Mirrors',
             status: action.payload.mirrors.status,
-            dateModified: action.payload.mirrors,
+            dateModified: action.payload.mirrors.dateModified,
             Score: 3
           },
           muffler: {
             keyId: 'Muffler',
             status: action.payload.muffler.status,
-            dateModified: action.payload.muffler,
+            dateModified: action.payload.muffler.dateModified,
             Score: 2
           },
           oilLevel: {
             keyId: 'Oil Level',
             status: action.payload.oilLevel.status,
-            dateModified: action.payload.oilLevel,
+            dateModified: action.payload.oilLevel.dateModified,
             Score: 5
           },
           radiatorLevel: {
             keyId: 'Radiator Level',
             status: action.payload.radiatorLevel.status,
-            dateModified: action.payload.radiatorLevel,
+            dateModified: action.payload.radiatorLevel.dateModified,
             Score: 4
           },
           rearEnd: {
             keyId: 'Rear End',
             status: action.payload.rearEnd.status,
-            dateModified: action.payload.rearEnd,
+            dateModified: action.payload.rearEnd.dateModified,
             Score: 3
           },
           reflectors: {
             keyId: 'Reflectors',
             status: action.payload.reflectors.status,
-            dateModified: action.payload.reflectors,
+            dateModified: action.payload.reflectors.dateModified,
             Score: 1
           },
           fireExtinguisher: {
             keyId: 'Fire Extinguisher',
             status: action.payload.fireExtinguisher.status,
-            dateModified: action.payload.fireExtinguisher,
+            dateModified: action.payload.fireExtinguisher.dateModified,
             Score: 3
           },
           flags: {
             keyId: 'Flags',
             status: action.payload.flags.status,
-            dateModified: action.payload.flags,
+            dateModified: action.payload.flags.dateModified,
             Score: 2
           },
           flares: {
             keyId: 'Flares',
             status: action.payload.flares.status,
-            dateModified: action.payload.flares,
+            dateModified: action.payload.flares.dateModified,
             Score: 2
           },
           fusees: {
             keyId: 'Fusees',
             status: action.payload.fusees.status,
-            dateModified: action.payload.fusees,
+            dateModified: action.payload.fusees.dateModified,
             Score: 1
           },
           reflectiveTriangles: {
             keyId: 'Reflective Triangles',
             status: action.payload.reflectiveTriangles.status,
-            dateModified: action.payload.reflectiveTriangles,
+            dateModified: action.payload.reflectiveTriangles.dateModified,
             Score: 1
           },
           spareBulbs: {
             keyId: 'Spare Bulbs',
             status: action.payload.spareBulbs.status,
-            dateModified: action.payload.spareBulbs,
+            dateModified: action.payload.spareBulbs.dateModified,
             Score: 1
           },
           spareFuses: {
             keyId: 'Spare Fuses',
             status: action.payload.spareFuses.status,
-            dateModified: action.payload.spareFuses,
+            dateModified: action.payload.spareFuses.dateModified,
             Score: 1
           },
           spareSealBeam: {
             keyId: 'Spare Seal Beam',
             status: action.payload.spareSealBeam.status,
-            dateModified: action.payload.spareSealBeam,
+            dateModified: action.payload.spareSealBeam.dateModified,
             Score: 1
           },
           starter: {
             keyId: 'Starter',
             status: action.payload.starter.status,
-            dateModified: action.payload.starter,
+            dateModified: action.payload.starter.dateModified,
             Score: 2
           },
           steering: {
             keyId: 'Steering',
             status: action.payload.steering.status,
-            dateModified: action.payload.steering,
+            dateModified: action.payload.steering.dateModified,
             Score: 2
           },
           suspensionSystem: {
             keyId: 'Suspension System',
             status: action.payload.suspensionSystem.status,
-            dateModified: action.payload.suspensionSystem,
+            dateModified: action.payload.suspensionSystem.dateModified,
             Score: 4
           },
           tireChains: {
             keyId: 'Tire Chains',
             status: action.payload.tireChains.status,
-            dateModified: action.payload.tireChains,
+            dateModified: action.payload.tireChains.dateModified,
             Score: 3
           },
           tires: {
             keyId: 'Tires',
             status: action.payload.tires.status,
-            dateModified: action.payload.tires,
+            dateModified: action.payload.tires.dateModified,
             Score: 5
           },
           transmission: {
             keyId: 'Transmission',
             status: action.payload.transmission.status,
-            dateModified: action.payload.transmission,
+            dateModified: action.payload.transmission.dateModified,
             Score: 4
           },
           tripRecorder: {
             keyId: 'Trip Recorder',
             status: action.payload.tripRecorder.status,
-            dateModified: action.payload.tripRecorder,
+            dateModified: action.payload.tripRecorder.dateModified,
             Score: 2
           },
           weelsAndRim: {
             keyId: 'Weels And Rim',
             status: action.payload.weelsAndRim.status,
-            dateModified: action.payload.weelsAndRim,
+            dateModified: action.payload.weelsAndRim.dateModified,
             Score: 4
           },
           windows: {
             keyId: 'Windows',
             status: action.payload.windows.status,
-            dateModified: action.payload.windows,
+            dateModified: action.payload.windows.dateModified,
             Score: 1
           },
           windshieldsWipers: {
             keyId: 'Windshields Wipers',
             status: action.payload.windshieldsWipers.status,
-            dateModified: action.payload.windshieldsWipers,
+            dateModified: action.payload.windshieldsWipers.dateModified,
             Score: 1
           }
         }

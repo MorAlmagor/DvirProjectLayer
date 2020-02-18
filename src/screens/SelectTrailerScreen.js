@@ -20,9 +20,10 @@ const SelectTrailerScreen = ({
   trailer1Number
 }) => {
   //
-  const [textxxx, setTextxxx] = useState('');
+
   const [textInputlangth, setTextInputlangth] = useState(0);
   const [textInput, setTextInput] = useState('');
+  const [textxxx, setTextxxx] = useState('');
 
   useEffect(() => {
     const textLang = textxxx.toUpperCase();
@@ -63,25 +64,25 @@ const SelectTrailerScreen = ({
   }
 
   return (
-    <View style={styles.modal}>
-      <Text style={styles.noFaultsText}>{trailerTitle}</Text>
+    <View style={{ alignItems: 'center' }}>
+      <View>
+        <Text style={styles.titleStyle}>{trailerTitle}</Text>
+      </View>
       <View>
         <TextInput
-          onChangeText={(text) => setTextxxx(text)}
-          placeholder="Tap Your Trailer Licence Plate Here!"
-          value={textInput}
           placeholderTextColor="grey"
-          style={styles.input}
+          placeholder="Tap Your Vehicle Licence Plate Here!"
+          style={styles.inputC}
+          value={textInput}
           autoCorrect={false}
+          onChangeText={(text) => setTextxxx(text)}
         />
       </View>
       <View style={{ marginTop: 20 }}>
         {trailerListToShow}
       </View>
       <View style={styles.buttonsRow}>
-        <View style={styles.buttonsView}>
-          <ModalsButton onpress={() => navigation.goBack()}>Go back</ModalsButton>
-        </View>
+        <ModalsButton onpress={() => navigation.goBack()}>Go back</ModalsButton>
       </View>
     </View>
   );
@@ -119,17 +120,13 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
   },
   input: {
-    height: 50,
-    width: 300,
-    borderColor: '#aa0061',
-    borderWidth: 1,
-    borderRadius: 26,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    // fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto', אל תשני ביינתים
-    paddingVertical: 12,
-    paddingHorizontal: 12
+    alignItems: 'center'
   },
+  buttonsRow: {
+    top: 50,
+    marginVertical: '100%',
+    position: 'absolute'
+  }
 });
 
 const mapStateToProps = (state) => {

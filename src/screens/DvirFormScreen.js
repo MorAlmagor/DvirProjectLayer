@@ -53,12 +53,10 @@ const DvirFormScreen = ({
     setModalShow(false);
     setCheckBoxValue(false);
     setClicked(false);
-    // לסדר קלין אפ אחרי שליחה לא גמור בעליל פאק מי לייף!
     navigation.navigate('Index', { type: 'lockApp' });
   };
 
   const submitForm = () => {
-    //
     setLoading(true);
     const date = new Date();
     const hours = date.getHours();
@@ -233,8 +231,8 @@ const DvirFormScreen = ({
             'Oops Something went wrong',
             'Please Check Your Conection',
             [
-              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly(bigData) },
-              { text: 'Try Again', style: 'destructive', onPress: submitForm },
+              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData) },
+              { text: 'Try Again', style: 'destructive', onPress: () => submitForm() },
             ]
           );
         }
@@ -258,8 +256,8 @@ const DvirFormScreen = ({
           'Oops Something went wrong',
           'Please Check Your Conection',
           [
-            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly(bigData) },
-            { text: 'Try Again', style: 'destructive', onPress: submitForm },
+            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData) },
+            { text: 'Try Again', style: 'destructive', onPress: () => submitForm() },
           ]
         );
       } else {
@@ -319,7 +317,6 @@ const DvirFormScreen = ({
       } else {
         const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/OpenForm/.json?auth=${token}`, DATA);
         if (response) {
-          // setLoading(false);
           const resetLocalData = [];
           try {
             AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
@@ -340,46 +337,18 @@ const DvirFormScreen = ({
           Alert.alert(
             'Oops Something went wrong',
             [
-              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: SaveDataLocaly(bigData) },
-              { text: 'Try Again', style: 'destructive', onPress: submitForm },
+              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData) },
+              { text: 'Try Again', style: 'destructive', onPress: () => submitForm },
             ]
           );
         }
       }
     };
 
-    const storeData = (json) => {
-      let tempLocalDATA = json;
-      if (tempLocalDATA === null) {
-        tempLocalDATA = [];
-      }
-      tempLocalDATA.push(DATA);
-      try {
-        AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
-        alert('saved');
-      } catch (error) {
-        alert('error');
-      }
-    };
-
-    const retrieveData = () => {
-      AsyncStorage.getItem('aocalDATA')
-        .then((req) => JSON.parse(req))
-        .then((json) => storeData(json))
-        .catch((error) => alert(error));
-    };
-
-    const retrieveCompanyUpdateServerData = () => {
-      AsyncStorage.getItem('aocalCOMPANY')
-        .then((req) => JSON.parse(req))
-        .then((json) => storeData(json))
-        .catch((error) => alert(error));
-    };
-
-
     const SaveDataLocaly = (companysCurrentObj) => {
-      retrieveData();
-      retrieveCompanyUpdateServerData(companysCurrentObj)
+      const tempLocalDATA = [DATA]
+      AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
+      AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(companysCurrentObj))
       onSaveData(DATA);
       setLoading(false);
       navigation.navigate('Index');
@@ -391,7 +360,6 @@ const DvirFormScreen = ({
       <Modal navigation={navigation} modalshowHandler={setModalShow} clean={cleanUpHandler} />
     )
   } else {
-    console.log(!tripStatus)
     return (
       <ScrollView>
         <View>
