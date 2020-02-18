@@ -153,6 +153,7 @@ const IndexScreen = ({
             <Text style={styles.userNameText}>
               Hello {userName}
             </Text>
+            {/* אחי אני לא מצליח לגרום פה לרנדר אני אמור להציג את השורה הזאת שיש טופס שמור זה נמצא ב old report  */}
             {/* {savedForm && <Text style={styles.offlineText}>
               You have form Saved Loclaly in old reports section
             </Text>} */}
@@ -180,9 +181,9 @@ const IndexScreen = ({
           />
         </View>
         <View style={styles.offlineButtonsContainer}>
-          <MainButton onpress={() => navigation.navigate('Camera')}>Pre-Trip</MainButton>
-          <MainButton onpress={() => navigation.navigate('Camera')}>Post-Trip</MainButton>
+          <MainButton onpress={() => CheckConnectivity}>Refresh</MainButton>
           <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>
+          <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
         </View>
       </View>
     );
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
     marginTop: '25%'
   },
   offlineButtonsContainer: {
-    height: '53%',
+    height: '30%',
     justifyContent: 'space-around',
   },
   container: {

@@ -8,7 +8,10 @@ import {
   Dimensions,
   TouchableOpacity,
   AsyncStorage,
-  Text
+  Text,
+  NetInfo,
+  Platform,
+  Alert
 } from 'react-native';
 import axios from 'axios';
 import { useDispatch, connect } from 'react-redux';
@@ -47,10 +50,42 @@ const StartScreen = ({
 }) => {
   //
   const [skipBool, setSkipBool] = useState(false);
+  const [renderFunction, setRenderFunction] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setSkipBool(true), 5000);
   }, []);
+
+  // const CheckConnectivity = () => {
+  //   if (Platform.OS === 'android') {
+  //     NetInfo.isConnected.fetch().then((isConnected) => {
+  //       if (isConnected) {
+  //         onUserConnection(isConnected);
+  //       } else {
+  //         onUserConnection(isConnected);
+  //       }
+  //     });
+  //   } else {
+  //     NetInfo.isConnected.addEventListener(
+  //       'connectionChange',
+  //       handleFirstConnectivityChange()
+  //     );
+  //   }
+  // };
+
+  // const handleFirstConnectivityChange = (isConnected) => {
+  //   NetInfo.isConnected.removeEventListener(
+  //     'connectionChange',
+  //     handleFirstConnectivityChange
+  //   );
+
+  //   if (isConnected === false) {
+  //     Alert.alert('You Are Offline! \n Please Check Your Connection');
+  //     onUserConnection(isConnected);
+  //   } else {
+  //     onUserConnection(isConnected);
+  //   }
+  // };
 
   let skipButton = false;
   if (skipBool) {
@@ -62,41 +97,94 @@ const StartScreen = ({
   }
 
   const dispatch = useDispatch();
+
   useEffect(() => {
-    AsyncStorage.getItem('userData').then((userData) => {
-      if (!userData) {
-        navigation.navigate('Login');
+    if (Platform.OS === 'android') {
+      NetInfo.isConnected.fetch().then((isConnected) => {
+        if (isConnected) {
+          StartLogin(isConnected);
+        } else {
+          logoutHandler();
+        }
+      });
+    } else {
+      NetInfo.isConnected.addEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange()
+      );
+    }
+
+    const handleFirstConnectivityChange = (isConnected) => {
+      NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        handleFirstConnectivityChange
+      );
+
+      if (isConnected === false) {
+        Alert.alert('You Are Offline! \n Please Check Your Connection');
+        logoutHandler(isConnected);
       } else {
-        const transformData = JSON.parse(userData);
-        if (transformData.token === null) {
+        StartLogin(isConnected);
+      }
+    };
+
+    const logoutHandler = async (nav) => {
+      Alert.alert(
+        'Sorry You Cant Continue',
+        'There Is a Problem With Your Network Connection,\n Please Check The Connection And Try Again Later',
+        [
+          {
+            text: 'Try Again',
+            onPress: () => setRenderFunction(''),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => logOutActions(nav) },
+        ],
+        { cancelable: false },
+      );
+    };
+  
+    const logOutActions = async () => {
+      const action = authActions.logout('offLine');
+      await dispatch(action);
+    };
+
+    const StartLogin = () => {
+      AsyncStorage.getItem('userData').then((userData) => {
+        if (!userData) {
           navigation.navigate('Login');
         } else {
-          const { token, userId, expirationDate } = transformData;
-          const expiryDate = new Date(expirationDate);
-          if (expiryDate <= new Date() || !token || !userId) {
+          const transformData = JSON.parse(userData);
+          if (transformData.token === null) {
             navigation.navigate('Login');
           } else {
-            axios.get(`https://dvir-project-server.firebaseio.com/users/-M-0uwVMgVBoGMdqHfp9.json?auth=${token}`)
-              .then((res) => {
-                const users = Object.keys(res.data);
-                for (let i = 0; i < users.length; i += 1) {
-                  if (users[i] === userId) {
-                    userFoundGetDataFromServer(res.data[users[i]], token, userId);
-                    break;
+            const { token, userId, expirationDate } = transformData;
+            const expiryDate = new Date(expirationDate);
+            if (expiryDate <= new Date() || !token || !userId) {
+              navigation.navigate('Login');
+            } else {
+              axios.get(`https://dvir-project-server.firebaseio.com/users/-M-0uwVMgVBoGMdqHfp9.json?auth=${token}`)
+                .then((res) => {
+                  const users = Object.keys(res.data);
+                  for (let i = 0; i < users.length; i += 1) {
+                    if (users[i] === userId) {
+                      userFoundGetDataFromServer(res.data[users[i]], token, userId);
+                      break;
+                    }
                   }
-                }
-                dispatch(authActions.authenticate(token, userId));
-              })
-              .catch((err) => {
-                console.log(err);
-                alert('Sorry, auto-login failed');
-                navigation.navigate('Login');
-              });
+                  dispatch(authActions.authenticate(token, userId));
+                })
+                .catch((err) => {
+                  console.log(err);
+                  alert('Sorry, auto-login failed');
+                  navigation.navigate('Login');
+                });
+            }
           }
         }
-      }
-    });
-  }, []);
+      });
+    };
+  }, [renderFunction]);
   //
   const userFoundGetDataFromServer = (company, token, userUID) => {
     axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}.json?auth=${token}`)

@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
@@ -13,20 +14,41 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Colors from '../../../Colors/Colors';
+import PreTripPage from '../Modals/PreTripPage';
 
-const OldReports = ({ data, index, uploadForm, deleteForm }) => {
-  // console.log(data);
-  return (
-    <View style={styles.container}>
-      {/* <Icon style={styles.iconRight} name="md-trash" size={30} /> */}
-      {/* <Icon style={styles.iconLeft} name="ios-cloud-upload" size={30} /> */}
-      <Text style={styles.typeText}>{index}</Text>
-      <Text style={styles.dateText}>Date: {data.date}</Text>
-      <Text style={styles.timeText}>Time: {data.time}</Text>
-      <Button title="Upload Form" color={Colors.primary} onPress={() => uploadForm(index)} />
-      <Button title="Delete Form" color={Colors.accent} onPress={() => deleteForm(index)} />
-    </View>
-  );
+const OldReports = ({
+  data,
+  index,
+  uploadForm,
+  deleteForm
+}) => {
+  const [preViewBool, setPreViewBool] = useState(false);
+  console.log('xxx '+ preViewBool);
+  if (preViewBool) {
+    console.log('sec')
+    return (
+      <View>
+        <Button title="Go Back" onPress={() => setPreViewBool(true)} />
+        <Button title="Upaload Form" />
+        <Button title="Delete form" />
+        <PreTripPage data={data} />
+      </View>
+    );
+  } else {
+    console.log('first')
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity onPress={() => setPreViewBool(true)}>
+          {/* <Icon style={styles.iconRight} name="md-trash" size={30} /> */}
+          {/* <Icon style={styles.iconLeft} name="ios-cloud-upload" size={30} /> */}
+          <Text style={styles.dateText}>Date: {data.date}</Text>
+          <Text style={styles.timeText}>Time: {data.time}</Text>
+        </TouchableOpacity>
+        <Button title="Upload Form" color={Colors.primary} onPress={() => uploadForm(index)} />
+        <Button title="Delete Form" color={Colors.accent} onPress={() => deleteForm(index)} />
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

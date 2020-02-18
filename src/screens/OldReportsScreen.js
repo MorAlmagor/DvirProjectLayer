@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-else-return */
 /* eslint-disable no-alert */
 /* eslint-disable prefer-template */
@@ -16,10 +17,14 @@ import {
   ScrollView,
   Platform,
   NetInfo,
+  Button,
+  Alert
 } from 'react-native';
+import SpinerModal from '../components/UI/Spiner/SpinerModal';
 import Colors from '../Colors/Colors';
 import OldReports from '../components/UI/MapReturnSection/OldReports';
 import PreTripPage from '../components/UI/Modals/PreTripPage';
+import { setPostTripMode } from '../store/actions/appUiActions';
 
 export const OldReportsTab = (props) => {
   const [allReportData, setAllReportData] = useState(false);
@@ -44,9 +49,9 @@ export const OldReportsTab = (props) => {
   if (!allReportData && company && userData) {
     axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/.json?auth=${userData.token}`)
       .then((res) => {
-        setAllReportData(res.data);
         findUserForm(res.data);
       })
+      // eslint-disable-next-line no-console
       .catch((err) => console.log(err));
   }
 
@@ -54,50 +59,66 @@ export const OldReportsTab = (props) => {
     const truckKeys = Object.keys(data);
     const userUID = userData.userId;
     for (let i = 0; i < truckKeys.length; i += 1) {
-      if (data[truckKeys[i]].OpenForm !== false) {
-        if (data[truckKeys[i]].OpenForm.userUID === userUID) {
-          setUserForm(data[truckKeys[i]].OpenForm);
-        }
+      if (data[truckKeys[i]].OpenForm !== false && data[truckKeys[i]].OpenForm.userUID === userUID) {
+        setUserForm(data[truckKeys[i]].OpenForm);
       }
     }
   };
-  
-  
+
+
   return (
     <View>
       <View style={styles.headerView}>
         <Text style={styles.headerText}>History</Text>
       </View>
-      { userForm
+      {userForm
         ? <ScrollView><PreTripPage data={userForm} /></ScrollView>
         : <Text style={styles.emptinessText}>There Is No Reports From You</Text>}
     </View>
   );
 };
+// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const LocalyForms = ({ navigation }) => {
-  //
+export const LocalyForms = (props) => {
+  const [loading, setLoading] = useState(false);
+  const [companyDataToServer, setCompanyDataToServer] = useState(false);
+  const [userData, setUserData] = useState(false);
+  const [company, setCompany] = useState(false);
   const [localData, setLocalData] = useState(false);
 
-  const loadLocalData = () => {
-    AsyncStorage.getItem('aocalDATA')
-      .then((req) => {
-        const json = JSON.parse(req);
-        setLocalData(json);
-      })
-      .catch(() => alert('error!'));
-  };
 
   useEffect(() => {
-    loadLocalData();
+    AsyncStorage.getItem('userCompany')
+      .then((userCompany) => {
+        const tempCompany = JSON.parse(userCompany);
+        setCompany(tempCompany);
+        AsyncStorage.getItem('userData')
+          .then((user) => {
+            const temp = JSON.parse(user);
+            setUserData(temp);
+            AsyncStorage.getItem('aocalDATA')
+              .then((req) => {
+                const json = JSON.parse(req);
+                if (json[0].userUID === temp.userId) {
+                  setLocalData(json);
+                  AsyncStorage.getItem('aocalCOMPANY')
+                    .then((companyData) => {
+                      const compnyDataObj = JSON.parse(companyData);
+                      setCompanyDataToServer(compnyDataObj);
+                    })
+                    .catch(() => null);
+                }
+              })
+              .catch(() => null);
+          });
+      });
   }, []);
 
-  const deleteLocalForm = async (index) => {
+  const deleteLocalForm = (index) => {
     const newData = localData;
     newData.splice(index, 1);
     try {
-      await AsyncStorage.setItem('aocalDATA', JSON.stringify(newData));
-      loadLocalData();
+      AsyncStorage.setItem('aocalDATA', JSON.stringify(newData));
     } catch (error) {
       alert('error');
     }
@@ -110,6 +131,7 @@ export const LocalyForms = ({ navigation }) => {
   };
 
   const CheckConnectivity = (dataToFatch, index) => {
+    setLoading(true);
     // For Android devices
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
@@ -117,6 +139,7 @@ export const LocalyForms = ({ navigation }) => {
           fatchDataToServer(dataToFatch, index);
         } else {
           alert('No Internet Connection');
+          setLoading(false);
         }
       });
     } else {
@@ -142,35 +165,179 @@ export const LocalyForms = ({ navigation }) => {
   };
 
   const fatchDataToServer = async (dataToFatch, index) => {
-    const response = await fetch('https://dvir-project-server.firebaseio.com/data.json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(dataToFatch)
-    });
-
-    if (response.ok) {
-      // setLoading(false);
-      alert('the form has been sent successfully');
-      deleteLocalForm(index);
-    }
-    if (response.status === 404) {
-      alert('Oops Something went wrong');
+    if (company && userData) {
+      axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`)
+        .then((companyObjData) => {
+          axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/.json?auth=${userData.token}`)
+            .then((ReportTruckData) => {
+              const localFormTruckNumber = dataToFatch[index].truckNumber;
+              const truckReportDATA = ReportTruckData.data;
+              const truckReportDATAkeys = Object.keys(truckReportDATA);
+              if (companyObjData.data.drivers[userData.userId].tripStatus === false && truckReportDATA[localFormTruckNumber].OpenForm === false) {
+                const currentCompanyData = companyObjData.data;
+                const localCompanyData = companyDataToServer;
+                currentCompanyData.drivers[userData.userId] = localCompanyData.drivers[userData.userId];
+                currentCompanyData.vehicle[dataToFatch[index].truckNumber] = localCompanyData.vehicle[dataToFatch[index].truckNumber];
+                if (currentCompanyData.drivers[userData.userId].bindTrailer1 !== false) {
+                  currentCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer1] = localCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer1];
+                  if (currentCompanyData.drivers[userData.userId].bindTrailer2 !== false) {
+                    currentCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer2] = localCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer2];
+                  }
+                }
+                preTripUpload(dataToFatch[index], currentCompanyData, dataToFatch, index);
+              } else if (companyObjData.data.drivers[userData.userId].tripStatus === true && truckReportDATA[localFormTruckNumber].OpenForm !== false) {
+                // ////////////// report obj ////////////////
+                const lastPreTripObj = truckReportDATA[localFormTruckNumber].OpenForm;
+                const newCloseForms = updateCloseFormObjByDate(truckReportDATA[localFormTruckNumber]);
+                const truckData = truckReportDATA[localFormTruckNumber];
+                if (typeof truckReportDATA[localFormTruckNumber] === 'object') {
+                  truckData.closeForms = newCloseForms;
+                  truckData.OpenForm = false;
+                  truckData.closeForms[new Date()] = {
+                    preTripForm: lastPreTripObj,
+                    postTripForm: dataToFatch[index]
+                  };
+                }
+                // ////////////// company obj ///////////////
+                const currentPostCompanyData = companyObjData.data;
+                const localCompanyData = companyDataToServer;
+                currentPostCompanyData.drivers[userData.userId] = localCompanyData.drivers[userData.userId];
+                currentPostCompanyData.vehicle[dataToFatch[index].truckNumber] = localCompanyData.vehicle[dataToFatch[index].truckNumber];
+                if (currentPostCompanyData.drivers[userData.userId].bindTrailer1 !== false) {
+                  currentPostCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer1] = localCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer1];
+                  if (currentPostCompanyData.drivers[userData.userId].bindTrailer2 !== false) {
+                    currentPostCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer2] = localCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer2];
+                  }
+                }
+                postTripUpload(truckData, currentPostCompanyData, localFormTruckNumber, dataToFatch, index);
+              } else {
+                Alert.alert(
+                  'Oops Something went wrong',
+                  'There is a problem with form reliability please fill in new form',
+                  [
+                    { text: 'Fill New Post-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('Index') },
+                  ],
+                );
+              }
+            })
+            .catch(() => fatchFalseAlert(true, dataToFatch, index));
+        })
+        .catch(() => fatchFalseAlert(true, dataToFatch, index));
     }
   };
 
+  const postTripUpload = async (truckData, companyData, truckNumber, dataToFatch, index) => {
+    axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${truckNumber}/.json?auth=${userData.token}`, truckData)
+      .then(() => {
+        axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, companyData)
+          .then(() => {
+            alert(' form has been sent successfully');
+            setLoading(false);
+            deleteLocalForm(index);
+            props.navigation.navigate('Index', { type: 'lockApp' });
+          })
+          .catch(() => fatchFalseAlert(true, dataToFatch, index));
+      })
+      .catch(() => fatchFalseAlert(true, dataToFatch, index));
+  };
+
+  const fatchFalseAlert = (tripMode, data, indexx) => {
+    if (tripMode) {
+      // post trip mode
+      Alert.alert(
+        'Oops Something went wrong',
+        'Form Not Upload',
+        [
+          { text: 'Fill New Post-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('Dvir') },
+          { text: 'Try Again', style: 'destructive', onPress: () => CheckConnectivity(data, indexx) },
+        ],
+      );
+    } else {
+      // pre trip mode
+      Alert.alert(
+        'Oops Something went wrong',
+        'Form Not Upload',
+        [
+          { text: 'Fill New Pre-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('SelectTruck') },
+          { text: 'Try Again', style: 'destructive', onPress: () => CheckConnectivity(data, indexx) },
+        ],
+      );
+    }
+  };
+
+  const updateCloseFormObjByDate = (allTruckReports) => {
+    // אחי אם יש טופס שמור ואני מנסה להעלות ונגיד אין אינטרנטנגיד אני סוגר אותו מהפלא זה מעלים לי את הדף שמוצג פה באופן שמור והוא שמור לוקלי משו מוזר
+// ישנה עוד בעיה שאנהי מוחק את הטופס ששמור לוקלית זה לא באמת מוחק אותו ואחרי זה במקום להגיד לי שאין התראות זה מציג err
+//  עוד בעיה רצינית כול פעם שאני חוזר לדף של האינד'קס דרך החץ חזורא משו שאמור להיות אפשרי זה זורק לי שגיאה של memory leak
+    const truckOldData = allTruckReports.closeForms;
+    if (allTruckReports) {
+      const keysArr = Object.keys(truckOldData);
+      const day180 = 86400000 * 180;
+      const current = new Date();
+      const sixMounthAgoDate = new Date(current.getTime() - day180);
+      const UpdateKeys = [];
+      for (let i = 0; i < keysArr.length; i += 1) {
+        if (keysArr[i] !== 'doNotDelete') {
+          const tempSavedDate = new Date(keysArr[i]);
+          if (sixMounthAgoDate > tempSavedDate) {
+            UpdateKeys.push(keysArr[i]);
+          }
+        }
+      }
+      for (let j = 0; j < UpdateKeys.length; j += 1) {
+        delete truckOldData[UpdateKeys[j]];
+      }
+    }
+    return truckOldData;
+  };
+
+  const preTripUpload = async (reports, currentCompanyData, dataToFatch, index) => {
+    const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${reports.truckNumber}/OpenForm/.json?auth=${userData.token}`, reports);
+    if (response) {
+      const resetLocalData = [];
+      try {
+        AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
+        AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+        AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
+        AsyncStorage.setItem('lastReport', JSON.stringify(reports));
+
+        axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, currentCompanyData)
+          .then(() => {
+            alert(' form has been sent successfully');
+            setLoading(false);
+            deleteLocalForm(index);
+            props.navigation.navigate('Index', { type: 'lockApp' });
+          })
+          .catch(() => fatchFalseAlert(false, dataToFatch, index));
+      } catch (error) {
+        fatchFalseAlert(false, dataToFatch, index);
+      }
+    } else {
+      fatchFalseAlert(false, dataToFatch, index);
+    }
+  };
+
+  const formView = (
+    <View>
+      <Button title="Delete Form" onPress={() => deleteLocalForm(0)} />
+      <Button title="Upload Form" onPress={() => uploadLocalForm(0)} />
+      <PreTripPage data={localData[0]} />
+    </View>
+  );
+
+
   return (
+
     <View>
       <View style={styles.headerView}>
         <Text style={styles.headerText}>Saved Reports</Text>
       </View>
       <ScrollView>
         {localData.length > 0
-          // eslint-disable-next-line max-len
-          ? localData.map((data, index) => <OldReports key={data.time} deleteForm={deleteLocalForm} uploadForm={uploadLocalForm} data={data} index={index} />)
+          ? formView
           : <Text style={styles.emptinessText}>Good! No Localy Reports</Text>}
       </ScrollView>
+      {loading && <SpinerModal />}
     </View>
   );
 };
@@ -197,22 +364,8 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => {
-  return {
-    truckNum: state.form.truckNumber,
-    token: state.auth.token,
-    userCompany: state.form.carrier,
-  };
-};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    //
-  };
-};
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(createBottomTabNavigator({
+export default createBottomTabNavigator({
 
   Old_Reports: {
     screen: OldReportsTab,
@@ -239,4 +392,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(createBottomTabNavig
     }
   },
 
-}));
+});

@@ -45,13 +45,18 @@ export const login = (email, password) => {
 };
 
 export const logout = (nav) => {
-  nav.navigate('Login');
-  AsyncStorage.setItem('userData', JSON.stringify({
-    token: null,
-    userId: null,
-    expirationDate: null
-  }));
-  exitApp();
+  if (nav === 'offLine') {
+    console.log('blaa')
+    exitApp();
+  } else {
+    nav.navigate('Login');
+    AsyncStorage.setItem('userData', JSON.stringify({
+      token: null,
+      userId: null,
+      expirationDate: null
+    }));
+    exitApp();
+  }
 };
 
 const exitApp = () => {
