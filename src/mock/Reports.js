@@ -2,22 +2,26 @@ const reports = {
   ups: {
     doNotDelete: 'doNotDelete'
   },
-  hunterbg: {
-    doNotDelete: 'doNotDelete'
-  },
   cita: {
     doNotDelete: 'doNotDelete'
   }
 };
 
-const faults = {
+const Notifications = {
   ups: {
-    doNotDelete: 'doNotDelete'
-  },
-  hunterbg: {
-    doNotDelete: 'doNotDelete'
+    generalNotifications: {
+      doNotDelete: 'doNotDelete'
+    },
+    impotentNotifications: {
+      doNotDelete: 'doNotDelete'
+    }
   },
   cita: {
-    doNotDelete: 'doNotDelete'
+    generalNotifications: {
+      doNotDelete: 'doNotDelete'
+    },
+    impotentNotifications: {
+      doNotDelete: 'doNotDelete'
+    }
   }
 };

@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -44,14 +45,18 @@ const SelectTruckScreen = ({
         keyExtractor={(truck) => truck.truckNum}
         data={updateTruckList}
         renderItem={({ item }) => {
-          return (
-            <TruckList
-              truck={item}
-              odometer={item.addomer}
-              truckNum={item.truckNum}
-              nav={navigation}
-            />
-          );
+          if (item.onTrip === false) {
+            return (
+              <TruckList
+                truck={item}
+                odometer={item.addomer}
+                truckNum={item.truckNum}
+                nav={navigation}
+              />
+            );
+          } else {
+            return null;
+          }
         }}
       />
     );

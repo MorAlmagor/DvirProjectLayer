@@ -1,6 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
+  block: '',
   age: '',
   driverID: '',
   id: '',
@@ -30,6 +31,7 @@ const userReducer = (state = initialState, action) => {
         phoneNumber: action.payload.phoneNumber,
         tripStatus: action.payload.tripStatus,
         userID: action.payload.userID,
+        block: action.payload.block
       };
     default: return state;
   }

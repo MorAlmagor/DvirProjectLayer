@@ -21,17 +21,16 @@ const FormIntroSection = ({
   onOdometerUpdate,
   onDateUpdate,
   choosenLocation,
-  onCarrierUpdate
+  onCarrierUpdate,
 }) => {
   const dateString = getStringDate();
+  
 
   onDateUpdate(dateString);
 
   const onChangeText = (OdometerInputText) => {
     onOdometerUpdate(OdometerInputText.replace(/[^0-9]/g, ''));
   };
-
-  // dvirStatus = true;
 
   let inputSction = (
     <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>

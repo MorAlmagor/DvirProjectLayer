@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-else-return */
@@ -13,7 +14,7 @@ import {
   NetInfo,
   Alert,
   Image,
-  AsyncStorage,
+  AsyncStorage
 } from 'react-native';
 import { userIsConnect, setSavedFormBool } from '../store/actions/appUiActions';
 import MainButton from '../components/UI/Buttons/MainButton';
@@ -25,12 +26,17 @@ const IndexScreen = ({
   userIsConnected,
   userName,
   TripStatus,
+  userBlock,
+  savedForm,
+  onSavedFormAlert
 }) => {
   const dispatch = useDispatch();
   const [userFirstTime, setUserFirstTime] = useState(null);
   const [lock, setLock] = useState(false);
+  const [block, setBlock] = useState(false);
   setTimeout(() => {
     CheckConnectivity();
+    setBlock(userBlock);
   }, 1000);
 
   if (navigation.state.params !== undefined) {
@@ -39,8 +45,26 @@ const IndexScreen = ({
       if (lock === false) {
         setLock(true);
       }
+    } else if (type === 'block') {
+      if (block === false) {
+        setBlock(true);
+      }
+    } else if (type === 'noLocalForm') {
+      if (block === false) {
+        onSavedFormAlert(false);
+      }
     }
   }
+  
+  AsyncStorage.getItem('aocalDATA').then((test) => {
+    const x = JSON.parse(test);
+    if (x.length > 0) {
+      onSavedFormAlert(true);
+    } else {
+      onSavedFormAlert(false);
+    }
+  });
+
   const CheckConnectivity = () => {
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
@@ -129,18 +153,40 @@ const IndexScreen = ({
             <Text style={styles.userNameText}>
               Hello {userName}
             </Text>
-            {/* {savedForm && <Text style={styles.offlineText}>
-                You have form Saved Loclaly in old reports section
-              </Text>} */}
+            {savedForm && <><Text style={styles.offlineText}> You have form Saved Loclaly</Text><Text style={styles.offlineText}>in old reports section </Text></>}
             <View style={styles.buttonsContainer}>
               {TripStatus
                 ? <MainButton onpress={() => alert('Successfully submitted form You will not be able to submit forms any time soon')}>Pre-Trip</MainButton>
-                : <MainButton onpress={() => navigation.navigate('Dvir')}>Post-Trip</MainButton>}
+                : <MainButton onpress={() => alert('Successfully submitted form You will not be able to submit forms any time soon')}>Post-Trip</MainButton>}
               {userFirstTime === null ? null : <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>}
               <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
             </View>
           </View>
         );
+      } else if (block) {
+        return (
+          <View style={styles.container}>
+            <View>
+              <Image
+                style={styles.image}
+                source={require('../../assets/ic_just2.png')}
+              />
+            </View>
+            <Text style={styles.userNameText}>
+              Hello {userName}
+            </Text>
+            <Text style={styles.offlineText}>
+              You Are Not Allowed To Take Any Action
+            </Text>
+            <Text style={styles.offlineText}>
+              Please Contact Your Manager
+            </Text>
+            <View style={styles.buttonsContainer}>
+              <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
+            </View>
+          </View>
+        );
+        //
       } else {
         return (
           <View style={styles.container}>
@@ -153,10 +199,7 @@ const IndexScreen = ({
             <Text style={styles.userNameText}>
               Hello {userName}
             </Text>
-            {/* אחי אני לא מצליח לגרום פה לרנדר אני אמור להציג את השורה הזאת שיש טופס שמור זה נמצא ב old report  */}
-            {/* {savedForm && <Text style={styles.offlineText}>
-              You have form Saved Loclaly in old reports section
-            </Text>} */}
+            {savedForm && <><Text style={styles.offlineText}> You have form Saved Loclaly</Text><Text style={styles.offlineText}>in old reports section </Text></>}
             <View style={styles.buttonsContainer}>
               {!TripStatus
                 ? <MainButton onpress={() => navigation.navigate('SelectTruck')}>Pre-Trip</MainButton>
@@ -172,16 +215,16 @@ const IndexScreen = ({
   if (!userIsConnected) {
     return (
       <View style={styles.container}>
-        <Text style={styles.offlineText}>You Are Offline</Text>
-        <Text style={styles.offlineText}>Please Check Your Connection</Text>
         <View>
           <Image
             style={styles.image}
             source={require('../../assets/ic_just2.png')}
           />
         </View>
-        <View style={styles.offlineButtonsContainer}>
-          <MainButton onpress={() => CheckConnectivity}>Refresh</MainButton>
+        <Text style={styles.offlineText}>You Are Offline</Text>
+        {savedForm && <><Text style={styles.offlineText}> You have form Saved Loclaly</Text><Text style={styles.offlineText}>in old reports section </Text></>}
+        <View style={styles.buttonsContainer}>
+          <MainButton onpress={() => CheckConnectivity()}>Refresh</MainButton>
           <MainButton onpress={() => navigation.navigate('Reports')}>Old-Reports</MainButton>
           <MainButton onpress={() => logoutHandler(navigation)}>Logout</MainButton>
         </View>
@@ -226,7 +269,10 @@ const styles = StyleSheet.create({
   offlineText: {
     color: 'red',
     fontWeight: 'bold',
-    fontSize: 20
+    fontSize: 20,
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    top: '16%'
+
   }
 });
 
@@ -236,6 +282,7 @@ const mapStateToProps = (state) => {
     DATA: state.appUI.DATA,
     userName: state.user.name,
     TripStatus: state.user.tripStatus,
+    userBlock: state.user.block,
     savedForm: state.appUI.savedFormBool
   };
 };
