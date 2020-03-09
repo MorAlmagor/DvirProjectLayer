@@ -25,7 +25,7 @@ const reducerUI = (state = initialState, action) => {
     case actionTypes.SET_SAVED_FORM_BOOL:
       return {
         ...state,
-        trailerModalShow: action.payload
+        savedFormBool: action.payload
       };
     case actionTypes.CHANGE_MODAL_SHOW:
       return {

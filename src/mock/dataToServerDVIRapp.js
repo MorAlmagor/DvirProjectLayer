@@ -3,17 +3,20 @@ export const data = {
     ups: {
       drivers: {
         XmZla6C110ejpBAxlS3b30mYDYR2: {
-          name: 'bari',
-          lastName: 'yuda brother',
           age: '56',
-          id: '3125687898',
           licenceNum: '4R55T4S5R4T',
-          licenceType: '2',
-          phoneNumber: '03001231213',
-          mail: 'bari@gmail.com',
+          bindTrailer1: false,
+          bindTrailer2: false,
+          bindTruck: false,
           driverID: 'B1321',
+          id: '3125687898',
+          lastName: 'yuda brother',
+          licenceType: '2',
+          mail: 'bari@gmail.com',
+          name: 'bari',
+          phoneNumber: '03001231213',
+          tripStatus: false,
           userID: 'XmZla6C110ejpBAxlS3b30mYDYR2',
-          tripStatus: false
         },
         RlPSssz2OGeOWm5A2x3drGRGAqi2: {
           name: 'yuda',
@@ -26,7 +29,10 @@ export const data = {
           mail: 'yuda@gmail.com',
           driverID: 'B1232',
           userID: 'RlPSssz2OGeOWm5A2x3drGRGAqi2',
-          tripStatus: false
+          tripStatus: false,
+          bindTrailer1: false,
+          bindTrailer2: false,
+          bindTruck: false,
         },
       },
       vehicle: {
@@ -2020,7 +2026,10 @@ export const data = {
           mail: 'ziv@gmail.com',
           driverID: 'CA1321',
           userID: 'z9T4blDxNpSzpDQpHDMYkHkx2ld2',
-          tripStatus: false
+          tripStatus: false,
+          bindTrailer1: false,
+          bindTrailer2: false,
+          bindTruck: false,
         },
         n9y8lXzORyMQaUdhlPSGtFCgHF63: {
           name: 'yudit',
@@ -2033,6 +2042,9 @@ export const data = {
           mail: 'yudit@gmail.com',
           driverID: 'CA1232',
           userID: 'n9y8lXzORyMQaUdhlPSGtFCgHF63',
+          bindTrailer1: false,
+          bindTrailer2: false,
+          bindTruck: false,
           tripStatus: false
         }
       },

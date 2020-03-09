@@ -28,6 +28,7 @@ const DvirSummeryModal = ({
   trailer2Valid,
   truckRaf,
   trailerRaf,
+  block
 }) => {
   //
   const [timerValid, setTimerValid] = useState(false);
@@ -37,6 +38,8 @@ const DvirSummeryModal = ({
     }, 4000);
     return () => clearTimeout(timer);
   }, []);
+
+  console.log(block);
 
   const getSummery = (tempData, type) => {
     const tempDataArreyKeys = Object.keys(tempData);

@@ -113,7 +113,6 @@ export const LocalyForms = (props) => {
           });
       });
   }, []);
-
   const deleteLocalForm = (index) => {
     const newData = localData;
     newData.splice(index, 1);
@@ -122,6 +121,7 @@ export const LocalyForms = (props) => {
     } catch (error) {
       alert('error');
     }
+    props.navigation.navigate('Index', { type: 'noLocalForm' });
   };
 
   const uploadLocalForm = (index) => {
@@ -234,6 +234,9 @@ export const LocalyForms = (props) => {
             alert(' form has been sent successfully');
             setLoading(false);
             deleteLocalForm(index);
+            const resetLocalData = false;
+            AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+            AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
             props.navigation.navigate('Index', { type: 'lockApp' });
           })
           .catch(() => fatchFalseAlert(true, dataToFatch, index));
@@ -266,9 +269,6 @@ export const LocalyForms = (props) => {
   };
 
   const updateCloseFormObjByDate = (allTruckReports) => {
-    // אחי אם יש טופס שמור ואני מנסה להעלות ונגיד אין אינטרנטנגיד אני סוגר אותו מהפלא זה מעלים לי את הדף שמוצג פה באופן שמור והוא שמור לוקלי משו מוזר
-// ישנה עוד בעיה שאנהי מוחק את הטופס ששמור לוקלית זה לא באמת מוחק אותו ואחרי זה במקום להגיד לי שאין התראות זה מציג err
-//  עוד בעיה רצינית כול פעם שאני חוזר לדף של האינד'קס דרך החץ חזורא משו שאמור להיות אפשרי זה זורק לי שגיאה של memory leak
     const truckOldData = allTruckReports.closeForms;
     if (allTruckReports) {
       const keysArr = Object.keys(truckOldData);

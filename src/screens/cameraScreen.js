@@ -1,10 +1,7 @@
-/* eslint-disable no-else-return */
-/* eslint-disable spaced-comment */
-/* eslint-disable prefer-template */
 /* eslint-disable no-alert */
-//  לא מצליח לבצע בקשה וקבלה כמו שעשינו פעם שעברה עם הרובוט המסריח נכון לעכשיו 
-// העלמתי אותו אם תוכל לעזור לי עם זה אני מוכר לך תנשמה שלי בחצי מחיר 
-// סימנתי לך למטה!!!
+/* eslint-disable no-console */
+/* eslint-disable prefer-template */
+/* eslint-disable no-else-return */
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -34,7 +31,6 @@ const CameraScreen = ({
 
   useEffect(() => {
     if (uguuKeyLink) {
-      // ביצוע בקשה לשרת של הרובוא המסריח 
       const uguuLinkEncode = base64.encode(uguuKeyLink);
       const aiBotLink = 'http://31.220.62.151:1880/lprclassifier/';
       const linkToFatch = aiBotLink + uguuLinkEncode;
@@ -106,15 +102,6 @@ const CameraScreen = ({
         uri: true,
       });
       if (!cancelled) {
-        //  אליייייי פה אחי זה מבצע בקשות ונפק עם עצמו לא אכפת לי שלא יזהה רק  שיעבוד ויחזיר לי פלט של מספר כולשהו כמו קודם 
-        //  נכון לעכשיו זה ריגקט אחד גדול ימח שמו ושם זכרו של אוגולינק 
-        //   מזכיר לך דרך פעולה צריך להעלות תמונה כתמונה לא כבלוב או בייס 64 
-        //  להעלות תמונה כקובץ תמונה
-        // jpeg או משו מהחברה האלה לשרת 
-        // את הלינק שאנחנו מקבלים להמיר לבייס 64 
-        // ואז לשים את החרא הזה אחרי השורה של הלינק של הרובוט המסריח 
-        // http://31.220.62.151:1880/lprclassifier/***כאן-צריך-להיות-הלינק-שקיבלנו-מהשרת-של-התמונה-והמרנו-לבייס64****
-        
         const base64Image = `data:image/png;base64,${base64}`;
         onSetImage(base64Image);
         const formData = new FormData();
@@ -151,8 +138,6 @@ const CameraScreen = ({
           }
         });
         const test = response.data;
-        //  פה זה לוקח את הליק שקיבלת ובפונקציה של setUguuLink() 
-        //ובפונציה זה מבצע בקשה שניה לשרת של הרובוט 
         setUguuKeyLink(test + '');
         setLoading(true);
       }
