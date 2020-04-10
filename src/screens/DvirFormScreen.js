@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-console */
 /* eslint-disable no-else-return */
 /* eslint-disable semi */
@@ -70,6 +71,7 @@ const DvirFormScreen = ({
   };
 
   const submitForm = () => {
+    console.log('sumbit')
     setLoading(true);
     const date = new Date();
     const hours = date.getHours();
@@ -143,7 +145,7 @@ const DvirFormScreen = ({
 
     // // driver update onTrip Status //
     bigData.drivers[userUID].tripStatus = !statusSwitch;
-    bigData.drivers.z9T4blDxNpSzpDQpHDMYkHkx2ld2.block = false;
+    bigData.drivers[userUID].block = false;
     if (postTripMode) {
       bigData.drivers[userUID]['bindTruck'] = false;
       bigData.drivers[userUID]['bindTrailer1'] = false;
@@ -239,13 +241,13 @@ const DvirFormScreen = ({
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
         if (isConnected) {
-          fatchDataToServer();
+          fatchDataToServer(false);
         } else {
           Alert.alert(
             'Oops Something went wrong',
             'Please Check Your Conection',
             [
-              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData) },
+              { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => fatchDataToServer(true) },
               { text: 'Try Again', style: 'destructive', onPress: () => submitForm() },
             ]
           );
@@ -270,12 +272,12 @@ const DvirFormScreen = ({
           'Oops Something went wrong',
           'Please Check Your Conection',
           [
-            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData) },
+            { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => fatchDataToServer(true) },
             { text: 'Try Again', style: 'destructive', onPress: () => submitForm() },
           ]
         );
       } else {
-        fatchDataToServer();
+        fatchDataToServer(false);
       }
     };
 
@@ -302,8 +304,9 @@ const DvirFormScreen = ({
       return truckOldData;
     };
 
-    const fatchDataToServer = async () => {
-
+    const fatchDataToServer = async (switchLocalSave) => {
+      console.log('fatchDataToServer')
+      console.log('fatchDataToServer switch : ' + switchLocalSave)
       const getSummery = (tempData, type) => {
         const tempDataArreyKeys = Object.keys(tempData);
         const tempFaults = [];
@@ -335,6 +338,8 @@ const DvirFormScreen = ({
       const TruckDetail = truckRaf > truckSummery.score;
       const Trailer1Detail = trailerRaf > tariler1Summery.score;
       const Trailer2Detail = trailerRaf > tariler2Summery.score;
+      let blockBool = TruckDetail && Trailer1Detail && Trailer2Detail;
+      blockBool = !blockBool
       let alertToServer;
 
       if (TruckDetail && Trailer1Detail && Trailer2Detail) {
@@ -342,85 +347,118 @@ const DvirFormScreen = ({
           // postTrip ok
           alertToServer = {
             type: 'END_TRIP',
-            FaultsData: truckSummery,
+            FaultsData: {
+              truckSummery,
+              tariler1Summery,
+              tariler2Summery
+            },
             data: DATA,
             userUID
           }
-          const truckReportData = lastPreTripObj;
-          const newCloseForm = updateCloseFormObjByDate();
-          truckReportData.closeForms = newCloseForm
+          const summeryData = {
+            truckStatus,
+            blockBool,
+            alertToServer
+          };
+          if (switchLocalSave) {
+            // post Trip ok local save
+            SaveDataLocaly(bigData, summeryData, false, alertToServer)
+          } else {
+            const truckReportData = lastPreTripObj;
+            const newCloseForm = updateCloseFormObjByDate();
+            truckReportData.closeForms = newCloseForm
 
-          const openForm = truckReportData.OpenForm;
-          if (typeof truckReportData === 'object') {
-            truckReportData.OpenForm = false;
-            truckReportData.closeForms[date] = {
-              preTripForm: openForm,
-              postTripForm: DATA
+            const openForm = truckReportData.OpenForm;
+            if (typeof truckReportData === 'object') {
+              truckReportData.OpenForm = false;
+              truckReportData.closeForms[date] = {
+                preTripForm: openForm,
+                postTripForm: DATA
+              }
+              axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/.json?auth=${token}`, truckReportData)
+                .then(() => {
+                  axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
+                    .then(() => {
+                      axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${userCompany}/generalNotifications/.json?auth=${token}`, alertToServer)
+                        .then(() => {
+                          setLoading(false);
+                          setModalShow(true);
+                          const resetLocalData = false;
+                          AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
+                          AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+                          AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
+                          AsyncStorage.setItem('lastReport', JSON.stringify(DATA));
+                        })
+                        .catch((err) => console.log(err));
+                    })
+                    .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
             }
-            axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/.json?auth=${token}`, truckReportData)
-              .then(() => {
-                axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
-                  .then(() => {
-                    axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${userCompany}/generalNotifications/.json?auth=${token}`, alertToServer)
-                      .then(() => {
-                        setLoading(false);
-                        setModalShow(true);
-                        const resetLocalData = false;
-                        AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
-                        AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
-                        AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
-                        AsyncStorage.setItem('lastReport', JSON.stringify(DATA));
-                      })
-                      .catch((err) => console.log(err));
-                  })
-                  .catch((err) => console.log(err));
-              })
-              .catch((err) => console.log(err));
           }
         } else {
           // preTrip ok
           alertToServer = {
             type: 'START_TRIP',
-            FaultsData: truckSummery,
+            FaultsData: {
+              truckSummery,
+              tariler1Summery,
+              tariler2Summery
+            },
             data: DATA,
             userUID
           }
-          const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/OpenForm/.json?auth=${token}`, DATA);
-          if (response) {
-            const resetLocalData = false;
-            try {
-              AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
-              AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
-              AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
-              AsyncStorage.setItem('lastReport', JSON.stringify(DATA));
-              axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
-                .then(() => {
-                  axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${userCompany}/generalNotifications/.json?auth=${token}`, alertToServer)
-                    .then(() => {
-                    })
-                    .catch((err) => console.log(err));
-                })
-                .catch((err) => console.log(err));
-            } catch (error) {
-              alert('error');
-            }
-            Alert.alert(' form has been sent successfully');
-            setLoading(false);
-            setModalShow(true);
+          const summeryData = {
+            truckStatus,
+            blockBool,
+            alertToServer
+          };
+          if (switchLocalSave) {
+            SaveDataLocaly(bigData, summeryData, false, alertToServer)
           } else {
-            Alert.alert(
-              'Oops Something went wrong',
-              [
-                { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData) },
-                { text: 'Try Again', style: 'destructive', onPress: () => submitForm() },
-              ]
-            );
+            const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${userCompany}/${truckNum}/OpenForm/.json?auth=${token}`, DATA);
+            if (response) {
+              const resetLocalData = false;
+              try {
+                AsyncStorage.setItem('firstTimeUser', JSON.stringify(true));
+                AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+                AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
+                AsyncStorage.setItem('lastReport', JSON.stringify(DATA));
+                axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
+                  .then(() => {
+                    axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${userCompany}/generalNotifications/.json?auth=${token}`, alertToServer)
+                      .then(() => {
+                      })
+                      .catch((err) => console.log(err));
+                  })
+                  .catch((err) => console.log(err));
+              } catch (error) {
+                alert('error');
+              }
+              Alert.alert(' form has been sent successfully');
+              setLoading(false);
+              setModalShow(true);
+            } else {
+              Alert.alert(
+                'Oops Something went wrong',
+                [
+                  { text: 'Save Form Localy & Go To Start', style: 'destructive', onPress: () => SaveDataLocaly(bigData, summeryData, false, alertToServer) },
+                  { text: 'Try Again', style: 'destructive', onPress: () => submitForm() },
+                ]
+              );
+            }
           }
         }
       } else {
+        // ////////////////////////////////////// fuck my life ////////////////////////////////////////////////////////////////
+        // חסר עדכון מצב טריילרים
         alertToServer = {
           type: 'TOTALOS',
-          FaultsData: truckSummery,
+          FaultsData: {
+            truckSummery,
+            tariler1Summery,
+            tariler2Summery
+          },
           data: DATA,
           date: new Date(),
           tripPosition: tripStatus,
@@ -453,8 +491,14 @@ const DvirFormScreen = ({
             bigData.trailers[trailer2Valid].onTrip = true;
           }
         }
-        if (bigData) {
-
+        if (switchLocalSave) {
+          const summeryData = {
+            truckStatus,
+            blockBool,
+            alertToServer
+          }
+          SaveDataLocaly(bigData, summeryData, true, alertToServer)
+        } else {
           axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${userCompany}/impotentNotifications/.json?auth=${token}`, alertToServer)
             .then(() => {
               axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${userCompany}/.json?auth=${token}`, bigData)
@@ -470,12 +514,22 @@ const DvirFormScreen = ({
       }
     };
 
-    const SaveDataLocaly = (companysCurrentObj) => {
+    const SaveDataLocaly = (bigDatalocal, summeryData, blockStatus, blockAlert) => {
       const tempLocalDATA = [DATA]
       AsyncStorage.setItem('aocalDATA', JSON.stringify(tempLocalDATA));
-      AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(companysCurrentObj))
+      AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(bigDatalocal))
+      const sumDataBlock = {
+        summeryData,
+        blockStatus,
+        blockAlert,
+        truckStatus,
+        trailer1Status,
+        trailer2Status
+      };
+      AsyncStorage.setItem('SummryBlockAlert', JSON.stringify(sumDataBlock))
       onSaveData(DATA);
       setLoading(false);
+      alert('The form has been successfully saved');
       navigation.navigate('Index');
     };
   };
