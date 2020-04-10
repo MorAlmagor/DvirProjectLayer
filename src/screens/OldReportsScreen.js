@@ -8,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { connect } from 'react-redux';
 import {
   Text,
   View,
@@ -22,9 +21,7 @@ import {
 } from 'react-native';
 import SpinerModal from '../components/UI/Spiner/SpinerModal';
 import Colors from '../Colors/Colors';
-import OldReports from '../components/UI/MapReturnSection/OldReports';
 import PreTripPage from '../components/UI/Modals/PreTripPage';
-import { setPostTripMode } from '../store/actions/appUiActions';
 
 export const OldReportsTab = (props) => {
   const [allReportData, setAllReportData] = useState(false);
@@ -78,14 +75,17 @@ export const OldReportsTab = (props) => {
   );
 };
 // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 export const LocalyForms = (props) => {
   const [loading, setLoading] = useState(false);
   const [companyDataToServer, setCompanyDataToServer] = useState(false);
   const [userData, setUserData] = useState(false);
   const [company, setCompany] = useState(false);
   const [localData, setLocalData] = useState(false);
-
+  const [block, setBlock] = useState(false);
+  const [truckStatus, setTruckStatus] = useState(false);
+  const [trailer1Status, setTrailer1Status] = useState(false);
+  const [trailer2Status, setTrailer2Status] = useState(false);
+  const [localAlert, setLocalAlert] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem('userCompany')
@@ -105,6 +105,16 @@ export const LocalyForms = (props) => {
                     .then((companyData) => {
                       const compnyDataObj = JSON.parse(companyData);
                       setCompanyDataToServer(compnyDataObj);
+                      AsyncStorage.getItem('SummryBlockAlert')
+                        .then((SummryBlockAlert) => {
+                          const SummryBlockAlertObj = JSON.parse(SummryBlockAlert);
+                          setBlock(SummryBlockAlertObj.blockStatus);
+                          setTrailer1Status(SummryBlockAlertObj.trailer1Status);
+                          setTrailer2Status(SummryBlockAlertObj.trailer2Status);
+                          setTruckStatus(SummryBlockAlertObj.truckStatus);
+                          setLocalAlert(SummryBlockAlertObj.blockAlert);
+                        })
+                        .catch(() => null);
                     })
                     .catch(() => null);
                 }
@@ -136,7 +146,7 @@ export const LocalyForms = (props) => {
     if (Platform.OS === 'android') {
       NetInfo.isConnected.fetch().then((isConnected) => {
         if (isConnected) {
-          fatchDataToServer(dataToFatch, index);
+          fatchDataToServer(dataToFatch, index, trailer1Status, trailer2Status);
         } else {
           alert('No Internet Connection');
           setLoading(false);
@@ -160,64 +170,171 @@ export const LocalyForms = (props) => {
     if (isConnected === false) {
       alert('You Are Offline! \n Please Check Your Connection');
     } else {
-      fatchDataToServer(dataToFatch, index);
+      fatchDataToServer(dataToFatch, index, trailer1Status, trailer2Status);
     }
   };
 
-  const fatchDataToServer = async (dataToFatch, index) => {
+  const fatchDataToServer = (dataToFatchArr, index, trailerStatusData1, trailerStatusData2) => {
+    //
+    const dataToFatch = dataToFatchArr[0];
     if (company && userData) {
       axios.get(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`)
         .then((companyObjData) => {
           axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/.json?auth=${userData.token}`)
             .then((ReportTruckData) => {
-              const localFormTruckNumber = dataToFatch[index].truckNumber;
+              const localFormTruckNumber = dataToFatch.truckNumber;
               const truckReportDATA = ReportTruckData.data;
-              const truckReportDATAkeys = Object.keys(truckReportDATA);
-              if (companyObjData.data.drivers[userData.userId].tripStatus === false && truckReportDATA[localFormTruckNumber].OpenForm === false) {
-                const currentCompanyData = companyObjData.data;
-                const localCompanyData = companyDataToServer;
-                currentCompanyData.drivers[userData.userId] = localCompanyData.drivers[userData.userId];
-                currentCompanyData.vehicle[dataToFatch[index].truckNumber] = localCompanyData.vehicle[dataToFatch[index].truckNumber];
-                if (currentCompanyData.drivers[userData.userId].bindTrailer1 !== false) {
-                  currentCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer1] = localCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer1];
-                  if (currentCompanyData.drivers[userData.userId].bindTrailer2 !== false) {
-                    currentCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer2] = localCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer2];
+              if (block) {
+                if (!dataToFatch.tripStatus) {
+                  // preTrip block
+                  companyDataToServer.drivers[userData.userId].tripStatus = false;
+                  companyDataToServer.drivers[userData.userId].block = true;
+                  companyDataToServer.drivers[userData.userId].bindTruck = false;
+                  companyDataToServer.drivers[userData.userId].bindTrailer1 = false;
+                  companyDataToServer.drivers[userData.userId].bindTrailer2 = false;
+                  companyDataToServer.vehicle[localFormTruckNumber].onTrip = false;
+                  companyDataToServer.vehicle[localFormTruckNumber].status = truckStatus;
+                  if (dataToFatch.trailer1Number) {
+                    companyDataToServer.trailers[dataToFatch.trailer1Number].onTrip = false;
+                    companyDataToServer.trailers[dataToFatch.trailer1Number].status = {
+                      brakeConnections: trailer1Status.brakeConnectionsTrailer1,
+                      brakes: trailer1Status.brakesTrailer1,
+                      couplingDevices: trailer1Status.couplingDevicesTrailer1,
+                      couplingKingPin: trailer1Status.couplingKingPinTrailer1,
+                      doors: trailer1Status.doorsTrailer1,
+                      hitch: trailer1Status.hitchTrailer1,
+                      landingGear: trailer1Status.landingGearTrailer1,
+                      lights: trailer1Status.lightsTrailer1,
+                      reflectors: trailer1Status.reflectorsTrailer1,
+                      roof: trailer1Status.roofTrailer1,
+                      suspensionSystem: trailer1Status.suspensionSystemTrailer1,
+                      straps: trailer1Status.strapsTrailer1,
+                      tarpulin: trailer1Status.tarpulinTrailer1,
+                      tires: trailer1Status.tiresTrailer1,
+                      wheelsAndRim: trailer1Status.wheelsAndRimTrailer1
+                    };
                   }
-                }
-                preTripUpload(dataToFatch[index], currentCompanyData, dataToFatch, index);
-              } else if (companyObjData.data.drivers[userData.userId].tripStatus === true && truckReportDATA[localFormTruckNumber].OpenForm !== false) {
-                // ////////////// report obj ////////////////
-                const lastPreTripObj = truckReportDATA[localFormTruckNumber].OpenForm;
-                const newCloseForms = updateCloseFormObjByDate(truckReportDATA[localFormTruckNumber]);
-                const truckData = truckReportDATA[localFormTruckNumber];
-                if (typeof truckReportDATA[localFormTruckNumber] === 'object') {
-                  truckData.closeForms = newCloseForms;
-                  truckData.OpenForm = false;
-                  truckData.closeForms[new Date()] = {
-                    preTripForm: lastPreTripObj,
-                    postTripForm: dataToFatch[index]
-                  };
-                }
-                // ////////////// company obj ///////////////
-                const currentPostCompanyData = companyObjData.data;
-                const localCompanyData = companyDataToServer;
-                currentPostCompanyData.drivers[userData.userId] = localCompanyData.drivers[userData.userId];
-                currentPostCompanyData.vehicle[dataToFatch[index].truckNumber] = localCompanyData.vehicle[dataToFatch[index].truckNumber];
-                if (currentPostCompanyData.drivers[userData.userId].bindTrailer1 !== false) {
-                  currentPostCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer1] = localCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer1];
-                  if (currentPostCompanyData.drivers[userData.userId].bindTrailer2 !== false) {
-                    currentPostCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer2] = localCompanyData.trailers[currentPostCompanyData.drivers[userData.userId].bindTrailer2];
+                  if (dataToFatch.trailer2Number !== false) {
+                    companyDataToServer.trailers[dataToFatch.trailer2Number].onTrip = false;
+                    companyDataToServer.trailers[dataToFatch.trailer2Number].status = {
+                      brakeConnections: trailer2Status.brakeConnectionsTrailer2,
+                      brakes: trailer2Status.brakesTrailer2,
+                      couplingDevices: trailer2Status.couplingDevicesTrailer2,
+                      couplingKingPin: trailer2Status.couplingKingPinTrailer2,
+                      doors: trailer2Status.doorsTrailer2,
+                      hitch: trailer2Status.hitchTrailer2,
+                      landingGear: trailer2Status.landingGearTrailer2,
+                      lights: trailer2Status.lightsTrailer2,
+                      reflectors: trailer2Status.reflectorsTrailer2,
+                      roof: trailer2Status.roofTrailer2,
+                      suspensionSystem: trailer2Status.suspensionSystemTrailer2,
+                      straps: trailer2Status.strapsTrailer2,
+                      tarpulin: trailer2Status.tarpulinTrailer2,
+                      tires: trailer2Status.tiresTrailer2,
+                      wheelsAndRim: trailer2Status.wheelsAndRimTrailer2
+                    };
                   }
+                  BlockUpload(companyDataToServer);
+                } else {
+                  // postTrip block
+                  companyDataToServer.drivers[userData.userId].tripStatus = true;
+                  companyDataToServer.drivers[userData.userId].block = true;
+                  companyDataToServer.drivers[userData.userId].bindTruck = localFormTruckNumber;
+                  companyDataToServer.drivers[userData.userId].bindTrailer1 = dataToFatch.trailer1Number;
+                  companyDataToServer.drivers[userData.userId].bindTrailer2 = dataToFatch.trailer2Number;
+                  companyDataToServer.vehicle[localFormTruckNumber].status = truckStatus;
+                  companyDataToServer.vehicle[localFormTruckNumber].onTrip = true;
+                  if (dataToFatch.trailer1Number !== false) {
+                    companyDataToServer.trailers[dataToFatch.trailer1Number].status = {
+                      brakeConnections: trailer1Status.brakeConnectionsTrailer1,
+                      brakes: trailer1Status.brakesTrailer1,
+                      couplingDevices: trailer1Status.couplingDevicesTrailer1,
+                      couplingKingPin: trailer1Status.couplingKingPinTrailer1,
+                      doors: trailer1Status.doorsTrailer1,
+                      hitch: trailer1Status.hitchTrailer1,
+                      landingGear: trailer1Status.landingGearTrailer1,
+                      lights: trailer1Status.lightsTrailer1,
+                      reflectors: trailer1Status.reflectorsTrailer1,
+                      roof: trailer1Status.roofTrailer1,
+                      suspensionSystem: trailer1Status.suspensionSystemTrailer1,
+                      straps: trailer1Status.strapsTrailer1,
+                      tarpulin: trailer1Status.tarpulinTrailer1,
+                      tires: trailer1Status.tiresTrailer1,
+                      wheelsAndRim: trailer1Status.wheelsAndRimTrailer1
+                    };
+                    companyDataToServer.trailers[dataToFatch.trailer1Number].onTrip = true;
+                  }
+                  if (dataToFatch.trailer2Number !== false) {
+                    companyDataToServer.trailers[dataToFatch.trailer2Number].status = {
+                      brakeConnections: trailer2Status.brakeConnectionsTrailer2,
+                      brakes: trailer2Status.brakesTrailer2,
+                      couplingDevices: trailer2Status.couplingDevicesTrailer2,
+                      couplingKingPin: trailer2Status.couplingKingPinTrailer2,
+                      doors: trailer2Status.doorsTrailer2,
+                      hitch: trailer2Status.hitchTrailer2,
+                      landingGear: trailer2Status.landingGearTrailer2,
+                      lights: trailer2Status.lightsTrailer2,
+                      reflectors: trailer2Status.reflectorsTrailer2,
+                      roof: trailer2Status.roofTrailer2,
+                      suspensionSystem: trailer2Status.suspensionSystemTrailer2,
+                      straps: trailer2Status.strapsTrailer2,
+                      tarpulin: trailer2Status.tarpulinTrailer2,
+                      tires: trailer2Status.tiresTrailer2,
+                      wheelsAndRim: trailer2Status.wheelsAndRimTrailer2
+                    };
+                    companyDataToServer.trailers[dataToFatch.trailer2Number].onTrip = true;
+                  }
+                  BlockUpload(companyDataToServer);
                 }
-                postTripUpload(truckData, currentPostCompanyData, localFormTruckNumber, dataToFatch, index);
-              } else {
-                Alert.alert(
-                  'Oops Something went wrong',
-                  'There is a problem with form reliability please fill in new form',
-                  [
-                    { text: 'Fill New Post-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('Index') },
-                  ],
-                );
+              } else if (!block) {
+                if (companyObjData.data.drivers[userData.userId].tripStatus === false && truckReportDATA[localFormTruckNumber].OpenForm === false) {
+                  // pre Trip
+                  const currentCompanyData = companyObjData.data;
+                  const localCompanyData = companyDataToServer;
+                  currentCompanyData.drivers[userData.userId] = localCompanyData.drivers[userData.userId];
+                  currentCompanyData.vehicle[dataToFatch.truckNumber] = localCompanyData.vehicle[dataToFatch.truckNumber];
+                  if (currentCompanyData.drivers[userData.userId].bindTrailer1 !== false) {
+                    currentCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer1] = localCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer1];
+                    if (currentCompanyData.drivers[userData.userId].bindTrailer2 !== false) {
+                      currentCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer2] = localCompanyData.trailers[currentCompanyData.drivers[userData.userId].bindTrailer2];
+                    }
+                  }
+                  preTripUpload(dataToFatch, currentCompanyData, index, localAlert);
+                } else if (companyObjData.data.drivers[userData.userId].tripStatus === true && truckReportDATA[localFormTruckNumber].OpenForm !== false) {
+                  // post Trip
+                  const lastPreTripObj = truckReportDATA[localFormTruckNumber].OpenForm;
+                  const newCloseForms = updateCloseFormObjByDate(truckReportDATA[localFormTruckNumber]);
+                  const truckData = truckReportDATA[localFormTruckNumber];
+                  if (typeof truckReportDATA[localFormTruckNumber] === 'object') {
+                    truckData.closeForms = newCloseForms;
+                    truckData.OpenForm = false;
+                    truckData.closeForms[new Date()] = {
+                      preTripForm: lastPreTripObj,
+                      postTripForm: dataToFatch[index]
+                    };
+                  }
+                  const currentPostCompanyData = companyObjData.data;
+                  const localCompanyData = companyDataToServer;
+                  currentPostCompanyData.drivers[userData.userId] = localCompanyData.drivers[userData.userId];
+                  currentPostCompanyData.vehicle[dataToFatch.truckNumber] = localCompanyData.vehicle[dataToFatch.truckNumber];
+                  if (lastPreTripObj.trailer1Number !== false) {
+                    currentPostCompanyData.trailers[lastPreTripObj.trailer1Number] = localCompanyData.trailers[lastPreTripObj.trailer1Number];
+                    currentPostCompanyData.trailers[lastPreTripObj.trailer1Number].onTrip = false;
+                    if (lastPreTripObj.trailer2Number !== false) {
+                      currentPostCompanyData.trailers[lastPreTripObj.trailer2Number] = localCompanyData.trailers[lastPreTripObj.trailer2Number];
+                      currentPostCompanyData.trailers[lastPreTripObj.trailer2Number].onTrip = false;
+                    }
+                  }
+                  postTripUpload(truckData, currentPostCompanyData, localFormTruckNumber, dataToFatch, index, localAlert);
+                } else {
+                  Alert.alert(
+                    'Oops Something went wrong',
+                    'There is a problem with form reliability please fill in new form',
+                    [
+                      { text: 'Fill New Post-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('Index') },
+                    ],
+                  );
+                }
               }
             })
             .catch(() => fatchFalseAlert(true, dataToFatch, index));
@@ -226,20 +343,25 @@ export const LocalyForms = (props) => {
     }
   };
 
-  const postTripUpload = async (truckData, companyData, truckNumber, dataToFatch, index) => {
+  const postTripUpload = (truckData, companyData, truckNumber, dataToFatch, index, alert) => {
+    // setModalShow(true);
     axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${truckNumber}/.json?auth=${userData.token}`, truckData)
       .then(() => {
-        axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, companyData)
+        axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${company}/generalNotifications/.json?auth=${userData.token}`, localAlert)
           .then(() => {
-            alert(' form has been sent successfully');
-            setLoading(false);
-            deleteLocalForm(index);
-            const resetLocalData = false;
-            AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
-            AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
-            props.navigation.navigate('Index', { type: 'lockApp' });
+            axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, companyData)
+              .then(() => {
+                deleteLocalForm(index);
+                setLoading(false);
+                AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
+                const resetLocalData = false;
+                AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
+                props.navigation.navigate('Index', { type: 'lockApp' }); // להעביר לדף סמרי ולהוסיף אלרט
+                // navigation לoldreportSummeryModl
+              })
+              .catch(() => fatchFalseAlert(true, dataToFatch, index));
           })
-          .catch(() => fatchFalseAlert(true, dataToFatch, index));
+          .catch((err) => null);
       })
       .catch(() => fatchFalseAlert(true, dataToFatch, index));
   };
@@ -251,7 +373,7 @@ export const LocalyForms = (props) => {
         'Oops Something went wrong',
         'Form Not Upload',
         [
-          { text: 'Fill New Post-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('Dvir') },
+          { text: 'Fill New Post-Trip Form', style: 'destructive', onPress: () => props.navigation.navigate('SelectTruck') },
           { text: 'Try Again', style: 'destructive', onPress: () => CheckConnectivity(data, indexx) },
         ],
       );
@@ -291,7 +413,22 @@ export const LocalyForms = (props) => {
     return truckOldData;
   };
 
+  const BlockUpload = (bigData) => {
+    axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${company}/impotentNotifications/.json?auth=${userData.token}`, localAlert)
+      .then(() => {
+        axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, bigData)
+          .then(() => {
+            setLoading(false);
+            setBlock(true);
+            // להעביר לסמרי
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
+  };
+
   const preTripUpload = async (reports, currentCompanyData, dataToFatch, index) => {
+    // setModalShow(true);
     const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${reports.truckNumber}/OpenForm/.json?auth=${userData.token}`, reports);
     if (response) {
       const resetLocalData = [];
@@ -300,15 +437,19 @@ export const LocalyForms = (props) => {
         AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
         AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
         AsyncStorage.setItem('lastReport', JSON.stringify(reports));
-
-        axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, currentCompanyData)
+        axios.post(`https://dvir-project-server.firebaseio.com/Notifications/${company}/generalNotifications/.json?auth=${userData.token}`, localAlert)
           .then(() => {
-            alert(' form has been sent successfully');
-            setLoading(false);
-            deleteLocalForm(index);
-            props.navigation.navigate('Index', { type: 'lockApp' });
+            axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, currentCompanyData)
+              .then(() => {
+                alert('form has been sent successfully');
+                setLoading(false);
+                deleteLocalForm(index);
+                props.navigation.navigate('Index', { type: 'lockApp' });
+                // navigation לoldreportSummeryModl
+              })
+              .catch(() => fatchFalseAlert(false, dataToFatch, index));
           })
-          .catch(() => fatchFalseAlert(false, dataToFatch, index));
+          .catch((err) => console.log(err));
       } catch (error) {
         fatchFalseAlert(false, dataToFatch, index);
       }

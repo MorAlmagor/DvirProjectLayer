@@ -3,7 +3,6 @@
 /* eslint-disable prefer-template */
 /* eslint-disable no-else-return */
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import { StackedBarChart } from 'react-native-svg-charts';
 import {
   View,
@@ -253,25 +252,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 17
   }
-
 });
 
-const mapStateToProps = (state) => {
-  return {
-    truckStatus: state.form.truckStatus,
-    trailer1Valid: state.form.trailer1.trailerNumber,
-    trailer2Valid: state.form.trailer2.trailerNumber,
-    trailer1Status: state.form.trailer1,
-    trailer2Status: state.form.trailer2,
-    truckRaf: state.appUI.truckRaf,
-    trailerRaf: state.appUI.trailerRaf,
-  };
-};
 
-// const mapDispatchToProps = (dispatch) => {
-//   return {
-
-//   };
-// };
-
-export default connect(mapStateToProps, null)(DvirSummeryModal);
+export default DvirSummeryModal;

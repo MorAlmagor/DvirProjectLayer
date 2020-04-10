@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
@@ -26,6 +27,8 @@ const FormSummeryAlertCard = ({
   trailer2Active,
   postTripMode
 }) => {
+  console.log('postTripMode');
+  console.log(postTripMode);
   const TruckDetail = truckRaf > truckSummery.score;
   const Trailer1Detail = trailerRaf > tariler1Summery.score;
   const Trailer2Detail = trailerRaf > tariler2Summery.score;
@@ -49,7 +52,7 @@ const FormSummeryAlertCard = ({
     if (postTripMode) {
       SummeryAlert = (
         <Text style={styles.alertGuildText}>
-          {TruckDetail && Trailer1Detail ? 'Thank you for reporting the form saved' : 'Thank you for reporting the form saved \n You\'r Not Allowed To Drive' }
+          {TruckDetail && Trailer1Detail ? 'Thank You For Reporting Form Saved' : 'Thank You For Reporting Form Saved \n You\'r Not Allowed To Drive' }
         </Text>
       );
     } else {
@@ -78,20 +81,62 @@ const FormSummeryAlertCard = ({
       </Text>
     );
   }
+  if (!postTripMode) {
+    return (
+      <View style={styles.alertGuildContainer}>
+        <Text style={styles.alertGuildText}>Pre-Trip Form Upload</Text>
+        {SummeryAlert}
+        <Text style={styles.alertGuildText}>
+          {TruckDetail
+            ? 'Truck Is Safe For Drive'
+            : 'Truck Is Not Safe For Drive'}
+        </Text>
+        {TrailersDetails}
+        <Text style={styles.alertGuildText}>A Message Was Sent To Your Company</Text>
+        <Text style={styles.alertGuildText}>Tap For Details</Text>
+      </View>
+    );
+  } else {
+    let trailer1sum = null;
+    let trailer2sum = null;
+    if (trailer1Active) {
+      if (Trailer1Detail) {
+        trailer1sum = (
+          <Text>Trailer {trailer1Active} Mechanical Ok!</Text>
+        );
+      } else {
+        trailer1sum = (
+          <Text>Trailer {trailer1Active} Mechanical Must Repair</Text>
+        );
+      }
+      if (trailer2Active) {
+        if (Trailer2Detail) {
+          trailer2sum = (
+            <Text>Trailer {trailer2Active} Mechanical Ok!</Text>
+          );
+        } else {
+          trailer2sum = (
+            <Text>Trailer {trailer2Active} Mechanical Must Repair</Text>
+          );
+        }
+      }
+    }
 
-  return (
-    <View style={styles.alertGuildContainer}>
-      {/* <Text>Tap For Detail</Text> */}
-      {SummeryAlert}
-      <Text style={styles.alertGuildText}>
-        {TruckDetail
-          ? 'Truck Is Safe For Drive'
-          : 'Truck Is Not Safe For Drive'}
-      </Text>
-      {TrailersDetails}
-      <Text style={styles.alertGuildText}>A Message Was Sent To Your Company</Text>
-    </View>
-  );
+    return (
+      <View style={styles.alertGuildContainer}>
+        <Text style={styles.alertGuildText}>Post-Trip Form Upload</Text>
+        <Text style={styles.alertGuildText}>
+          {TruckDetail
+            ? 'Truck Mechanical Is Good'
+            : 'Truck Mechanical Must Repair'}
+        </Text>
+        {trailer1sum}
+        {trailer2sum}
+        <Text style={styles.alertGuildText}>A Message Was Sent To Your Company</Text>
+        <Text style={styles.alertGuildText}>Tap For Details</Text>
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

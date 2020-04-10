@@ -18,7 +18,8 @@ const initialState = {
       keyId: 'Brake Connections',
       status: true,
       dateModified: '',
-      Score: 5
+      // donst forget to 5 score onlky for test
+      Score: 100
     },
     brakesTrailer1: {
       keyId: 'Brakes',

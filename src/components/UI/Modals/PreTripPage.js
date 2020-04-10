@@ -131,6 +131,7 @@ const PreTripPage = ({
       <ScrollView>
         <View style={styles.masterC}>
           <View style={styles.headContainer}>
+            <Text style={styles.headTitle}>Type: <Text>{!data.tripStatus ? 'Pre Trip' : 'Post Trip'}</Text></Text>
             <Text style={styles.headTitle}>Company: <Text style={{ fontWeight: '400' }}>{data.company}</Text></Text>
             <Text style={styles.headTitle}>Odometer: <Text style={{ fontWeight: '400' }}>{data.odometer}</Text></Text>
           </View>
@@ -251,6 +252,7 @@ const PreTripPage = ({
       <ScrollView>
         <View style={styles.masterC}>
           <View style={styles.headContainer}>
+            <Text style={styles.headTitle}>Type: <Text>{!data.tripStatus ? 'Pre Trip' : 'Post Trip'}</Text></Text>
             <Text style={styles.headTitle}>Company: <Text style={{ fontWeight: '400' }}>{data.company}</Text></Text>
             <Text style={styles.headTitle}>Odometer: <Text style={{ fontWeight: '400' }}>{data.odometer}</Text></Text>
           </View>
