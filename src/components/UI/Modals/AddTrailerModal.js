@@ -3,14 +3,13 @@ import {
   View,
   StyleSheet,
   Text,
-  // Platform, לא לשנות ביינתים
   TextInput
 } from 'react-native';
 import { connect } from 'react-redux';
 import ModalsButton from '../Buttons/ModalsButton';
 import Colors from '../../../Colors/Colors';
 import { changeModalShow, ExpandSectionTrailer1, ExpandSectionTrailer2 } from '../../../store/actions/appUiActions';
-import { updateTrailer1Number, updateTrailer2Number } from '../../../store/actions/formActions';
+// import { updateTrailer1Number, updateTrailer2Number } from '../../../store/actions/formActions';
 
 
 const AddTrailerModal = ({
@@ -173,8 +172,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     closeTrailerModal: (demi) => dispatch(changeModalShow(demi)),
-    saveTrailer1: (trailer1) => dispatch(updateTrailer1Number(trailer1)),
-    saveTrailer2: (trailer2) => dispatch(updateTrailer2Number(trailer2)),
+    // saveTrailer1: (trailer1) => dispatch(updateTrailer1Number(trailer1)),
+    // saveTrailer2: (trailer2) => dispatch(updateTrailer2Number(trailer2)),
     setExpandSectionTrailer1: () => dispatch(ExpandSectionTrailer1()),
     setExpandSectionTrailer2: () => dispatch(ExpandSectionTrailer2())
   };

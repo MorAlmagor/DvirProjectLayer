@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable max-len */
 /* eslint-disable no-else-return */
 /* eslint-disable no-alert */
@@ -85,6 +86,8 @@ export const LocalyForms = (props) => {
   const [truckStatus, setTruckStatus] = useState(false);
   const [trailer1Status, setTrailer1Status] = useState(false);
   const [trailer2Status, setTrailer2Status] = useState(false);
+  const [trailer1Validation, setTrailer1Validation] = useState(false);
+  const [trailer2Validation, setTrailer2Validation] = useState(false);
   const [localAlert, setLocalAlert] = useState(false);
 
   useEffect(() => {
@@ -101,6 +104,9 @@ export const LocalyForms = (props) => {
                 const json = JSON.parse(req);
                 if (json[0].userUID === temp.userId) {
                   setLocalData(json);
+                  const trailersValidation = json[0];
+                  setTrailer1Validation(trailersValidation.trailer1Number);
+                  setTrailer2Validation(trailersValidation.trailer2Number);
                   AsyncStorage.getItem('aocalCOMPANY')
                     .then((companyData) => {
                       const compnyDataObj = JSON.parse(companyData);
@@ -123,7 +129,7 @@ export const LocalyForms = (props) => {
           });
       });
   }, []);
-  const deleteLocalForm = (index) => {
+  const deleteLocalForm = (index, uploadBool) => {
     const newData = localData;
     newData.splice(index, 1);
     try {
@@ -131,7 +137,9 @@ export const LocalyForms = (props) => {
     } catch (error) {
       alert('error');
     }
-    props.navigation.navigate('Index', { type: 'noLocalForm' });
+    if (!uploadBool) {
+      props.navigation.navigate('Index', { type: 'noLocalForm' });
+    }
   };
 
   const uploadLocalForm = (index) => {
@@ -343,7 +351,7 @@ export const LocalyForms = (props) => {
     }
   };
 
-  const postTripUpload = (truckData, companyData, truckNumber, dataToFatch, index, alert) => {
+  const postTripUpload = (truckData, companyData, truckNumber, dataToFatch, index) => {
     // setModalShow(true);
     axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${truckNumber}/.json?auth=${userData.token}`, truckData)
       .then(() => {
@@ -351,17 +359,22 @@ export const LocalyForms = (props) => {
           .then(() => {
             axios.put(`https://dvir-project-server.firebaseio.com/companysData/-M-0ven_8goSu7kFGM-H/${company}/.json?auth=${userData.token}`, companyData)
               .then(() => {
-                deleteLocalForm(index);
                 setLoading(false);
                 AsyncStorage.setItem('aocalCOMPANY', JSON.stringify(resetLocalData));
                 const resetLocalData = false;
                 AsyncStorage.setItem('aocalDATA', JSON.stringify(resetLocalData));
-                props.navigation.navigate('Index', { type: 'lockApp' }); // להעביר לדף סמרי ולהוסיף אלרט
-                // navigation לoldreportSummeryModl
+                props.navigation.navigate('OldReportSum', {
+                  trailer1Validation,
+                  trailer2Validation,
+                  truckStatus,
+                  trailer1Status,
+                  trailer2Status
+                });
+                deleteLocalForm(index, true);
               })
               .catch(() => fatchFalseAlert(true, dataToFatch, index));
           })
-          .catch((err) => null);
+          .catch((err) => fatchFalseAlert(true, dataToFatch, index));
       })
       .catch(() => fatchFalseAlert(true, dataToFatch, index));
   };
@@ -420,7 +433,14 @@ export const LocalyForms = (props) => {
           .then(() => {
             setLoading(false);
             setBlock(true);
-            // להעביר לסמרי
+            props.navigation.navigate('OldReportSum', {
+              trailer1Validation,
+              trailer2Validation,
+              truckStatus,
+              trailer1Status,
+              trailer2Status
+            });
+            deleteLocalForm(0, true);
           })
           .catch((err) => console.log(err));
       })
@@ -428,7 +448,6 @@ export const LocalyForms = (props) => {
   };
 
   const preTripUpload = async (reports, currentCompanyData, dataToFatch, index) => {
-    // setModalShow(true);
     const response = await axios.put(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/${reports.truckNumber}/OpenForm/.json?auth=${userData.token}`, reports);
     if (response) {
       const resetLocalData = [];
@@ -443,13 +462,18 @@ export const LocalyForms = (props) => {
               .then(() => {
                 alert('form has been sent successfully');
                 setLoading(false);
-                deleteLocalForm(index);
-                props.navigation.navigate('Index', { type: 'lockApp' });
-                // navigation לoldreportSummeryModl
+                props.navigation.navigate('OldReportSum', {
+                  trailer1Validation,
+                  trailer2Validation,
+                  truckStatus,
+                  trailer1Status,
+                  trailer2Status
+                });
+                deleteLocalForm(index, true);
               })
               .catch(() => fatchFalseAlert(false, dataToFatch, index));
           })
-          .catch((err) => console.log(err));
+          .catch(() => fatchFalseAlert(false, dataToFatch, index));
       } catch (error) {
         fatchFalseAlert(false, dataToFatch, index);
       }

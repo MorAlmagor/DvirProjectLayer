@@ -1,8 +1,10 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable consistent-return */
 /* eslint-disable max-len */
 /* eslint-disable prefer-template */
 /* eslint-disable no-else-return */
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { StackedBarChart } from 'react-native-svg-charts';
 import {
   View,
@@ -12,22 +14,21 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native';
-import MainButton from '../Buttons/MainButton';
-import Colors from '../../../Colors/Colors';
-import DvirSummeryButton from '../Buttons/DvirSummeryButton';
-import FormSummeryAlertCard from '../Cards/FormSummeryAlertCard';
+import MainButton from '../components/UI/Buttons/MainButton';
+import Colors from '../Colors/Colors';
+import DvirSummeryButton from '../components/UI/Buttons/DvirSummeryButton';
+import FormSummeryAlertCard from '../components/UI/Cards/FormSummeryAlertCard';
 
-const DvirSummeryModal = ({
+const oldReportSummery = ({
   navigation,
-  clean,
-  truckStatus,
-  trailer1Status,
-  trailer2Status,
-  trailer1Valid,
-  trailer2Valid,
   truckRaf,
   trailerRaf,
 }) => {
+  const truckStatus = navigation.state.params.truckStatus;
+  const trailer1Status = navigation.state.params.trailer1Status;
+  const trailer2Status = navigation.state.params.trailer2Status;
+  const trailer1Valid = navigation.state.params.trailer1Validation;
+  const trailer2Valid = navigation.state.params.trailer2Validation;
   //
   const [timerValid, setTimerValid] = useState(false);
   useEffect(() => {
@@ -204,7 +205,7 @@ const DvirSummeryModal = ({
             />
           </TouchableOpacity>
           <View>
-            {timerValid && <MainButton onpress={() => clean()}>OK!</MainButton>}
+            {timerValid && <MainButton onpress={() => navigation.navigate('Index', { type: 'lockApp' })}>OK!</MainButton>}
           </View>
         </View>
       </ScrollView>
@@ -252,5 +253,15 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = (state) => {
+  return {
+    truckRaf: state.appUI.truckRaf,
+    trailerRaf: state.appUI.trailerRaf,
+    DATA: state.appUI.DATA,
+    userName: state.user.name,
+    TripStatus: state.user.tripStatus,
+    userBlock: state.user.block,
+  };
+};
 
-export default DvirSummeryModal;
+export default connect(mapStateToProps, null)(oldReportSummery);
