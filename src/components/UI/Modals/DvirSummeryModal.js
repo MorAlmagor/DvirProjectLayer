@@ -39,8 +39,6 @@ const DvirSummeryModal = ({
   }, []);
 
   const getSummery = (tempData, type) => {
-    // console.log('MODAL');
-    // console.log(tempData);
     const tempDataArreyKeys = Object.keys(tempData);
     const tempFaults = [];
     let tempScore = 0;

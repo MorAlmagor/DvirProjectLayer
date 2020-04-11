@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-else-return */
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
@@ -27,13 +28,33 @@ const FormSummeryAlertCard = ({
   trailer2Active,
   postTripMode
 }) => {
-  console.log('postTripMode');
-  console.log(postTripMode);
   const TruckDetail = truckRaf > truckSummery.score;
   const Trailer1Detail = trailerRaf > tariler1Summery.score;
   const Trailer2Detail = trailerRaf > tariler2Summery.score;
   let SummeryAlert = null;
   let TrailersDetails = null;
+
+  let blockBool = false;
+  if (Trailer1Detail && Trailer2Detail && TruckDetail) {
+    if (postTripMode) {
+      blockBool = (
+        <Text style={styles.alertGuildText}>Post-Trip Form Upload</Text>
+      );
+    } else {
+      blockBool = (
+        <Text style={styles.alertGuildText}>Pre-Trip Form Upload</Text>
+      );
+    }
+  } else {
+    blockBool = (
+      <>
+        <Text style={styles.alertGuildText}>Many Mechanical Failures Were Reported</Text>
+        <Text style={styles.alertGuildText}>The System Has Been Blocked</Text>
+        <Text style={styles.alertGuildText}>Form Not Upload</Text>
+      </>
+    );
+  }
+
   if (trailer1Active === null && trailer2Active === null) {
     TrailersDetails = (
       <Text style={styles.alertGuildText}>No Trailers Add To Truck</Text>
@@ -84,8 +105,8 @@ const FormSummeryAlertCard = ({
   if (!postTripMode) {
     return (
       <View style={styles.alertGuildContainer}>
-        <Text style={styles.alertGuildText}>Pre-Trip Form Upload</Text>
         {SummeryAlert}
+        {blockBool}
         <Text style={styles.alertGuildText}>
           {TruckDetail
             ? 'Truck Is Safe For Drive'
@@ -102,21 +123,21 @@ const FormSummeryAlertCard = ({
     if (trailer1Active) {
       if (Trailer1Detail) {
         trailer1sum = (
-          <Text>Trailer {trailer1Active} Mechanical Ok!</Text>
+          <Text style={styles.alertGuildText}>Trailer {trailer1Active} Mechanical Ok!</Text>
         );
       } else {
         trailer1sum = (
-          <Text>Trailer {trailer1Active} Mechanical Must Repair</Text>
+          <Text style={styles.alertGuildText}>Trailer {trailer1Active} Mechanical Must Repair</Text>
         );
       }
       if (trailer2Active) {
         if (Trailer2Detail) {
           trailer2sum = (
-            <Text>Trailer {trailer2Active} Mechanical Ok!</Text>
+            <Text style={styles.alertGuildText}>Trailer {trailer2Active} Mechanical Ok!</Text>
           );
         } else {
           trailer2sum = (
-            <Text>Trailer {trailer2Active} Mechanical Must Repair</Text>
+            <Text style={styles.alertGuildText}>Trailer {trailer2Active} Mechanical Must Repair</Text>
           );
         }
       }
@@ -124,7 +145,7 @@ const FormSummeryAlertCard = ({
 
     return (
       <View style={styles.alertGuildContainer}>
-        <Text style={styles.alertGuildText}>Post-Trip Form Upload</Text>
+        {blockBool}
         <Text style={styles.alertGuildText}>
           {TruckDetail
             ? 'Truck Mechanical Is Good'

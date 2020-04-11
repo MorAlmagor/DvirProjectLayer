@@ -168,17 +168,17 @@ const LoginScreen = ({
       if (userUID === drivers[i]) {
         onUpdateUserData(driversDATA[drivers[i]]);
         if (driversDATA[drivers[i]].bindTruck !== false) {
-          console.log('bind');
+          // bind
           onSetPostTripMode(true);
           onSaveTruckNumber(driversDATA[drivers[i]].bindTruck);
           onOdometerUpdate(trucksData[driversDATA[drivers[i]].bindTruck].addomer);
           onUpdateTruckStatus(bigData.vehicle[driversDATA[drivers[i]].bindTruck].status);
           if (driversDATA[drivers[i]].bindTrailer1) {
-            console.log('bindT1');
+            // bindT1
             onSelectTrailer1(bigData.trailers[driversDATA[drivers[i]].bindTrailer1]);
           }
           if (driversDATA[drivers[i]].bindTrailer2) {
-            console.log('bindT2');
+            // bindT2
             onSelectTrailer2(bigData.trailers[driversDATA[drivers[i]].bindTrailer2]);
           }
           getLastTruckReportFromServer(company, driversDATA[drivers[i]].bindTruck, token);

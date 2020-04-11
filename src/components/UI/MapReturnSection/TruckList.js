@@ -21,7 +21,6 @@ const TruckList = ({
 }) => {
 //
   const truckSelectedHandler = (truckIndex) => {
-    console.log(truckIndex);
     onSaveTruckNumber(truck.truckNum);
     onOdometerUpdate(truck.addomer);
     onUpdateTruckStatus(truck.status);

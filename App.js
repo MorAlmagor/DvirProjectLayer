@@ -17,6 +17,8 @@ import AllFaultsScreen from './src/screens/AllFaultsScreen';
 import SemiFaultsScreen from './src/screens/SemiFaultsScreen';
 import SelectTruckScreen from './src/screens/SelectTruckScreen';
 import SelectTrailerScreen from './src/screens/SelectTrailerScreen';
+import oldReportSummery from './src/screens/oldReportSummery';
+
 
 import Colors from './src/Colors/Colors';
 
@@ -35,6 +37,7 @@ const navigator = createStackNavigator({
   SemiFaults: SemiFaultsScreen,
   SelectTruck: SelectTruckScreen,
   SelectTrailer: SelectTrailerScreen,
+  OldReportSum: oldReportSummery
 },
 {
   initialRouteName: 'OpenApp',

@@ -2,7 +2,6 @@
 /* eslint-disable prefer-template */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {
   Text,
   View,
@@ -23,9 +22,7 @@ const OldReports = ({
   deleteForm
 }) => {
   const [preViewBool, setPreViewBool] = useState(false);
-  console.log('xxx '+ preViewBool);
   if (preViewBool) {
-    console.log('sec')
     return (
       <View>
         <Button title="Go Back" onPress={() => setPreViewBool(true)} />
@@ -35,7 +32,6 @@ const OldReports = ({
       </View>
     );
   } else {
-    console.log('first')
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={() => setPreViewBool(true)}>
