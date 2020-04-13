@@ -16,25 +16,14 @@ const SelectTruckScreen = ({
   navigation,
   truckListData,
 }) => {
-  //
-
-  const [textInputlangth, setTextInputlangth] = useState(0);
-  const [textInput, setTextInput] = useState('');
-  const [textxxx, setTextxxx] = useState('');
-
-  useEffect(() => {
-    const textLang = textxxx.toUpperCase();
-    setTextInput(textLang);
-    const test = textLang.split('');
-    setTextInputlangth(test.length);
-  }, [textxxx]);
+  const [licensePlate, setLicensePlate] = useState('');
 
   let TrucklistToShow = null;
-  if (textInputlangth > 3) {
+  if (licensePlate.length > 3) {
     const updateTruckList = [];
     const truckListKeys = Object.keys(truckListData);
     for (let i = 0; i < truckListKeys.length; i += 1) {
-      const tempFilter = truckListKeys[i].indexOf(textInput);
+      const tempFilter = truckListKeys[i].indexOf(licensePlate);
       if (tempFilter !== -1) {
         updateTruckList.push(truckListData[truckListKeys[i]]);
       }
@@ -65,16 +54,16 @@ const SelectTruckScreen = ({
   return (
     <View style={{ alignItems: 'center' }}>
       <View>
-        <Text style={styles.titleStyle}>Please type Your Vehicle Licence Plate</Text>
+        <Text style={styles.titleStyle}>Please enter your vehicle licence plate</Text>
       </View>
       <View>
         <TextInput
           placeholderTextColor="grey"
-          placeholder="Tap Your Vehicle Licence Plate Here!"
+          placeholder="Enter license plate"
           style={styles.inputC}
-          value={textInput}
+          value={licensePlate}
           autoCorrect={false}
-          onChangeText={(text) => setTextxxx(text)}
+          onChangeText={(value) => setLicensePlate(value)}
         />
       </View>
       <View style={{ marginTop: 20 }}>
@@ -107,13 +96,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     height: 50,
     width: '90%',
+    minWidth: 250,
     padding: 12,
     top: 14,
     borderColor: '#aa0061',
     borderWidth: 1,
     borderRadius: 26,
     textAlign: 'center',
-    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto'
+    fontFamily: Platform.OS === 'ios' ? 'Avenir' : 'Roboto',
+    textTransform: 'uppercase'
   },
   input: {
     alignItems: 'center'

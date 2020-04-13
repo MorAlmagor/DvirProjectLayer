@@ -58,7 +58,7 @@ const IndexScreen = ({
   
   AsyncStorage.getItem('aocalDATA').then((test) => {
     const x = JSON.parse(test);
-    if (x.length > 0) {
+    if (x && x.length > 0) {
       onSavedFormAlert(true);
     } else {
       onSavedFormAlert(false);
@@ -114,7 +114,7 @@ const IndexScreen = ({
 
   const logOutActions = async (nav) => {
     const action = authActions.logout(nav);
-    await dispatch(action);
+    dispatch(action);
   };
 
   if (userIsConnected) {

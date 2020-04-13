@@ -34,30 +34,35 @@ export const OldReportsTab = (props) => {
     AsyncStorage.getItem('userCompany')
       .then((userCompany) => {
         const tempCompany = JSON.parse(userCompany);
+        console.log(4);
         setCompany(tempCompany);
         AsyncStorage.getItem('userData')
           .then((user) => {
             const temp = JSON.parse(user);
-            setUserData(temp);
+        console.log(3);
+        setUserData(temp);
           });
       });
   }, []);
 
-
-  if (!allReportData && company && userData) {
-    axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/.json?auth=${userData.token}`)
-      .then((res) => {
-        findUserForm(res.data);
-      })
-      // eslint-disable-next-line no-console
-      .catch((err) => console.log(err));
-  }
+  useEffect(() => {
+    if (!allReportData && company && userData) {
+      axios.get(`https://dvir-project-server.firebaseio.com/reports/-M-LnoFF1RuOGySki32y/${company}/.json?auth=${userData.token}`)
+        .then((res) => {
+          console.log(1);
+          findUserForm(res.data);
+        })
+        // eslint-disable-next-line no-console
+        .catch((err) => console.log(err));
+    }
+  }, [allReportData, company, userData]);
 
   const findUserForm = (data) => {
     const truckKeys = Object.keys(data);
     const userUID = userData.userId;
     for (let i = 0; i < truckKeys.length; i += 1) {
       if (data[truckKeys[i]].OpenForm !== false && data[truckKeys[i]].OpenForm.userUID === userUID) {
+        console.log(2);
         setUserForm(data[truckKeys[i]].OpenForm);
       }
     }
