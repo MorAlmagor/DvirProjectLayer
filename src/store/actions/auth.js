@@ -50,12 +50,14 @@ export const logout = (nav) => {
     exitApp();
   } else {
     nav.navigate('Login');
-    AsyncStorage.setItem('userData', JSON.stringify({
-      token: null,
-      userId: null,
-      expirationDate: null
-    }));
-    exitApp();
+    return async (dispatch) => {
+      await AsyncStorage.setItem('userData', JSON.stringify({
+        token: null,
+        userId: null,
+        expirationDate: null
+      }));
+      exitApp();
+    };
   }
 };
 
